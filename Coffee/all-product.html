@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semua Produk - Nusantara Beans</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23C5A059%22 d=%22M96 96c0-35.3 28.7-64 64-64H384c35.3 0 64 28.7 64 64v32H96V96zM48 224h416c26.5 0 48 21.5 48 48v32c0 53-43 96-96 96H160c-53 0-96-43-96-96V272c0-26.5 21.5-48 48-48zm352 160h32c35.3 0 64-28.7 64-64V288H432v96zM32 448H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32z%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABEL TEMA ELEGAN ================= */
+        :root {
+            --color-coffee: #2C1E16; 
+            --color-gold: #C5A059;   
+            --color-gold-hover: #D4B572;
+            --color-cream: #F8F5F0;  
+            --color-text: #333333;
+            --color-white: #FFFFFF;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        /* ================= RESET & DASAR ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-cream);
+            color: var(--color-text);
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            background-color: var(--color-coffee);
+            color: var(--color-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .navbar-brand-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-size: clamp(18px, 3.5vw, 22px);
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-gold);
+            line-height: 1.1;
+        }
+        .navbar-tagline {
+            font-size: clamp(8px, 1.5vw, 10px);
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 2px;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(10px, 3vw, 20px);
+        }
+        .burger-container {
+            position: relative;
+        }
+        .burger-btn {
+            font-size: clamp(18px, 3vw, 22px);
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid rgba(197, 160, 89, 0.3);
+            padding-right: 15px;
+        }
+        .burger-btn:hover { color: var(--color-white); }
+        
+        .social-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: var(--color-coffee);
+            border: 1px solid var(--color-gold);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+        .social-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .social-dropdown i {
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .social-dropdown i:hover { color: var(--color-white); }
+
+        .navbar-icons {
+            display: flex;
+            gap: clamp(12px, 2.5vw, 20px);
+            align-items: center;
+        }
+        .navbar-icons i {
+            font-size: clamp(16px, 2.5vw, 18px);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .navbar-icons i:hover { color: var(--color-white); }
+
+        /* ================= SEARCH DROPDOWN BAWAH NAVBAR ================= */
+        .search-dropdown-bar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            background: var(--color-coffee);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px);
+            transition: all 0.3s ease-in-out;
+        }
+        .search-dropdown-bar.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .search-bar-inner {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            background: var(--color-white);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 2px solid var(--color-gold);
+        }
+        .search-bar-input {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-text);
+        }
+        .search-bar-btn {
+            background: var(--color-gold);
+            color: var(--color-white);
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.3s;
+        }
+        .search-bar-btn:hover {
+            background: var(--color-coffee);
+            color: var(--color-gold);
+        }
+
+        /* ================= HALAMAN ALL PRODUCTS ================= */
+        .search-page-container {
+            padding: 120px 5% 60px;
+            max-width: 1300px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+        
+        .back-to-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-coffee);
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+        .back-to-home:hover {
+            color: var(--color-gold);
+        }
+
+        .search-page-title {
+            font-family: var(--font-heading);
+            font-size: clamp(24px, 4vw, 32px);
+            color: var(--color-coffee);
+            margin-bottom: 8px;
+        }
+        .search-page-title span { color: var(--color-gold); }
+        .search-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Grid Produk (Persis Card Index) */
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* Product Card (Disamakan dengan index.html)[cite: 1] */
+        .product-card {
+            background: var(--color-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: left;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .product-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: var(--color-white);
+            cursor: zoom-in;
+            overflow: hidden;
+        }
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 15px;
+            transition: transform 0.3s ease;
+        }
+        .product-img-wrapper:hover .product-img { transform: scale(1.05); }
+
+        .product-badge-top {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #d9534f;
+            color: var(--color-white);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 3;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .product-label-corner {
+            position: absolute;
+            top: 22px;
+            right: -35px;
+            background: var(--color-coffee);
+            color: var(--color-gold);
+            font-size: 9px;
+            font-weight: 600;
+            width: 130px;
+            text-align: center;
+            padding: 4px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transform: rotate(45deg);
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(197, 160, 89, 0.4);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.4);
+            pointer-events: none;
+        }
+
+        .product-info { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title {
+            font-family: var(--font-heading);
+            font-size: 19px;
+            color: var(--color-coffee);
+            margin-bottom: 5px;
+        }
+        .product-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-gold);
+            margin-bottom: 10px;
+        }
+        .product-bio {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .product-actions { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: auto; 
+        }
+        .btn {
+            flex: 1;
+            padding: 8px 6px;
+            border: none;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--color-gold);
+            color: var(--color-coffee);
+        }
+        .btn-outline:hover { background: var(--color-gold); color: var(--color-white); }
+        .btn-solid {
+            background: var(--color-gold);
+            color: var(--color-white);
+        }
+        .btn-solid:hover { background: var(--color-coffee); }
+
+        /* ================= PAGINATION STYLES (Sama dengan Search) ================= */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+        .page-btn {
+            background: var(--color-white);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            color: var(--color-coffee);
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .page-btn:hover:not(:disabled) {
+            background: var(--color-gold);
+            color: var(--color-white);
+            border-color: var(--color-gold);
+        }
+        .page-btn.active {
+            background: var(--color-coffee);
+            color: var(--color-gold);
+            border-color: var(--color-coffee);
+            font-weight: 600;
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ================= MODAL STANDARD (DETAIL & ZOOM) ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(26, 18, 13, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 20px;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .close-modal {
+            position: absolute; 
+            top: 20px; right: 25px; 
+            font-size: 26px;
+            color: var(--color-gold); 
+            cursor: pointer;
+            z-index: 1001;
+            background: rgba(44, 30, 22, 0.6);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+        }
+        .close-modal:hover { background: var(--color-gold); color: var(--color-white); transform: rotate(90deg); }
+
+        .product-modal-content {
+            background: var(--color-cream); 
+            width: 100%; 
+            max-width: 750px;
+            border-radius: 12px; 
+            overflow: hidden; 
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--color-gold);
+        }
+        .modal-overlay.active .product-modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .product-modal-img-container {
+            background-color: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-right: 1px solid rgba(197, 160, 89, 0.2);
+        }
+        .product-modal-img { 
+            width: 100%; 
+            max-height: 320px; 
+            object-fit: contain; 
+        }
+        .product-modal-body { 
+            padding: 30px; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+        }
+        .product-modal-title {
+            font-family: var(--font-heading); 
+            color: var(--color-coffee);
+            font-size: clamp(22px, 3vw, 28px); 
+            margin-bottom: 12px;
+        }
+        .product-modal-desc { 
+            font-size: 13.5px; 
+            color: #555; 
+            line-height: 1.7; 
+            margin-bottom: 25px; 
+        }
+
+        .image-modal {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 20px;
+        }
+        .fullscreen-img {
+            max-width: 92%;
+            max-height: 88vh;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 0 35px rgba(197, 160, 89, 0.2);
+            animation: zoomInModal 0.3s ease;
+        }
+
+        @keyframes zoomInModal {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* ================= FOOTER ================= */
+        .site-footer {
+            background: #1A120D;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            padding: 50px 5% 20px;
+        }
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            color: var(--color-gold);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .footer-brand {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-white);
+            margin-bottom: 12px;
+        }
+        .footer-brand span { color: var(--color-gold); }
+        .footer-desc { margin-bottom: 15px; line-height: 1.6; }
+        
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .footer-socials a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 50%;
+            color: var(--color-white);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        .footer-socials a:hover {
+            background: var(--color-gold);
+            color: var(--color-coffee);
+            transform: translateY(-3px);
+        }
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-contact i { color: var(--color-gold); font-size: 15px; margin-top: 3px; }
+
+        .subscribe-form { display: flex; align-items: center; }
+        .subscribe-form input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+            font-family: var(--font-body);
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            font-size: 13px;
+        }
+        .subscribe-form button {
+            padding: 10px 16px;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid var(--color-gold);
+            height: 100%;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-bottom span { color: var(--color-gold); }
+
+        @media (max-width: 768px) {
+            .product-modal-content {
+                grid-template-columns: 1fr;
+                max-width: 90%;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+            .product-modal-img-container {
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            }
+            .product-modal-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand-wrapper">
+            <div class="navbar-brand">Nusantara<span>Beans</span></div>
+            <div class="navbar-tagline">Arabika Premium Indonesia</div>
+        </a>
+        <div class="navbar-right">
+            <div class="navbar-icons">
+                <i class="fas fa-search" id="searchBtn" title="Cari Produk"></i>
+                <a href="checkout.html"><i class="fas fa-shopping-cart" title="Keranjang"></i></a>
+                <a href="chat.html"><i class="fas fa-comments" title="Chat Admin"></i></a>
+                <a href="user.html"><i class="fas fa-user" title="Akun Saya"></i></a>
+            </div>
+            
+            <div class="burger-container">
+                <div class="burger-btn" id="burgerBtn">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="social-dropdown" id="socialDropdown">
+                    <i class="fas fa-shopping-bag" title="Shopee"></i> 
+                    <i class="fab fa-tiktok" title="TikTok"></i>
+                    <i class="fab fa-instagram" title="Instagram"></i>
+                    <i class="fab fa-facebook-f" title="Facebook"></i>
+                    <i class="fab fa-whatsapp" title="WhatsApp"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SEARCH DROPDOWN BAWAH NAVBAR -->
+    <form action="search.html" method="GET" class="search-dropdown-bar" id="searchDropdownBar">
+        <div class="search-bar-inner">
+            <input type="text" name="q" class="search-bar-input" id="searchBarInput" placeholder="Ketik nama kopi, biji, atau proses..." required>
+            <button type="submit" class="search-bar-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+
+    <!-- KONTEN HALAMAN ALL PRODUCTS -->
+    <main class="search-page-container">
+        <!-- Kembali ke Beranda -->
+        <a href="index.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+
+        <h1 class="search-page-title">Semua Produk <span>Eksklusif</span></h1>
+        <p class="search-meta" id="searchMeta">Menampilkan seluruh koleksi biji kopi pilihan dan green beans terbaik dari Nusantara Beans.</p>
+
+        <!-- Grid Produk -->
+        <div class="search-results-grid" id="allProductsGrid">
+            <!-- Data produk akan dimuat secara dinamis via JavaScript berdasarkan card slider index.html[cite: 1] -->
+        </div>
+
+        <!-- Container Pagination -->
+        <div class="pagination-container" id="paginationContainer"></div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 class="footer-brand">Nusantara<span>Beans</span>
+				<div class="navbar-tagline">Arabika Premium Indonesia</div></h3>
+                <p class="footer-desc">Kopi Premium Mahakarya Indonesia. Nikmati cita rasa kopi terbaik langsung dari petani lokal yang di-roasting dengan standar artisan profesional.</p>
+                <div class="footer-socials">
+                    <a href="#" target="_blank" title="Shopee"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/62895333841200" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:info@nusantarabeans.com" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Hubungi Kami</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i> 
+                        <span>Jl. Braga No. 10, Sumur Bandung<br>Bandung, Jawa Barat 40111</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i> 
+                        <span>089-5333-841-200</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i> 
+                        <span>info@nusantarabeans.com</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Berlangganan Newsletter</h4>
+                <p class="footer-desc">Dapatkan informasi promo eksklusif, produk terbaru, dan diskon spesial langsung di email Anda.</p>
+                <form class="subscribe-form" action="#" method="POST">
+                    <input type="email" placeholder="Masukkan Email Anda" required>
+                    <button type="submit" class="btn btn-solid"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 <span>Nusantara Beans</span>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= MODAL STANDARD (DETAIL & ZOOM) ================= -->
+    <div class="modal-overlay" id="modalProduct">
+        <span class="close-modal" onclick="closeModals()">&times;</span>
+        <div class="product-modal-content">
+            <div class="product-modal-img-container">
+                <img src="" alt="" class="product-modal-img" id="modalImg">
+            </div>
+            <div class="product-modal-body">
+                <h3 class="product-modal-title" id="modalTitle">Judul Kopi</h3>
+                <p class="product-modal-desc" id="modalDesc">Deskripsi detail mengenai kopi...</p>
+                <button class="btn btn-solid" style="padding: 12px; font-size: 14px;"><i class="fas fa-cart-plus"></i> Tambah ke Keranjang</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay image-modal" id="modalImageZoom">
+        <span class="close-modal" onclick="closeModals()">&times;</span>
+        <img src="" alt="Zoom Fullscreen" class="fullscreen-img" id="fullscreenImg">
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Toggle Burger Menu
+        const burgerBtn = document.getElementById('burgerBtn');
+        const socialDropdown = document.getElementById('socialDropdown');
+        
+        burgerBtn.addEventListener('click', (e) => {
+            socialDropdown.classList.toggle('active');
+            e.stopPropagation();
+        });
+
+        // Toggle Search Bar
+        const searchBtn = document.getElementById('searchBtn');
+        const searchDropdownBar = document.getElementById('searchDropdownBar');
+        const searchBarInput = document.getElementById('searchBarInput');
+
+        searchBtn.addEventListener('click', (e) => {
+            searchDropdownBar.classList.toggle('active');
+            if (searchDropdownBar.classList.contains('active')) {
+                searchBtn.classList.remove('fa-search');
+                searchBtn.classList.add('fa-xmark');
+                searchBarInput.focus();
+            } else {
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+            e.stopPropagation();
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!burgerBtn.contains(e.target) && !socialDropdown.contains(e.target)) {
+                socialDropdown.classList.remove('active');
+            }
+            if (!searchDropdownBar.contains(e.target) && e.target !== searchBtn) {
+                searchDropdownBar.classList.remove('active');
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+        });
+
+        // === DATA PRODUK LENGKAP DARI CARD SLIDER INDEX.HTML ===[cite: 1]
+        const allProductsData = [
+            {
+                title: "Arabica Premium",
+                price: "Rp 120.000 /kg",
+                bio: "Kopi Arabica Gayo low acidity & full body. Memiliki sentuhan khas rempah, cokelat pekat, dan hint karamel.",
+                img: "assets/img/arabika-1536x1536.webp",
+                badge: "Best Seller",
+                corner: "Single Origin",
+                detailDesc: "Kopi Arabica Gayo ditanam di ketinggian 1.200 - 1.500 mdpl di dataran tinggi Gayo, Aceh. Memiliki keasaman rendah dengan body tebal. Terdapat sentuhan rempah, cokelat pekat, dan hint karamel.",
+                detailImg: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Arabica Full Wash",
+                price: "Rp 135.000 /kg",
+                bio: "Proses Full Wash menghasilkan cita rasa kopi yang sangat bersih dengan tingkat keasaman cerah dan segar.",
+                img: "assets/img/fullwash-1122×1402.webp",
+                badge: "",
+                corner: "Full Wash",
+                detailDesc: "Proses Full Wash menghasilkan cita rasa kopi yang sangat bersih dengan tingkat keasaman (acidity) yang lebih cerah dan segar.",
+                detailImg: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Arabica Natural",
+                price: "Rp 140.000 /kg",
+                bio: "Penjemuran utuh bersama ceri memunculkan notes buah-buahan tropis serta rasa manis alami yang sangat kuat.",
+                img: "assets/img/natural-1122x1402.webp",
+                badge: "Favorit",
+                corner: "Natural",
+                detailDesc: "Diproses secara natural dengan penjemuran utuh bersama ceri kopi, menghasilkan notes buah-buahan tropis dan manis alami yang kuat.",
+                detailImg: "https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Yellow Honey",
+                price: "Rp 145.000 /kg",
+                bio: "Keseimbangan sempurna antara keasaman dan kemanisan, dilengkapi aroma floral dengan sentuhan madu ringan.",
+                img: "assets/img/yellowhoney-1149x1369.webp",
+                badge: "",
+                corner: "Honey Process",
+                detailDesc: "Proses Yellow Honey menyeimbangkan keasaman dan kemanisan. Memberikan aroma floral dengan sentuhan madu ringan.",
+                detailImg: "https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Red Honey",
+                price: "Rp 150.000 /kg",
+                bio: "Tingkat mucilage yang lebih tebal menghasilkan rasa yang jauh lebih manis dari Yellow Honey dengan karakter sirup.",
+                img: "assets/img/redhoney-1149x1369.webp",
+                badge: "",
+                corner: "Red Honey",
+                detailDesc: "Tingkat mucilage tebal menghasilkan rasa manis menyerupai sirup.",
+                detailImg: "https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Black Honey",
+                price: "Rp 160.000 /kg",
+                bio: "Menghasilkan profil kopi kental dengan tingkat kemanisan tertinggi serta kekayaan rasa cokelat yang sangat pekat.",
+                img: "assets/img/blackhoney-1149×1369.webp",
+                badge: "Limited",
+                corner: "Black Honey",
+                detailDesc: "Profil kopi kental dengan tingkat kemanisan tertinggi serta kekayaan rasa cokelat pekat.",
+                detailImg: "https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "Arabica Wine",
+                price: "Rp 185.000 /kg",
+                bio: "Difermentasi secara khusus (non-alkohol) untuk memunculkan aroma dan cita rasa anggur yang sangat eksotis.",
+                img: "assets/img/wine-1197x1315.webp",
+                badge: "Exclusive",
+                corner: "Wine Process",
+                detailDesc: "Difermentasi secara khusus (tanpa alkohol) untuk memunculkan aroma dan rasa anggur yang sangat eksotis dan tajam.",
+                detailImg: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "GB Gayo Full Wash",
+                price: "Rp 95.000 /kg",
+                bio: "Biji mentah Gayo Full Wash dengan kadar air ideal, siap masuk mesin roasting untuk menemani kreasi profil Anda.",
+                img: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                badge: "Best Seller",
+                corner: "Full Wash",
+                detailDesc: "Biji kopi mentah (green beans) asal Gayo dengan proses Full Wash. Kadar air ideal, siap untuk di-roasting dengan profil favorit Anda.",
+                detailImg: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "GB Gayo Natural",
+                price: "Rp 105.000 /kg",
+                bio: "Pilihan tepat untuk para roaster yang ingin memunculkan notes fruity dan acidity kompleks dalam racikan kopinya.",
+                img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                badge: "",
+                corner: "Natural",
+                detailDesc: "Green beans diproses secara natural. Cocok untuk roaster yang ingin memunculkan notes fruity dan acidity yang kompleks.",
+                detailImg: "https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "GB Gayo Honey",
+                price: "Rp 110.000 /kg",
+                bio: "Hasil sortasi terbaik tanpa cacat (defect). Menjanjikan rasa sweet dan balance yang pas saat diseduh nanti.",
+                img: "https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                badge: "",
+                corner: "Honey Process",
+                detailDesc: "Green beans dengan proses Honey. Kualitas sortasi terbaik tanpa defect, memberikan rasa sweet and balance saat diseduh.",
+                detailImg: "https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                title: "GB Luwak Liar",
+                price: "Rp 450.000 /kg",
+                bio: "Green beans kopi luwak liar bersertifikat. Sudah dibersihkan secara higienis, tinggal roasting untuk kemewahan hakiki.",
+                img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                badge: "Rare",
+                corner: "Wild Luwak",
+                detailDesc: "Green beans kopi luwak liar bersertifikat. Sudah dibersihkan secara higienis, tinggal masuk ke mesin roasting Anda.",
+                detailImg: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        const allProductsGrid = document.getElementById('allProductsGrid');
+        const paginationContainer = document.getElementById('paginationContainer');
+
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        function displayProductsPage(page) {
+            currentPage = page;
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedItems = allProductsData.slice(start, end);
+
+            allProductsGrid.innerHTML = paginatedItems.map(item => `
+                <div class="product-card">
+                    <div class="product-img-wrapper img-zoom-trigger" data-img="${item.detailImg}" data-title="${item.title}">
+                        ${item.badge ? `<span class="product-badge-top">${item.badge}</span>` : ''}
+                        <span class="product-label-corner">${item.corner}</span>
+                        <img src="${item.img}" alt="${item.title}" class="product-img">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${item.title}</h3>
+                        <div class="product-price">${item.price}</div>
+                        <p class="product-bio">${item.bio}</p>
+                        <div class="product-actions">
+                            <button class="btn btn-outline btn-detail" data-title="${item.title}" data-desc="${item.detailDesc}" data-img="${item.detailImg}"><i class="fas fa-external-link-alt"></i> Detail</button>
+                            <button class="btn btn-solid"><i class="fas fa-cart-plus"></i> Beli</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            renderPaginationControls();
+            bindModalEvents();
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(allProductsData.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+
+            // Tombol Previous
+            paginationHTML += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+            // Nomor Halaman
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            // Tombol Next
+            paginationHTML += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        window.changePage = function(page) {
+            displayProductsPage(page);
+        }
+
+        // Modal Logic
+        const modalProduct = document.getElementById('modalProduct');
+        const modalImageZoom = document.getElementById('modalImageZoom');
+        const fullscreenImg = document.getElementById('fullscreenImg');
+
+        function bindModalEvents() {
+            document.querySelectorAll('.btn-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.getElementById('modalTitle').innerText = e.target.getAttribute('data-title');
+                    document.getElementById('modalDesc').innerText = e.target.getAttribute('data-desc');
+                    document.getElementById('modalImg').src = e.target.getAttribute('data-img');
+                    modalProduct.classList.add('active');
+                });
+            });
+
+            document.querySelectorAll('.img-zoom-trigger').forEach(wrapper => {
+                wrapper.addEventListener('click', () => {
+                    const imgSrc = wrapper.getAttribute('data-img');
+                    fullscreenImg.src = imgSrc;
+                    modalImageZoom.classList.add('active');
+                });
+            });
+        }
+
+        function closeModals() {
+            modalProduct.classList.remove('active');
+            modalImageZoom.classList.remove('active');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modalProduct) modalProduct.classList.remove('active');
+            if (e.target === modalImageZoom) modalImageZoom.classList.remove('active');
+        });
+
+        // Inisialisasi halaman pertama saat pertama kali dimuat
+        displayProductsPage(1);
+    </script>
+</body>
+</html>

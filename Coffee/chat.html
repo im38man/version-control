@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat dengan Admin - Nusantara Beans</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23C5A059%22 d=%22M96 96c0-35.3 28.7-64 64-64H384c35.3 0 64 28.7 64 64v32H96V96zM48 224h416c26.5 0 48 21.5 48 48v32c0 53-43 96-96 96H160c-53 0-96-43-96-96V272c0-26.5 21.5-48 48-48zm352 160h32c35.3 0 64-28.7 64-64V288H432v96zM32 448H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32z%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABEL TEMA ELEGAN ================= */
+        :root {
+            --color-coffee: #2C1E16; 
+            --color-gold: #C5A059;   
+            --color-gold-hover: #D4B572;
+            --color-cream: #F8F5F0;  
+            --color-text: #333333;
+            --color-white: #FFFFFF;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        /* ================= RESET & DASAR ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-cream);
+            color: var(--color-text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ================= NAVBAR (Sesuai index.html) ================= */
+        .navbar {
+            background-color: var(--color-coffee);
+            color: var(--color-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .navbar-brand-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-size: clamp(18px, 3.5vw, 22px);
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-gold);
+            line-height: 1.1;
+        }
+        .navbar-tagline {
+            font-size: clamp(8px, 1.5vw, 10px);
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 2px;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(10px, 3vw, 20px);
+        }
+        .burger-container {
+            position: relative;
+        }
+        .burger-btn {
+            font-size: clamp(18px, 3vw, 22px);
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid rgba(197, 160, 89, 0.3);
+            padding-right: 15px;
+        }
+        .burger-btn:hover { color: var(--color-white); }
+        
+        .social-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: var(--color-coffee);
+            border: 1px solid var(--color-gold);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+        .social-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .social-dropdown i {
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .social-dropdown i:hover { color: var(--color-white); }
+
+        .navbar-icons {
+            display: flex;
+            gap: clamp(12px, 2.5vw, 20px);
+            align-items: center;
+        }
+        .navbar-icons i {
+            font-size: clamp(16px, 2.5vw, 18px);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .navbar-icons i:hover, .navbar-icons i.active-icon { color: var(--color-white); }
+
+        /* ================= SEARCH DROPDOWN BAWAH NAVBAR ================= */
+        .search-dropdown-bar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            background: var(--color-coffee);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px);
+            transition: all 0.3s ease-in-out;
+        }
+        .search-dropdown-bar.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .search-bar-inner {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            background: var(--color-white);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 2px solid var(--color-gold);
+        }
+        .search-bar-input {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-text);
+        }
+        .search-bar-btn {
+            background: var(--color-gold);
+            color: var(--color-white);
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.3s;
+        }
+        .search-bar-btn:hover {
+            background: var(--color-coffee);
+            color: var(--color-gold);
+        }
+
+        /* ================= CHAT SECTION CONTAINER ================= */
+        .chat-main-container {
+            flex: 1;
+            max-width: 900px;
+            width: 92%;
+            margin: 90px auto 40px auto; /* Memberi jarak di bawah navbar fixed */
+            background: var(--color-white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(44, 30, 22, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background-color: var(--color-coffee);
+            color: var(--color-white);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--color-gold);
+        }
+        .chat-admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .admin-avatar-wrapper {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-coffee);
+            font-size: 20px;
+            font-weight: 700;
+            border: 2px solid var(--color-white);
+        }
+        .status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            border: 2px solid var(--color-coffee);
+        }
+        .admin-info h3 {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            color: var(--color-gold);
+            margin-bottom: 2px;
+        }
+        .admin-info span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .chat-header-actions i {
+            font-size: 18px;
+            color: var(--color-gold);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .chat-header-actions i:hover { color: var(--color-white); }
+
+        /* Chat Body / Messages Area */
+        .chat-body {
+            padding: 25px;
+            flex: 1;
+            height: 420px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #FAF8F5;
+        }
+        .chat-date-divider {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin: 5px 0;
+            position: relative;
+        }
+        .chat-date-divider span {
+            background: #EFECE6;
+            padding: 4px 12px;
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeInMessage 0.3s ease;
+        }
+        @keyframes fadeInMessage {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.admin {
+            background-color: var(--color-white);
+            color: var(--color-text);
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .message.user {
+            background-color: var(--color-coffee);
+            color: var(--color-white);
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .message-time {
+            font-size: 10px;
+            display: block;
+            margin-top: 5px;
+            text-align: right;
+            opacity: 0.7;
+        }
+        .message.admin .message-time { color: #888; }
+        .message.user .message-time { color: rgba(255,255,255,0.75); }
+
+        /* Typing Indicator Animation */
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: var(--color-white);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border-top-left-radius: 2px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .typing-indicator span {
+            height: 7px;
+            width: 7px;
+            float: left;
+            margin: 0 2px;
+            background-color: var(--color-gold);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.3s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: -1.1s; }
+        .typing-indicator span:nth-child(3) { animation-delay: -0.9s; }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        /* Chat Footer / Input Form */
+        .chat-footer {
+            padding: 15px 20px;
+            background-color: var(--color-white);
+            border-top: 1px solid rgba(197, 160, 89, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-input-tool {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            color: var(--color-gold);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .chat-input-tool:hover { color: var(--color-coffee); }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            border-radius: 25px;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 13.5px;
+            background: var(--color-cream);
+            transition: border-color 0.3s;
+        }
+        .chat-input:focus {
+            border-color: var(--color-gold);
+            background: var(--color-white);
+        }
+        .chat-send-btn {
+            background-color: var(--color-gold);
+            color: var(--color-white);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chat-send-btn:hover {
+            background-color: var(--color-coffee);
+            color: var(--color-gold);
+            transform: scale(1.05);
+        }
+
+        /* ================= FOOTER (Sesuai index.html) ================= */
+        .site-footer {
+            background: #1A120D;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            padding: 50px 5% 20px;
+            margin-top: auto;
+        }
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            color: var(--color-gold);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .footer-brand {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-white);
+            margin-bottom: 12px;
+        }
+        .footer-brand span { color: var(--color-gold); }
+        .footer-desc { margin-bottom: 15px; line-height: 1.6; }
+        
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .footer-socials a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 50%;
+            color: var(--color-white);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        .footer-socials a:hover {
+            background: var(--color-gold);
+            color: var(--color-coffee);
+            transform: translateY(-3px);
+        }
+
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-contact i { color: var(--color-gold); font-size: 15px; margin-top: 3px; }
+
+        .subscribe-form { display: flex; align-items: center; }
+        .subscribe-form input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+            font-family: var(--font-body);
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            font-size: 13px;
+        }
+        .subscribe-form button {
+            padding: 10px 16px;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid var(--color-gold);
+            height: 100%;
+            background: var(--color-gold);
+            color: var(--color-white);
+            cursor: pointer;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-bottom span { color: var(--color-gold); }
+
+        /* Responsive Query */
+        @media (max-width: 768px) {
+            .chat-main-container {
+                width: 95%;
+                margin-top: 75px;
+                margin-bottom: 20px;
+            }
+            .chat-body {
+                height: 360px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (Sesuai index.html) -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand-wrapper">
+            <div class="navbar-brand">Nusantara<span>Beans</span></div>
+            <div class="navbar-tagline">Arabika Premium Indonesia</div>
+        </a>
+        <div class="navbar-right">
+            <div class="navbar-icons">
+                <i class="fas fa-search" id="searchBtn" title="Cari Produk"></i>
+                <a href="checkout.html"><i class="fas fa-shopping-cart" title="Keranjang"></i></a>
+                <a href="chat.html"><i class="fas fa-comments" title="Chat Admin"></i></a>
+                <a href="user.html"><i class="fas fa-user" title="Akun Saya"></i></a>
+            </div>
+            
+            <div class="burger-container">
+                <div class="burger-btn" id="burgerBtn">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="social-dropdown" id="socialDropdown">
+                    <i class="fas fa-shopping-bag" title="Shopee"></i> 
+                    <i class="fab fa-tiktok" title="TikTok"></i>
+                    <i class="fab fa-instagram" title="Instagram"></i>
+                    <i class="fab fa-facebook-f" title="Facebook"></i>
+                    <i class="fab fa-whatsapp" title="WhatsApp"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SEARCH DROPDOWN BAWAH NAVBAR -->
+    <form action="search.html" method="GET" class="search-dropdown-bar" id="searchDropdownBar">
+        <div class="search-bar-inner">
+            <input type="text" name="q" class="search-bar-input" id="searchBarInput" placeholder="Ketik nama kopi, biji, atau proses..." required>
+            <button type="submit" class="search-bar-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+
+    <!-- CHAT SECTION CONTAINER -->
+    <div class="chat-main-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-admin-profile">
+                <div class="admin-avatar-wrapper">
+                    NB
+                    <div class="status-dot"></div>
+                </div>
+                <div class="admin-info">
+                    <h3>Admin Nusantara Beans</h3>
+                    <span>Online • Siap membantu pertanyaan Anda</span>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <i class="fas fa-ellipsis-v" title="Opsi Lainnya"></i>
+            </div>
+        </div>
+
+        <!-- Chat Body / Message Log -->
+        <div class="chat-body" id="chatBody">
+            <div class="chat-date-divider">
+                <span>Hari Ini</span>
+            </div>
+            <div class="message admin">
+                Halo! Selamat datang di Nusantara Beans. Ada yang bisa kami bantu terkait produk biji kopi atau pemesanan Anda hari ini? 😊
+                <span class="message-time">10:00</span>
+            </div>
+            <!-- Typing Indicator Animation Box -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Chat Footer / Input Form -->
+        <form class="chat-footer" id="chatForm">
+            <button type="button" class="chat-input-tool" title="Lampirkan File/Gambar"><i class="fas fa-paperclip"></i></button>
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ketik pesan Anda di sini..." autocomplete="off" required>
+            <button type="submit" class="chat-send-btn" title="Kirim Pesan"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- FOOTER (Sesuai index.html) -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 class="footer-brand">Nusantara<span>Beans</span></h3>
+                <div class="navbar-tagline" style="margin-bottom: 12px;">Arabika Premium Indonesia</div>
+                <p class="footer-desc">Kopi Premium Mahakarya Indonesia. Nikmati cita rasa kopi terbaik langsung dari petani lokal yang di-roasting dengan standar artisan profesional.</p>
+                <div class="footer-socials">
+                    <a href="#" target="_blank" title="Shopee"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/62895333841200" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:info@nusantarabeans.com" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Hubungi Kami</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i> 
+                        <span>Jl. Braga No. 10, Sumur Bandung<br>Bandung, Jawa Barat 40111</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i> 
+                        <span>089-5333-841-200</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i> 
+                        <span>info@nusantarabeans.com</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Berlangganan Newsletter</h4>
+                <p class="footer-desc">Dapatkan informasi promo eksklusif, produk terbaru, dan diskon spesial langsung di email Anda.</p>
+                <form class="subscribe-form" action="#" method="POST">
+                    <input type="email" placeholder="Masukkan Email Anda" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 <span>Nusantara Beans</span>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Toggle Burger Menu & Social Dropdown
+        const burgerBtn = document.getElementById('burgerBtn');
+        const socialDropdown = document.getElementById('socialDropdown');
+        
+        burgerBtn.addEventListener('click', (e) => {
+            socialDropdown.classList.toggle('active');
+            e.stopPropagation();
+        });
+
+        // Search Dropdown Toggle Logic & Icon Switcher
+        const searchBtn = document.getElementById('searchBtn');
+        const searchDropdownBar = document.getElementById('searchDropdownBar');
+        const searchBarInput = document.getElementById('searchBarInput');
+
+        searchBtn.addEventListener('click', (e) => {
+            searchDropdownBar.classList.toggle('active');
+            if (searchDropdownBar.classList.contains('active')) {
+                searchBtn.classList.remove('fa-search');
+                searchBtn.classList.add('fa-xmark');
+                searchBarInput.focus();
+            } else {
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+            e.stopPropagation();
+        });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!burgerBtn.contains(e.target) && !socialDropdown.contains(e.target)) {
+                socialDropdown.classList.remove('active');
+            }
+            if (!searchDropdownBar.contains(e.target) && e.target !== searchBtn) {
+                searchDropdownBar.classList.remove('active');
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+        });
+
+        // ================= INTERAKTIF CHAT SCRIPT =================
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatBody = document.getElementById('chatBody');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        function getCurrentTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${hours}:${minutes}`;
+        }
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            // 1. Buat elemen pesan pengguna (User)
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user';
+            userMsgDiv.innerHTML = `
+                ${escapeHtml(messageText)}
+                <span class="message-time">${getCurrentTime()}</span>
+            `;
+            
+            // Masukkan sebelum typing indicator
+            chatBody.insertBefore(userMsgDiv, typingIndicator);
+            chatInput.value = '';
+            scrollToBottom();
+
+            // 2. Tampilkan indikator admin sedang mengetik
+            typingIndicator.style.display = 'block';
+            scrollToBottom();
+
+            // 3. Simulasi balasan otomatis dari Admin setelah 1.5 detik
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                
+                const adminMsgDiv = document.createElement('div');
+                adminMsgDiv.className = 'message admin';
+                adminMsgDiv.innerHTML = `
+                    Terima kasih atas pesan Anda. Pesan mengenai "<i>${escapeHtml(messageText)}</i>" telah kami terima. Tim admin kami akan segera merespons lebih lanjut atau memproses pesanan Anda ya kak! 🙏
+                    <span class="message-time">${getCurrentTime()}</span>
+                `;
+                chatBody.insertBefore(adminMsgDiv, typingIndicator);
+                scrollToBottom();
+            }, 1500);
+        });
+
+        function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Fungsi keamanan dasar untuk mencegah injeksi HTML pada input chat
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>

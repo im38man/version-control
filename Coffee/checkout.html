@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja - Nusantara Beans</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23C5A059%22 d=%22M96 96c0-35.3 28.7-64 64-64H384c35.3 0 64 28.7 64 64v32H96V96zM48 224h416c26.5 0 48 21.5 48 48v32c0 53-43 96-96 96H160c-53 0-96-43-96-96V272c0-26.5 21.5-48 48-48zm352 160h32c35.3 0 64-28.7 64-64V288H432v96zM32 448H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32z%22/></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABEL TEMA ELEGAN ================= */
+        :root {
+            --color-coffee: #2C1E16; 
+            --color-gold: #C5A059;   
+            --color-gold-hover: #D4B572;
+            --color-cream: #F8F5F0;  
+            --color-text: #333333;
+            --color-white: #FFFFFF;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        /* ================= RESET & DASAR ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-cream);
+            color: var(--color-text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ================= NAVBAR (Sesuai index.html) ================= */
+        .navbar {
+            background-color: var(--color-coffee);
+            color: var(--color-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .navbar-brand-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-size: clamp(18px, 3.5vw, 22px);
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-gold);
+            line-height: 1.1;
+        }
+        .navbar-tagline {
+            font-size: clamp(8px, 1.5vw, 10px);
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 2px;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(10px, 3vw, 20px);
+        }
+        .burger-container {
+            position: relative;
+        }
+        .burger-btn {
+            font-size: clamp(18px, 3vw, 22px);
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid rgba(197, 160, 89, 0.3);
+            padding-right: 15px;
+        }
+        .burger-btn:hover { color: var(--color-white); }
+        
+        .social-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: var(--color-coffee);
+            border: 1px solid var(--color-gold);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+        .social-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .social-dropdown i {
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .social-dropdown i:hover { color: var(--color-white); }
+
+        .navbar-icons {
+            display: flex;
+            gap: clamp(12px, 2.5vw, 20px);
+            align-items: center;
+        }
+        .navbar-icons i {
+            font-size: clamp(16px, 2.5vw, 18px);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .navbar-icons i:hover, .navbar-icons i.active-icon { color: var(--color-white); }
+
+        /* ================= SEARCH DROPDOWN BAWAH NAVBAR ================= */
+        .search-dropdown-bar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            background: var(--color-coffee);
+            border-bottom: 2px solid var(--color-gold);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px);
+            transition: all 0.3s ease-in-out;
+        }
+        .search-dropdown-bar.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .search-bar-inner {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            background: var(--color-white);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 2px solid var(--color-gold);
+        }
+        .search-bar-input {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--color-text);
+        }
+        .search-bar-btn {
+            background: var(--color-gold);
+            color: var(--color-white);
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.3s;
+        }
+        .search-bar-btn:hover {
+            background: var(--color-coffee);
+            color: var(--color-gold);
+        }
+
+        /* ================= CART SECTION CONTAINER ================= */
+        .cart-page-container {
+            flex: 1;
+            max-width: 1200px;
+            width: 92%;
+            margin: 95px auto 50px auto;
+        }
+
+        .page-header-title {
+            font-family: var(--font-heading);
+            font-size: clamp(24px, 4vw, 34px);
+            color: var(--color-coffee);
+            margin-bottom: 25px;
+        }
+        .page-header-title span { color: var(--color-gold); }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        /* Cart Items List */
+        .cart-items-wrapper {
+            background: var(--color-white);
+            border-radius: 8px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .cart-table th {
+            background-color: var(--color-coffee);
+            color: var(--color-gold);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 13.5px;
+            padding: 14px 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .cart-table td {
+            padding: 18px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+            vertical-align: middle;
+            font-size: 13.5px;
+        }
+
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cart-item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            background: var(--color-cream);
+            border-radius: 6px;
+            padding: 5px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+
+        .cart-item-detail h4 {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            color: var(--color-coffee);
+            margin-bottom: 3px;
+        }
+
+        .cart-item-detail span {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Quantity Control */
+        .qty-control {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--color-cream);
+        }
+
+        .qty-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--color-coffee);
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .qty-btn:hover {
+            background: var(--color-gold);
+            color: var(--color-white);
+        }
+
+        .qty-input {
+            width: 35px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+        }
+
+        .item-subtotal {
+            font-weight: 600;
+            color: var(--color-coffee);
+        }
+
+        .remove-item-btn {
+            background: transparent;
+            border: none;
+            color: #d9534f;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        .remove-item-btn:hover { transform: scale(1.15); }
+
+        /* Cart Summary Card */
+        .cart-summary-card {
+            background: var(--color-white);
+            border-radius: 8px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            padding: 24px;
+        }
+
+        .summary-title {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            color: var(--color-coffee);
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            font-size: 13.5px;
+            color: #555;
+        }
+
+        .summary-row.total {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-coffee);
+            border-top: 1px dashed rgba(197, 160, 89, 0.4);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .summary-row.total span:last-child {
+            color: var(--color-gold);
+        }
+
+        .btn-checkout {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--color-gold);
+            color: var(--color-white);
+            border: none;
+            border-radius: 30px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-checkout:hover {
+            background: var(--color-coffee);
+            color: var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        .empty-cart-message i {
+            font-size: 48px;
+            color: var(--color-gold);
+            margin-bottom: 15px;
+        }
+
+        /* ================= FOOTER (Sesuai index.html) ================= */
+        .site-footer {
+            background: #1A120D;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            padding: 50px 5% 20px;
+            margin-top: auto;
+        }
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            color: var(--color-gold);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .footer-brand {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--color-white);
+            margin-bottom: 12px;
+        }
+        .footer-brand span { color: var(--color-gold); }
+        .footer-desc { margin-bottom: 15px; line-height: 1.6; }
+        
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .footer-socials a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 50%;
+            color: var(--color-white);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        .footer-socials a:hover {
+            background: var(--color-gold);
+            color: var(--color-coffee);
+            transform: translateY(-3px);
+        }
+
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-contact i { color: var(--color-gold); font-size: 15px; margin-top: 3px; }
+
+        .subscribe-form { display: flex; align-items: center; }
+        .subscribe-form input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-white);
+            font-family: var(--font-body);
+            border-radius: 4px 0 0 4px;
+            outline: none;
+            font-size: 13px;
+        }
+        .subscribe-form button {
+            padding: 10px 16px;
+            border-radius: 0 4px 4px 0;
+            border: 1px solid var(--color-gold);
+            height: 100%;
+            background: var(--color-gold);
+            color: var(--color-white);
+            cursor: pointer;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-bottom span { color: var(--color-gold); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+            .cart-table th, .cart-table td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (Sesuai index.html) -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand-wrapper">
+            <div class="navbar-brand">Nusantara<span>Beans</span></div>
+            <div class="navbar-tagline">Arabika Premium Indonesia</div>
+        </a>
+        <div class="navbar-right">
+            <div class="navbar-icons">
+                <i class="fas fa-search" id="searchBtn" title="Cari Produk"></i>
+                <a href="checkout.html"><i class="fas fa-shopping-cart" title="Keranjang"></i></a>
+                <a href="chat.html"><i class="fas fa-comments" title="Chat Admin"></i></a>
+                <a href="user.html"><i class="fas fa-user" title="Akun Saya"></i></a>
+            </div>
+            
+            <div class="burger-container">
+                <div class="burger-btn" id="burgerBtn">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="social-dropdown" id="socialDropdown">
+                    <i class="fas fa-shopping-bag" title="Shopee"></i> 
+                    <i class="fab fa-tiktok" title="TikTok"></i>
+                    <i class="fab fa-instagram" title="Instagram"></i>
+                    <i class="fab fa-facebook-f" title="Facebook"></i>
+                    <i class="fab fa-whatsapp" title="WhatsApp"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SEARCH DROPDOWN BAWAH NAVBAR -->
+    <form action="search.html" method="GET" class="search-dropdown-bar" id="searchDropdownBar">
+        <div class="search-bar-inner">
+            <input type="text" name="q" class="search-bar-input" id="searchBarInput" placeholder="Ketik nama kopi, biji, atau proses..." required>
+            <button type="submit" class="search-bar-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+
+    <!-- CART PAGE CONTAINER -->
+    <div class="cart-page-container">
+        <h2 class="page-header-title">Keranjang <span>Belanja Anda</span></h2>
+
+        <div class="cart-layout">
+            <!-- Daftar Produk dalam Keranjang -->
+            <div class="cart-items-wrapper">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Harga</th>
+                            <th>Kuantitas</th>
+                            <th>Subtotal</th>
+                            <th><i class="fas fa-trash-alt"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        <!-- Item 1 -->
+                        <tr data-price="120000">
+                            <td>
+                                <div class="cart-item-info">
+                                    <img src="assets/img/arabika-1536x1536.webp" alt="Arabica Premium" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                                    <div class="cart-item-detail">
+                                        <h4>Arabica Premium</h4>
+                                        <span>Kemasan 1 Kg • Medium Roast</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Rp 120.000</td>
+                            <td>
+                                <div class="qty-control">
+                                    <button type="button" class="qty-btn qty-minus">-</button>
+                                    <input type="text" class="qty-input" value="1" readonly>
+                                    <button type="button" class="qty-btn qty-plus">+</button>
+                                </div>
+                            </td>
+                            <td class="item-subtotal">Rp 120.000</td>
+                            <td>
+                                <button type="button" class="remove-item-btn" title="Hapus Produk"><i class="fas fa-xmark"></i></button>
+                            </td>
+                        </tr>
+                        <!-- Item 2 -->
+                        <tr data-price="140000">
+                            <td>
+                                <div class="cart-item-info">
+                                    <img src="assets/img/natural-1122x1402.webp" alt="Arabica Natural" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                                    <div class="cart-item-detail">
+                                        <h4>Arabica Natural</h4>
+                                        <span>Kemasan 1 Kg • Natural Process</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Rp 140.000</td>
+                            <td>
+                                <div class="qty-control">
+                                    <button type="button" class="qty-btn qty-minus">-</button>
+                                    <input type="text" class="qty-input" value="2" readonly>
+                                    <button type="button" class="qty-btn qty-plus">+</button>
+                                </div>
+                            </td>
+                            <td class="item-subtotal">Rp 280.000</td>
+                            <td>
+                                <button type="button" class="remove-item-btn" title="Hapus Produk"><i class="fas fa-xmark"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ringkasan Belanja / Checkout Card -->
+            <div class="cart-summary-card">
+                <h3 class="summary-title">Ringkasan Pesanan</h3>
+                <div class="summary-row">
+                    <span>Total Item</span>
+                    <span id="summaryTotalItems">3 Produk</span>
+                </div>
+                <div class="summary-row">
+                    <span>Subtotal Harga</span>
+                    <span id="summarySubtotal">Rp 400.000</span>
+                </div>
+                <div class="summary-row">
+                    <span>Pph (2%)</span>
+                    <span id="summaryPph">Rp 8.000</span>
+                </div>
+                <div class="summary-row">
+                    <span>Estimasi Ongkir (Bandung)</span>
+                    <span id="summaryShipping">Rp 15.000</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Pembayaran</span>
+                    <span id="summaryGrandTotal">Rp 423.000</span>
+                </div>
+                <button type="button" class="btn-checkout" onclick="alert('Melanjutkan ke halaman pembayaran/checkout...')">
+                    <i class="fas fa-lock"></i> Lanjut Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (Sesuai index.html) -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 class="footer-brand">Nusantara<span>Beans</span></h3>
+                <div class="navbar-tagline" style="margin-bottom: 12px;">Arabika Premium Indonesia</div>
+                <p class="footer-desc">Kopi Premium Mahakarya Indonesia. Nikmati cita rasa kopi terbaik langsung dari petani lokal yang di-roasting dengan standar artisan profesional.</p>
+                <div class="footer-socials">
+                    <a href="#" target="_blank" title="Shopee"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/62895333841200" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:info@nusantarabeans.com" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Hubungi Kami</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i> 
+                        <span>Jl. Braga No. 10, Sumur Bandung<br>Bandung, Jawa Barat 40111</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i> 
+                        <span>089-5333-841-200</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i> 
+                        <span>info@nusantarabeans.com</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Berlangganan Newsletter</h4>
+                <p class="footer-desc">Dapatkan informasi promo eksklusif, produk terbaru, dan diskon spesial langsung di email Anda.</p>
+                <form class="subscribe-form" action="#" method="POST">
+                    <input type="email" placeholder="Masukkan Email Anda" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 <span>Nusantara Beans</span>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Toggle Burger Menu & Social Dropdown
+        const burgerBtn = document.getElementById('burgerBtn');
+        const socialDropdown = document.getElementById('socialDropdown');
+        
+        burgerBtn.addEventListener('click', (e) => {
+            socialDropdown.classList.toggle('active');
+            e.stopPropagation();
+        });
+
+        // Search Dropdown Toggle Logic & Icon Switcher
+        const searchBtn = document.getElementById('searchBtn');
+        const searchDropdownBar = document.getElementById('searchDropdownBar');
+        const searchBarInput = document.getElementById('searchBarInput');
+
+        searchBtn.addEventListener('click', (e) => {
+            searchDropdownBar.classList.toggle('active');
+            if (searchDropdownBar.classList.contains('active')) {
+                searchBtn.classList.remove('fa-search');
+                searchBtn.classList.add('fa-xmark');
+                searchBarInput.focus();
+            } else {
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+            e.stopPropagation();
+        });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!burgerBtn.contains(e.target) && !socialDropdown.contains(e.target)) {
+                socialDropdown.classList.remove('active');
+            }
+            if (!searchDropdownBar.contains(e.target) && e.target !== searchBtn) {
+                searchDropdownBar.classList.remove('active');
+                searchBtn.classList.remove('fa-xmark');
+                searchBtn.classList.add('fa-search');
+            }
+        });
+
+        // ================= INTERAKTIF CART CALCULATOR & ACTIONS =================
+        const shippingFee = 15000;
+        const pphRate = 0.02; // Pph 2% dari harga produk
+
+        function formatRupiah(number) {
+            return 'Rp ' + number.toLocaleString('id-ID');
+        }
+
+        function updateCartSummary() {
+            const rows = document.querySelectorAll('#cartTableBody tr');
+            let subtotalAll = 0;
+            let totalItemsCount = 0;
+
+            rows.forEach(row => {
+                const price = parseInt(row.getAttribute('data-price'));
+                const qtyInput = row.querySelector('.qty-input');
+                const qty = parseInt(qtyInput.value);
+                
+                const subtotal = price * qty;
+                row.querySelector('.item-subtotal').innerText = formatRupiah(subtotal);
+
+                subtotalAll += subtotal;
+                totalItemsCount += qty;
+            });
+
+            const pphAmount = subtotalAll * pphRate;
+            const actualShipping = rows.length > 0 ? shippingFee : 0;
+            const grandTotal = rows.length > 0 ? subtotalAll + pphAmount + actualShipping : 0;
+
+            document.getElementById('summaryTotalItems').innerText = totalItemsCount + ' Produk';
+            document.getElementById('summarySubtotal').innerText = formatRupiah(subtotalAll);
+            document.getElementById('summaryPph').innerText = formatRupiah(pphAmount);
+            document.getElementById('summaryShipping').innerText = formatRupiah(actualShipping);
+            document.getElementById('summaryGrandTotal').innerText = formatRupiah(grandTotal);
+
+            // Jika keranjang kosong
+            const tbody = document.getElementById('cartTableBody');
+            if (rows.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-cart-message">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>Keranjang belanja Anda masih kosong.</p>
+                                <a href="index.html#produk" style="display:inline-block; margin-top:12px; color:var(--color-gold); font-weight:600;">Mulai Belanja Sekarang -></a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Event listener untuk tombol plus, minus, dan hapus
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('qty-plus')) {
+                const qtyInput = e.target.closest('.qty-control').querySelector('.qty-input');
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+                updateCartSummary();
+            }
+
+            if (e.target.classList.contains('qty-minus')) {
+                const qtyInput = e.target.closest('.qty-control').querySelector('.qty-input');
+                let currentVal = parseInt(qtyInput.value);
+                if (currentVal > 1) {
+                    qtyInput.value = currentVal - 1;
+                    updateCartSummary();
+                }
+            }
+
+            if (e.target.closest('.remove-item-btn')) {
+                const row = e.target.closest('tr');
+                row.remove();
+                updateCartSummary();
+            }
+        });
+    </script>
+</body>
+</html>
