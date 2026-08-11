@@ -12,10 +12,10 @@
  *   DB_PASS = (password yang kamu buat sendiri saat membuat DB)
  * -----------------------------------------------------------
  */
-define('DB_HOST', 'sql201.infinityfree.com');
-define('DB_NAME', 'if0_42619393_mancares');
-define('DB_USER', 'if0_42619393');
-define('DB_PASS', '8lKyVcv8vG');
+define('DB_HOST', '');
+define('DB_NAME', '');
+define('DB_USER', '');
+define('DB_PASS', '');
 
 // Nama aplikasi (dipakai di beberapa tempat)
 define('APP_NAME', 'MANCARE');
