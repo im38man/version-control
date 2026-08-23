@@ -1,0 +1,134 @@
+{
+  "language": "jp",
+  "projectName": "Mansekai RPG",
+  "genre": "Fantasy Adventure",
+  "projectImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=150&q=80",
+  "userName": "Man",
+  "userAvatar": "",
+  "autoSave": true,
+  "projectBlueprint": "Tulis arsitektur dan rancangan blueprint dunia atau sistem game di sini...",
+  "projectImages": [
+    {
+      "title": "Concept Art Cover",
+      "url": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80"
+    }
+  ],
+  "collaborators": [
+    {
+      "name": "Man",
+      "role": "Game Master / Lead Writer"
+    },
+    {
+      "name": "Shiro",
+      "role": "Co-Writer & Artist"
+    }
+  ],
+  "notes": [
+    {
+      "title": "Lore — Dunia Mansekai",
+      "desc": "Konsep dunia dan sejarah utama.",
+      "date": "24 Aug"
+    },
+    {
+      "title": "Event Design",
+      "desc": "Format event dan trigger.",
+      "date": "24 Aug"
+    }
+  ],
+  "checklists": [
+    {
+      "text": "World Building Sejarah Utama",
+      "done": true
+    },
+    {
+      "text": "Desain Karakter Utama (Man & Shiro)",
+      "done": true
+    }
+  ],
+  "chapters": [
+    {
+      "title": "Chapter 01",
+      "subtitle": "The Strange Grimoire",
+      "status": "Draft",
+      "completed": false,
+      "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80",
+      "messages": [
+        {
+          "sender": "Narrator",
+          "text": "Kamar perpustakaan tua itu dipenuhi debu dan aroma kertas kuno.",
+          "time": "01:00"
+        },
+        {
+          "sender": "Man",
+          "text": "Buku apa ini? Sampulnya tidak punya judul sama sekali...",
+          "time": "01:02"
+        }
+      ]
+    }
+  ],
+  "events": [],
+  "characters": [
+    {
+      "name": "Go",
+      "role": "Nature",
+      "level": "Level 99",
+      "image": "https://raw.githubusercontent.com/im38man/version-control/refs/heads/main/Itemku/npc/Nature-7.png",
+      "completed": true
+    }
+  ],
+  "items": [],
+  "weapons": [],
+  "monsters": [],
+  "maps": [],
+  "lore": [],
+  "activities": [
+    {
+      "textKey": "act_char_up",
+      "timeKey": "act_just_now",
+      "icon": "fa-pen",
+      "color": "green"
+    },
+    {
+      "textKey": "act_char_del",
+      "timeKey": "act_just_now",
+      "icon": "fa-trash",
+      "color": "green"
+    },
+    {
+      "textKey": "act_lang",
+      "timeKey": "act_just_now",
+      "icon": "fa-globe",
+      "color": "purple"
+    },
+    {
+      "text": "Mengubah bahasa aplikasi",
+      "time": "Baru saja",
+      "icon": "fa-bolt",
+      "color": "green"
+    },
+    {
+      "text": "Mengubah bahasa aplikasi",
+      "time": "Baru saja",
+      "icon": "fa-bolt",
+      "color": "green"
+    },
+    {
+      "text": "Mengubah bahasa aplikasi",
+      "time": "Baru saja",
+      "icon": "fa-bolt",
+      "color": "green"
+    },
+    {
+      "text": "Mengubah bahasa aplikasi",
+      "time": "Baru saja",
+      "icon": "fa-bolt",
+      "color": "green"
+    },
+    {
+      "text": "Mengubah bahasa aplikasi",
+      "time": "Baru saja",
+      "icon": "fa-bolt",
+      "color": "green"
+    }
+  ]
+}
