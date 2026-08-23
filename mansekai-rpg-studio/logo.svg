@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#16102b" />
+      <stop offset="100%" stop-color="#0b0614" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d085" />
+      <stop offset="100%" stop-color="#8b794a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Lingkaran Gelap -->
+  <circle cx="250" cy="250" r="230" fill="url(#bgGrad)" stroke="#e2c073" stroke-width="6" />
+  
+  <!-- Outer Ring Ornamen -->
+  <circle cx="250" cy="250" r="210" fill="none" stroke="#8b794a" stroke-width="2" stroke-dasharray="10,5" />
+
+  <!-- Ikon Buku / Perisai RPG -->
+  <path d="M250 120 L340 180 V320 L250 380 L160 320 V180 Z" fill="#150f26" stroke="url(#goldGrad)" stroke-width="6" stroke-linejoin="round" />
+  
+  <!-- Garis Tengah Buku -->
+  <line x1="250" y1="120" x2="250" y2="380" stroke="#e2c073" stroke-width="4" />
+
+  <!-- Simbol Bintang / Magic Core di Tengah -->
+  <polygon points="250,190 265,225 300,230 275,255 282,290 250,270 218,290 225,255 200,230 235,225" fill="url(#goldGrad)" />
+
+  <!-- Teks Melingkar / Label -->
+  <text x="250" y="420" font-family="'Cinzel', serif" font-size="22" fill="#e2c073" font-weight="bold" text-anchor="middle" letter-spacing="4">MANSEKAI</text>
+</svg>
