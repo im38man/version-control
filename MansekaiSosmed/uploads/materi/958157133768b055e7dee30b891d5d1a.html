@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Lengkap: Integrasi HTML, CSS, dan JavaScript dalam Internal HTML</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-heading: #0f172a;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--text-heading);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        h2 {
+            color: var(--text-heading);
+            font-size: 1.5rem;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-box {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+        }
+
+        .code-tag {
+            color: #60a5fa;
+        }
+
+        .code-attr {
+            color: #f472b6;
+        }
+
+        .code-string {
+            color: #34d399;
+        }
+
+        /* Demo Playground Styling */
+        .demo-section {
+            background: #f1f5f9;
+            border: 2px dashed var(--primary);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .demo-section h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-top: 15px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        #demo-output {
+            margin-top: 15px;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Materi Lengkap: HTML, CSS, & JavaScript</h1>
+            <p>Panduan Menggabungkan Ketiga Pilar Web dalam Satu Berkas Internal (Single-File)</p>
+        </header>
+
+        <section>
+            <h2>1. Pendahuluan: Tiga Pilar Web</h2>
+            <p>Dalam pembuatan halaman web modern, terdapat tiga teknologi utama yang saling melengkapi ibarat fondasi, cat/dekorasi, dan sistem kelistrikan pada sebuah rumah:</p>
+            <ul>
+                <li><strong>HTML (HyperText Markup Language):</strong> Berfungsi sebagai struktur dan kerangka dasar halaman web (teks, gambar, tombol, formulir).</li>
+                <li><strong>CSS (Cascading Style Sheets):</strong> Berfungsi untuk mempercantik tampilan, mengatur tata letak (layout), warna, font, dan responsivitas.</li>
+                <li><strong>JavaScript (JS):</strong> Berfungsi untuk memberikan interaktivitas, logika, animasi dinamis, serta manipulasi elemen web tanpa perlu memuat ulang halaman.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>2. Apa itu "Internal HTML"?</h2>
+            <p>Biasanya, pengembang memisahkan file HTML, file CSS (<code>.css</code>), dan file JavaScript (<code>.js</code>). Namun, pendekatan <strong>Internal</strong> berarti kita menempatkan kode CSS dan JavaScript langsung di dalam satu dokumen HTML yang sama:</p>
+            <ul>
+                <li>CSS diletakkan di dalam tag <span class="code-tag">&lt;style&gt;</span> di bagian <span class="code-tag">&lt;head&gt;</span>.</li>
+                <li>JavaScript diletakkan di dalam tag <span class="code-tag">&lt;script&gt;</span> biasanya di bagian bawah sebelum <span class="code-tag">&lt;/body&gt;</span>.</li>
+            </ul>
+            <p>Pendekatan ini sangat ideal untuk pembelajaran, prototipe cepat, atau pembuatan halaman portofolio/landing page mini mandiri.</p>
+        </section>
+
+        <section>
+            <h2>3. Struktur Kerangka Dasar</h2>
+            <p>Berikut adalah struktur dasar penulisan HTML yang menggabungkan CSS dan JavaScript secara internal:</p>
+            
+            <div class="code-box">
+<span class="code-comment">&lt;!-- Struktur Dasar Internal HTML, CSS, JS --&gt;</span><br>
+<span class="code-tag">&lt;!DOCTYPE html&gt;</span><br>
+<span class="code-tag">&lt;html</span> <span class="code-attr">lang</span>=<span class="code-string">"id"</span><span class="code-tag">&gt;</span><br>
+<span class="code-tag">&lt;head&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;meta</span> <span class="code-attr">charset</span>=<span class="code-string">"UTF-8"</span><span class="code-tag">&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;title&gt;</span>Judul Web<span class="code-tag">&lt;/title&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">/* CSS INTERNAL: Diletakkan di dalam tag &lt;style&gt; */</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;style&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body { background-color: #f4f4f4; font-family: sans-serif; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h1 { color: #2563eb; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;/style&gt;</span><br>
+<span class="code-tag">&lt;/head&gt;</span><br>
+<span class="code-tag">&lt;body&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">&lt;!-- KONTEN HTML --&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;h1&gt;</span>Halo Dunia!<span class="code-tag">&lt;/h1&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;button</span> <span class="code-attr">id</span>=<span class="code-string">"myBtn"</span><span class="code-tag">&gt;</span>Klik Saya<span class="code-tag">&lt;/button&gt;</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-comment">/* JAVASCRIPT INTERNAL: Diletakkan di dalam tag &lt;script&gt; */</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;script&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById('myBtn').addEventListener('click', function() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert('Tombol berhasil diklik!');<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-tag">&lt;/script&gt;</span><br>
+<br>
+<span class="code-tag">&lt;/body&gt;</span><br>
+<span class="code-tag">&lt;/html&gt;</span>
+            </div>
+        </section>
+
+        <!-- Live Demo / Playground Section -->
+        <section class="demo-section">
+            <h3>Area Demo Interaktif</h3>
+            <p>Bagian di bawah ini merupakan hasil nyata dari penggabungan HTML, CSS, dan JavaScript secara internal dalam file ini.</p>
+            <div class="demo-box">
+                <p id="demo-text">Status: JavaScript belum dijalankan.</p>
+                <button class="btn" id="demo-action-btn">Ubah Teks & Warna</button>
+                <div id="demo-output"></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>4. Penjelasan Langkah-demi-Langkah</h2>
+            <ol>
+                <li><strong>HTML (<span class="code-tag">&lt;div&gt;</span>, <span class="code-tag">&lt;p&gt;</span>, <span class="code-tag">&lt;button&gt;</span>):</strong> Membuat elemen visual yang dapat dilihat dan berinteraksi dengan pengguna.</li>
+                <li><strong>CSS (<span class="code-tag">&lt;style&gt;</span>):</strong> Mengatur agar kotak demo memiliki latar belakang putih bersih, bayangan halus, serta tombol dengan warna biru khas.</li>
+                <li><strong>JavaScript (<span class="code-tag">&lt;script&gt;</span>):</strong> Mendengarkan kejadian (event) ketika tombol diklik, lalu mengubah teks, warna elemen, dan menampilkan pesan sambutan secara dinamis.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>5. Kelebihan & Kekurangan Internal Scripting</h2>
+            <h3>Kelebihan:</h3>
+            <ul>
+                <li><strong>Portabilitas:</strong> Hanya membutuhkan 1 file tunggal untuk dijalankan, sangat mudah dibagikan atau dites langsung di browser tanpa konfigurasi server lokal.</li>
+                <li><strong>Mudah Dipelajari:</strong> Pemula tidak perlu bingung mengelola jalur file (file path) antar berbagai folder.</li>
+            </ul>
+            <h3>Kekurangan:</h3>
+            <ul>
+                <li><strong>Skalabilitas:</strong> Jika kode bertambah panjang hingga ribuan baris, file akan menjadi sangat sulit dirawat (maintenance).</li>
+                <li><strong>Caching:</strong> Browser tidak dapat menyimpan cache kode CSS/JS secara terpisah, sehingga performa kurang optimal untuk situs skala besar.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Modul Pembelajaran Web Dasar - Dibuat untuk materi-1.html</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Internal untuk Demo Interaktif di atas -->
+    <script>
+        const actionBtn = document.getElementById('demo-action-btn');
+        const demoText = document.getElementById('demo-text');
+        const demoOutput = document.getElementById('demo-output');
+        
+        let clickCount = 0;
+
+        actionBtn.addEventListener('click', function() {
+            clickCount++;
+            demoText.textContent = "Status: Tombol telah diklik sebanyak " + clickCount + " kali!";
+            demoText.style.color = "#2563eb";
+            demoText.style.fontWeight = "bold";
+            
+            if(clickCount % 2 === 1) {
+                demoOutput.textContent = "✨ Efek Aktif: JavaScript berhasil memodifikasi DOM secara langsung!";
+                demoOutput.style.color = "#10b981";
+            } else {
+                demoOutput.textContent = "🚀 Efek Berkelanjutan: Sinergi HTML, CSS, & JS berjalan sempurna.";
+                demoOutput.style.color = "#f59e0b";
+            }
+        });
+    </script>
+</body>
+</html>
