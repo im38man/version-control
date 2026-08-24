@@ -1,4 +1,5 @@
 # Panduan Deploy Zenith Tour & Travel ke InfinityFree
+zenith-adventour.site.je / zenithadventourbandung
 
 Situs ini sudah diubah dari HTML statis menjadi PHP dinamis dengan fitur:
 - Login/Register user
