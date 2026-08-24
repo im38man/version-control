@@ -1,4 +1,5 @@
 # ManTrading — PHP + MySQL
+mantrading.fwh.is / muhamadfirmanhidayat38
 
 Konversi dari HTML/React statis (localStorage) ke PHP + MySQL, lengkap dengan wizard instalasi (`setup-admin.php`) dan dukungan hosting **InfinityFree**.
 
