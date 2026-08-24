@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIDEO - TAKANE NO NADESHIKO</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b87b92'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" type="image/svg+xml">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +14,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* Sembunyikan scrollbar bawaan browser secara total */
+        ::-webkit-scrollbar {
+            display: none !important;
+        }
+        * {
+            -ms-overflow-style: none !important;  /* IE and Edge */
+            scrollbar-width: none !important;  /* Firefox */
+        }
+
         /* CSS Variables */
         :root {
             --bg-color: #0d0d0d;
@@ -88,8 +99,51 @@
 
         /* Video Player */
         .video-container { position: relative; width: 100%; height: 100%; background-color: #000; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
-        .video-element { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
-        
+        .video-element { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            cursor: pointer; 
+        }
+
+        /* Custom Subtitle Overlay */
+        #customSubtitleOverlay {
+            position: absolute;
+            bottom: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 6px 16px;
+            font-size: 1.15rem;
+            text-align: center;
+            border-radius: 4px;
+            pointer-events: none;
+            display: none;
+            z-index: 15;
+            font-family: sans-serif;
+            text-shadow: 1px 1px 3px #000;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+
+        /* Pas Fullscreen */
+        .video-container:fullscreen,
+        .video-container:-webkit-full-screen,
+        .video-container:-moz-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: #000;
+        }
+
+        .video-container:fullscreen .video-element,
+        .video-container:-webkit-full-screen .video-element,
+        .video-container:-moz-full-screen .video-element {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important; 
+        }
+
         .custom-controls {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
@@ -114,6 +168,38 @@
         }
         .progress-bar:hover .progress-handle { opacity: 1; }
         
+        .progress-preview {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            transform: translateX(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--accent-pink);
+            border-radius: 6px;
+            padding: 4px;
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .progress-preview video {
+            width: 160px;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #000;
+        }
+        .progress-preview span {
+            font-size: 0.8rem;
+            color: #fff;
+            margin-top: 5px;
+            font-family: sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
         .control-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         .control-left, .control-right { display: flex; align-items: center; gap: 20px; font-size: 1.1rem; }
         .time-display { font-size: 0.8rem; font-family: sans-serif; letter-spacing: 0.5px; margin-left: -5px; }
@@ -123,7 +209,40 @@
         .settings-wrap { position: relative; }
         video::-webkit-media-controls { display: none !important; }
 
-        /* Video Info Header */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .volume-slider {
+            width: 0;
+            opacity: 0;
+            transition: width 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, var(--accent-pink) 100%, rgba(255, 255, 255, 0.4) 100%);
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+        }
+        .volume-container:hover .volume-slider {
+            width: 80px;
+            opacity: 1;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--text-main);
+            border-radius: 50%;
+            transition: transform 0.1s;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--accent-pink);
+        }
+
         .video-info-header { 
             display: flex; 
             justify-content: space-between; 
@@ -139,7 +258,6 @@
             min-width: 0; 
         }
         
-        /* Tombol Playlist: Default SEMBUNYI di Desktop */
         .playlist-toggle-drawer {
             display: none;
             align-items: center;
@@ -166,7 +284,6 @@
         .video-stats { font-size: 0.8rem; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .tags { color: var(--accent-pink); font-size: 0.8rem; }
 
-        /* Actions */
         .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
         .action-btn { background-color: var(--btn-bg); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
         .action-btn:hover { background-color: var(--btn-bg-hover); }
@@ -175,7 +292,6 @@
         .btn-group .action-btn:hover { background-color: rgba(255,255,255,0.1); }
         .divider { width: 1px; background-color: rgba(255,255,255,0.2); margin: 6px 0; }
 
-        /* Description Box */
         .description-box { background-color: var(--box-bg); padding: 15px 20px; border-radius: 8px; font-size: 0.85rem; color: #ddd; position: relative; }
         .desc-content { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; transition: all 0.3s; }
         .desc-content.expanded { -webkit-line-clamp: unset; }
@@ -184,20 +300,68 @@
         .show-more-btn i { margin-left: 5px; transition: transform 0.3s; }
         .show-more-btn.active i { transform: rotate(180deg); }
 
-        /* Playlist / Drawer Sidebar */
+        /* PLAYLIST SIDEBAR & CUSTOM SCROLLBAR */
         .sidebar-column { 
-            background-color: var(--box-bg); border: 1px solid var(--border-color); border-radius: 8px; 
-            display: flex; flex-direction: column; max-height: calc(100vh - 120px); 
+            background-color: var(--box-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            display: flex; 
+            flex-direction: column; 
+            max-height: calc(100vh - 120px); 
             transition: transform 0.3s ease;
         }
-        .playlist-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        
+        .playlist-scroll-wrapper {
+            position: relative;
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .playlist-items { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 10px 0; 
+            width: 100%;
+        }
+
+        .custom-scrollbar-track {
+            position: absolute;
+            right: 4px;
+            top: 5px;
+            bottom: 5px;
+            width: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            z-index: 10;
+            cursor: pointer;
+        }
+        .custom-scrollbar-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--accent-pink);
+            border-radius: 4px;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.2s, background 0.2s;
+        }
+        .custom-scrollbar-track:hover .custom-scrollbar-thumb,
+        .custom-scrollbar-thumb:hover {
+            opacity: 1;
+            background: var(--accent-pink-dark);
+        }
+
+        .playlist-header { 
+            padding: 15px 20px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         .playlist-header h3 { font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; }
         .playlist-count { font-size: 0.8rem; color: var(--accent-pink); cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        
-        .playlist-items { flex-grow: 1; overflow-y: auto; padding: 10px 0; }
-        .playlist-items::-webkit-scrollbar { width: 6px; }
-        .playlist-items::-webkit-scrollbar-track { background: var(--bg-color); }
-        .playlist-items::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
         .pl-item { display: flex; gap: 12px; padding: 10px 15px; cursor: pointer; transition: background 0.2s; align-items: flex-start; }
         .pl-item:hover { background-color: var(--box-bg-hover); }
@@ -226,15 +390,11 @@
         }
         .drawer-backdrop.active { opacity: 1; visibility: visible; }
 
-        /* Responsive Breakpoints (Tablet & Mobile: <= 1024px) */
+        /* Responsive Breakpoints */
         @media (max-width: 1024px) {
             .container { padding: 0 20px; }
             .player-layout { grid-template-columns: 1fr; }
-            
-            /* Tampilkan Tombol Playlist Khusus Tablet & Mobile */
             .playlist-toggle-drawer { display: inline-flex; }
-
-            /* Navbar jadi Hamburger Menu */
             .hamburger { display: block; }
             nav { 
                 position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px); 
@@ -244,16 +404,12 @@
                 opacity: 0; visibility: hidden; transform: translateY(-20px);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             }
-            nav.active { 
-                opacity: 1; visibility: visible; transform: translateY(0);
-            }
+            nav.active { opacity: 1; visibility: visible; transform: translateY(0); }
             nav ul { flex-direction: column; gap: 25px; text-align: center; width: 100%; }
             nav a { font-size: 1.1rem; }
             .header-right .social-icons { display: none; }
             .mobile-socials { display: flex; justify-content: center; width: 100%; gap: 20px; margin-top: 40px; font-size: 1.4rem; color: white; }
             .btn-fanclub .sub { display: none; }
-
-            /* Playlist Sidebar jadi Drawer */
             .sidebar-column {
                 position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
                 max-height: 100vh; z-index: 1100; border-radius: 0; border-left: 1px solid var(--border-color);
@@ -270,11 +426,11 @@
             .video-title { font-size: 1.1rem; }
             .meta-actions-row { flex-direction: column; gap: 15px; }
             .action-buttons { width: 100%; overflow-x: auto; padding-bottom: 5px; flex-wrap: nowrap; }
-            .action-buttons::-webkit-scrollbar { display: none; }
             .pl-thumb-wrap { width: 100px; }
             .pl-title { font-size: 0.8rem; }
             .sidebar-column { width: 100%; right: -100%; }
             .playlist-toggle-drawer { font-size: 0.75rem; padding: 6px 12px; }
+            .progress-preview video { width: 100px; }
         }
     </style>
 </head>
@@ -338,21 +494,41 @@
                         Your browser does not support HTML video.
                     </video>
                     
+                    <!-- KOTAK SUBTITLE KUSTOM (Menggantikan tag track bawaan) -->
+                    <div id="customSubtitleOverlay"></div>
+                    
                     <div class="custom-controls" id="customControls">
                         <div class="progress-bar" id="progressBar">
+                            <!-- Progress Thumbnail Preview -->
+                            <div class="progress-preview" id="progressPreview">
+                                <video id="previewVideo" muted preload="metadata"></video>
+                                <span id="previewTime">0:00</span>
+                            </div>
+                            
                             <div class="progress-filled" id="progressFilled">
                                 <div class="progress-handle"></div>
                             </div>
                         </div>
+                        
                         <div class="control-row">
                             <div class="control-left">
+                                <i class="fa-solid fa-step-backward icon-btn" id="prevBtn"></i>
                                 <i class="fa-solid fa-play icon-btn" id="playPauseBtn"></i>
                                 <i class="fa-solid fa-step-forward icon-btn" id="nextBtn"></i>
-                                <i class="fa-solid fa-volume-high icon-btn" id="muteBtn"></i>
+                                
+                                <!-- Slider Volume Hover & Drag -->
+                                <div class="volume-container">
+                                    <i class="fa-solid fa-volume-high icon-btn" id="muteBtn"></i>
+                                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                                </div>
+                                
                                 <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
                             </div>
                             <div class="control-right">
-                                <i class="fa-regular fa-closed-captioning icon-btn"></i>
+                                <!-- Tombol Picture-in-Picture -->
+                                <i class="fa-solid fa-clone icon-btn" id="pipBtn" title="Picture-in-Picture"></i>
+                                <!-- Tombol CC (Closed Captions) -->
+                                <i class="fa-regular fa-closed-captioning icon-btn" id="ccBtn" title="Subtitle (CC)"></i>
                                 <div class="settings-wrap icon-btn">
                                     <i class="fa-solid fa-gear"></i>
                                     <span class="quality-badge">HD</span>
@@ -366,7 +542,7 @@
                 <div class="video-info">
                     <div class="video-info-header">
                         <h1 class="video-title" id="mainVideoTitle">Memuat judul...</h1>
-                        <!-- Tombol ini otomatis hilang di Desktop, dan muncul di Tablet/Mobile -->
+                        <!-- Tombol Playlist Drawer (Tablet/Mobile) -->
                         <button class="playlist-toggle-drawer" id="openDrawerBtn">
                             <i class="fa-solid fa-list"></i> Playlist (<span id="drawerCount">0</span>)
                         </button>
@@ -407,14 +583,24 @@
             <!-- RIGHT COLUMN (Playlist / Drawer Panel) -->
             <div class="sidebar-column" id="sidebarColumn">
                 <div class="playlist-header">
-                    <h3>MUSIC VIDEO</h3>
+                    <button id="sortBtn" style="font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; cursor: pointer; background: none; color: inherit; border: none; display: flex; align-items: center; gap: 8px; padding: 0;">
+                        <i class="fa-solid fa-arrow-down-short-wide"></i> <span>Terbaru</span>
+                    </button>
                     <span class="playlist-count" id="closeDrawerBtn" style="cursor: pointer;">
                         <span>再生リスト (<span id="totalPlaylist">0</span>)</span> 
                         <i class="fa-solid fa-xmark" style="font-size: 1.1rem; margin-left: 5px;"></i>
                     </span>
                 </div>
                 
-                <div class="playlist-items" id="playlistContainer"></div>
+                <!-- Wrapper khusus list video & custom scrollbar -->
+                <div class="playlist-scroll-wrapper">
+                    <div class="playlist-items" id="playlistContainer"></div>
+                    
+                    <!-- Custom Thin Scrollbar Track & Thumb -->
+                    <div class="custom-scrollbar-track" id="customScrollTrack">
+                        <div class="custom-scrollbar-thumb" id="customScrollThumb"></div>
+                    </div>
+                </div>
                 
                 <div class="playlist-footer">
                     <button class="btn-full-outline" id="loadMoreBtn" style="display: none;">
@@ -429,6 +615,9 @@
         </div>
     </main>
 
+    <!-- Subtitle data (ditanam di JS, aman dibuka file:// tanpa server) -->
+    <script src="高嶺のなでしこ/sub/sub.js"></script>
+
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -439,6 +628,7 @@
                     duration: "04:16",
                     thumbnail: "高嶺のなでしこ/img/Vlpqp4QA61Y.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】ハートブーケ／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "honeyworks-heart-bouquet",
                     views: "181k",
                     date: "2026/06/07",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -457,6 +647,7 @@
                     duration: "03:34",
                     thumbnail: "高嶺のなでしこ/img/957yJCyB-tk.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】生きてりゃいい／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "325k",
                     date: "2026/05/13",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -474,6 +665,7 @@
                     duration: "04:10",
                     thumbnail: "高嶺のなでしこ/img/IoCC9aOnX-E.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】私は、わたしの事が好き。／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "353k",
                     date: "2026/04/14",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -492,6 +684,7 @@
                     duration: "128:36",
                     thumbnail: "高嶺のなでしこ/img/mSjZM5ob_jg.jpg",
                     videoSrc: "高嶺のなでしこ/vid/高嶺のなでしこ「3rdファンミーティング〜私たちの宣言式〜 」1部 (2025-08-07).mp4",
+                    subtitleSrc: "",
                     views: "1,234,567",
                     date: "2025/08/07",
                     tags: ["#高嶺のなでしこ", "#LIVE"],
@@ -507,6 +700,7 @@
                     duration: "03:10",
                     thumbnail: "高嶺のなでしこ/img/9tN1esSj2Tg.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】Cute for life／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "851k",
                     date: "2025/04/07",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -522,6 +716,7 @@
                     duration: "04:03",
                     thumbnail: "高嶺のなでしこ/img/FqiedUpRQco.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】東京サニーパーティー／涼海すう×葉月紗蘭×東山恵里沙【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "288k",
                     date: "2025/03/28",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -542,6 +737,7 @@
                     duration: "03:28",
                     thumbnail: "高嶺のなでしこ/img/OZycs0TBwKY.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】小悪魔だってかまわない!／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "809k",
                     date: "2025/02/08",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -562,6 +758,7 @@
                     duration: "03:32",
                     thumbnail: "高嶺のなでしこ/img/eA307eJBSrY.jpg",
                     videoSrc: "高嶺のなでしこ/vid/初恋の絵本（cover）／葉月紗蘭.mp4",
+                    subtitleSrc: "",
                     views: "288k",
                     date: "2024/12/21",
                     tags: ["#高嶺のなでしこ", "#COVER"],
@@ -579,6 +776,7 @@
                     duration: "04:14",
                     thumbnail: "高嶺のなでしこ/img/Bsq2ZKelIqQ.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】アイのウイルス／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "326k",
                     date: "2024/12/11",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -597,6 +795,7 @@
                     duration: "04:14",
                     thumbnail: "高嶺のなでしこ/img/iz6KQup9Uys.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】I'M YOUR IDOL／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.1m",
                     date: "2024/11/27",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -615,6 +814,7 @@
                     duration: "03:05",
                     thumbnail: "高嶺のなでしこ/img/n_8LTS92LXE.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】アドレナリンゲーム／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "485k",
                     date: "2024/11/06",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -633,6 +833,7 @@
                     duration: "03:27",
                     thumbnail: "高嶺のなでしこ/img/SB-r8BmlMhI.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】死ぬまでダーリン／松本ももな【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "545k",
                     date: "2024/10/19",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -658,6 +859,7 @@
                     duration: "04:08",
                     thumbnail: "高嶺のなでしこ/img/OItN_8OUBko.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】LOVE ANTHEM／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "648k",
                     date: "2024/09/07",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -675,6 +877,7 @@
                     duration: "03:14",
                     thumbnail: "高嶺のなでしこ/img/ivfMBjNqLZE.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】モテチェン！／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.2m",
                     date: "2024/07/14",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -692,6 +895,7 @@
                     duration: "03:39",
                     thumbnail: "高嶺のなでしこ/img/vo0f9AoWFLg.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】私より好きでいて／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "791k",
                     date: "2024/06/29",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -708,6 +912,7 @@
                     duration: "02:35",
                     thumbnail: "高嶺のなでしこ/img/6QuCebi6vuU.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】メイド☆至上主義／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.1m",
                     date: "2024/05/11",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -725,6 +930,7 @@
                     duration: "03:17",
                     thumbnail: "高嶺のなでしこ/img/pDC1ZgUDLZQ.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】推しの魔法／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.8m",
                     date: "2024/03/22",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -739,6 +945,7 @@
                     duration: "04:22",
                     thumbnail: "高嶺のなでしこ/img/iSvx1zS-zSs.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】恋を知った世界／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.7m",
                     date: "2024/02/21",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -756,6 +963,7 @@
                     duration: "03:32",
                     thumbnail: "高嶺のなでしこ/img/LG3Kho_3ZOA.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】私は怪物／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "382k",
                     date: "2024/02/06",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -769,10 +977,11 @@
                 },
                 {
                     title: "【MV】可愛いって言われたい／高嶺のなでしこ【HoneyWorks】",
-                    channel: "高嶺のなでしこ Official",
+                    channel: "High嶺のなでしこ Official",
                     duration: "03:35",
                     thumbnail: "高嶺のなでしこ/img/SLMwsq7IoWU.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】可愛いって言われたい／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "1.3m",
                     date: "2024/02/03",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -790,6 +999,7 @@
                     duration: "04:22",
                     thumbnail: "高嶺のなでしこ/img/IPZi16uFCqs.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】美しく生きろ／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "2.0m",
                     date: "2024/01/19",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -807,6 +1017,7 @@
                     duration: "04:49",
                     thumbnail: "高嶺のなでしこ/img/jDQKzMDsu5A.jpg",
                     videoSrc: "高嶺のなでしこ/vid/No.1（cover）／橋本桃呼.mp4",
+                    subtitleSrc: "",
                     views: "354k",
                     date: "2024/01/04",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -827,19 +1038,20 @@
                     duration: "03:00",
                     thumbnail: "高嶺のなでしこ/img/G3WOKUxk3TU.jpg",
                     videoSrc: "高嶺のなでしこ/vid/ラヴィ【踊ってみた】／城月菜央.mp4",
+                    subtitleSrc: "",
                     views: "201k",
                     date: "2023/12/25",
                     tags: ["#高嶺のなでしこ", "#MV"],
                     description: `城月菜央(きづきなお)ですっ! <br>
 								 「ラヴィ」踊ってみたをさせて頂きました!<br><br>
 								 1人での撮影が初めてだったのでとても、ドキドキしながらの撮影でした☺️ <br>
-								 でも、とーっても楽しかったです☆ <br><br>
+								 早いテンポで体を動かすのが少し難しかったけど、とーっても楽しかったです☆ <br><br>
 								 自分1人で1曲全部を踊るのが久しぶりで心配な気持ちが最初はとてもあったのですが、 <br>
 								 練習時間も含め撮影本番も <br>
 								 「ダンスってやっぱり楽しいな」 <br>
 								 って改めて思える素敵な時間となりました😌💛 <br><br>
-								 これは余談なのですが(　˙▿˙　)☝ <br>
-								 ラヴィは吸血鬼の王様ラヴィ・シュシュマルのテーマソングなんですが、実は私も八重歯の持ち主でして少し親近感があって <br>
+								 これは余談なのですが( ˙▿˙ )☝ <br>
+								 ラヴィは吸血鬼の王様ラヴィ・シュシュマルのテーマ songなんですが、実は私も八重歯の持ち主でして少し親近感があって <br>
 								 「果たして城月の八重歯は見えるのか?!」 <br>
 								 って感じで楽しく見てくださると嬉しいです🤣🤣🤣 <br><br>
 								 たくさんみてくださいねっ🙇‍♀️（byなお） <br><br>
@@ -854,6 +1066,7 @@
                     duration: "04:00",
                     thumbnail: "高嶺のなでしこ/img/B6ibZx9KcH4.jpg",
                     videoSrc: "高嶺のなでしこ/vid/【MV】いつか私がママになったら／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
                     views: "656k",
                     date: "2023/12/16",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -871,6 +1084,7 @@
                     duration: "04:33",
                     thumbnail: "高嶺のなでしこ/img/sM9Lowgbjww.jpg",
                     videoSrc: "高嶺のなでしこ/vid/今好きになる。（cover）／葉月紗蘭.mp4",
+                    subtitleSrc: "",
                     views: "728k",
                     date: "2023/10/13",
                     tags: ["#高嶺のなでしこ", "#MV"],
@@ -884,6 +1098,347 @@
                                 —<br>
                                 ▼ 配信はこちら<br>
                                 <a href="https://www.youtube.com/watch?v=sM9Lowgbjww">https://www.youtube.com/watch?v=sM9Lowgbjww</a>`
+                },
+                {
+                    title: "【Dance Performance Video】17歳／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:06",
+                    thumbnail: "高嶺のなでしこ/img/puTujCvaRjA.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】17歳／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.4m",
+                    date: "2023/09/03",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `手料理とかお掃除とか <br>
+								 苦手だけどもらってくれる(́・ω・｀)︖ <br><br>
+								 本家monaさんの『17歳』はこちら↓ <br>
+								 「17歳」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=puTujCvaRjA">https://www.youtube.com/watch?v=puTujCvaRjA</a>`
+                },
+                {
+                    title: "【MV】すきっちゅーの！／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "02:46",
+                    thumbnail: "高嶺のなでしこ/img/mBmSMIVrw1o.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】すきっちゅーの！／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "2.8m",
+                    date: "2023/09/01",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `叶わぬ恋だって？上等 <br>
+								 お黙りやがれ <br>
+								 仕返しのChu！ <br>
+								 「すきっちゅーの！」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=mBmSMIVrw1o">https://www.youtube.com/watch?v=mBmSMIVrw1o</a>`
+                },
+                {
+                    title: "17歳（cover）／葉月紗蘭×東山恵里沙",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:25",
+                    thumbnail: "高嶺のなでしこ/img/w4aDnfJ_tKU.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/17歳（cover）／葉月紗蘭×東山恵里沙.mp4",
+                    subtitleSrc: "",
+                    views: "357k",
+                    date: "2023/08/28",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `葉月紗蘭(はづきさあら)です！‎🤍 <br>
+								 monaさんの「17歳」をえりさと一緒にカバーさせて頂きました！ <br><br>
+								 同い年の今年17歳コンビで歌うことが出来てとても嬉しいです✨ <br><br>
+								 17歳という年齢だからこその共感できる歌詞が多くて、より気持ちを込めて歌うことができたと思います！ <br><br>
+								 ぜひぜひ沢山聞いてくださると嬉しいです！😆（byさあら） <br><br>
+								 たくさん聴いて下さったら嬉しいです🥰（byえりさ） <br><br>
+								 ♡･･*･･♬･･*･･♡･･*･･♬･･*･･♡･･*･･♬ <br><br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=w4aDnfJ_tKU">https://www.youtube.com/watch?v=w4aDnfJ_tKU</a>`
+                },
+                {
+                    title: "【Dance Performance Video】月曜日の憂鬱／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:26",
+                    thumbnail: "高嶺のなでしこ/img/lXhue1Chv6c.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】月曜日の憂鬱／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.8m",
+                    date: "2023/07/21",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `週末だけがオアシスだ  <br>
+								 月曜、憂鬱 <br><br>
+								 本家・月曜日の憂鬱 / 天月 feat.HoneyWorks <br><br>
+								 「月曜日の憂鬱」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=lXhue1Chv6c">https://www.youtube.com/watch?v=lXhue1Chv6c</a>`
+                },
+                {
+                    title: "【MV】初恋のひと。／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "03:49",
+                    thumbnail: "高嶺のなでしこ/img/KgcjPd8n2Es.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】初恋のひと。／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "4.8m",
+                    date: "2023/07/01",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `恥ずかしいほど好きで  <br>
+								 張り裂けるほど好きで <br>
+								 忘れたいほど好きな <br>
+								 君でよかった <br><br>
+								 「初恋のひと。」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=KgcjPd8n2Es">https://www.youtube.com/watch?v=KgcjPd8n2Es</a>`
+                },
+                {
+                    title: "【MV】決戦スピリット／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:33",
+                    thumbnail: "高嶺のなでしこ/img/B2S-jwfs6Ic.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】決戦スピリット／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.3m",
+                    date: "2023/06/22",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `“粋がってろ”馬鹿にされても  <br>
+								 勝利掲げ僕は生きたい <br>
+								 敗北を知り花は咲く <br><br>
+								 本家CHiCO with HoneyWorksさんの『決戦スピリット』はこちら↓ <br><br>
+								 「決戦スピリット」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=B2S-jwfs6Ic">https://www.youtube.com/watch?v=B2S-jwfs6Ic</a>`
+                },
+                {
+                    title: "【Dance Performance Video】ヒロインは平均以下。／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "03:47",
+                    thumbnail: "高嶺のなでしこ/img/8wwTjwjqQR0.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】ヒロインは平均以下。／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "2.7m",
+                    date: "2023/06/21",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `生き生きしてる今こそ   <br>
+								 私ヒロイン <br><br>
+								 本家HoneyWorks（歌：涼海ひより）の『ヒロインは平均以下。』はこちら↓ <br><br>
+								 「ヒロインは平均以下。」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=8wwTjwjqQR0">https://www.youtube.com/watch?v=8wwTjwjqQR0</a>`
+                },
+                {
+                    title: "決戦スピリット（cover）／日向端ひな×籾山ひめり",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:47",
+                    thumbnail: "高嶺のなでしこ/img/aeLMEitzNgo.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/決戦スピリット（cover）／日向端ひな×籾山ひめり.mp4",
+                    subtitleSrc: "",
+                    views: "342k",
+                    date: "2023/06/15",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `日向端ひなです！   <br>
+								 大好きなCHiCO with HoneyWorksさんの《決戦スピリット》を歌わせて頂きました！ <br>
+								 自分自身この曲が大好きなので <br>
+								 とても楽しく歌うことができました！ <br>
+								 是非、聴いてくださったら嬉しぃです！（byひな） <br>
+								 籾山ひめりです💙 <br>
+								 ぜひたくさん聞いていただけると嬉しいです！！（byひめり） <br>
+								 ♡･･*･･♬･･*･･♡･･*･･♬･･*･･♡･･*･･♬ <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=aeLMEitzNgo">https://www.youtube.com/watch?v=aeLMEitzNgo</a>`
+                },
+                {
+                    title: "【MV】革命の女王／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:04",
+                    thumbnail: "高嶺のなでしこ/img/WcJbDYD9u94.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】革命の女王／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.3m",
+                    date: "2023/04/21",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `残酷な運命だとしても奪う   <br>
+								 生きるために <br><br>
+								 ★「革命の女王」音楽配信サイトにて楽曲配信中！ <br>
+								 https://linkco.re/SMRG5Z34 <br><br>
+								 「革命の女王」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=WcJbDYD9u94">https://www.youtube.com/watch?v=WcJbDYD9u94</a>`
+                },
+                {
+                    title: "【MV】僕は君になれない／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:26",
+                    thumbnail: "高嶺のなでしこ/img/-Mm3QGGxg1k.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】僕は君になれない／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.2m",
+                    date: "2023/04/21",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `いつも全力 本気な君に   <br>
+								 いつも全力 本気な君に <br>
+								 曇ることのない瞳から <br>
+								 伝わる熱意  見とれていた <br><br>
+								 ★「僕は君になれない」音楽配信サイトにて楽曲配信中！ <br>
+								 http://linkco.re/mmANYVTN <br><br>
+								 「僕は君になれない」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=Mm3QGGxg1k">https://www.youtube.com/watch?v=Mm3QGGxg1k</a>`
+                },
+                {
+                    title: "【MV】男の子の目的は何？／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "02:50",
+                    thumbnail: "高嶺のなでしこ/img/-hTyIuPim5o.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】男の子の目的は何？／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "3.0m",
+                    date: "2023/03/20",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `もっと愛してよ    <br>
+								 ずっと騙してよ  <br>
+								 好きになった私の負けじゃん  <br><br>
+								 ★音楽配信サイトにて楽曲配信中！ <br>
+								 https://linkco.re/ghHaAQp9 <br><br>
+								 本家HoneyWorks（歌：高見沢アリサ）の『男の子の目的は何？』はこちら↓ <br>
+								 「男の子の目的は何？」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=-hTyIuPim5o">https://www.youtube.com/watch?v=-hTyIuPim5o</a>`
+                },
+                {
+                    title: "【MV】女の子は強い／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:28",
+                    thumbnail: "高嶺のなでしこ/img/edid66UmfiQ.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】女の子は強い／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "3.2m",
+                    date: "2022/12/25",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー    <br>
+								 全国お招きツアー2023〜First trip〜  <br>
+								 チケット一般発売中！  <br><br>
+								 チケットご購入はこちら→https://eplus.jp/takanenonadeshiko/ <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=edid66UmfiQ">https://www.youtube.com/watch?v=edid66UmfiQ</a>`
+                },
+                {
+                    title: "【MV】可愛くてごめん（cover）／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "03:37",
+                    thumbnail: "高嶺のなでしこ/img/MPywGQPLJPo.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】可愛くてごめん（cover）／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "20m",
+                    date: "2022/11/18",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `自分の味方は自分でありたい  <br>
+								 一番大切にしてあげたい   <br>
+								 理不尽な我慢はさせたくない <br>
+								 “それが私”  <br><br>
+								 「可愛くてごめん」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=MPywGQPLJPo">https://www.youtube.com/watch?v=MPywGQPLJPo</a>`
+                },
+                {
+                    title: "【Dance Performance Video】乙女どもよ。／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "04:10",
+                    thumbnail: "高嶺のなでしこ/img/JAA4CaJdXc8.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【Dance Performance Video】乙女どもよ。／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "3.0m",
+                    date: "2022/10/24",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `荒ぶれ乙女たち 抗え乙女たち   <br>
+								 痛みを知ってゆけ    <br>
+								 栞はいらない <br><br>
+								 本家CHiCO with HoneyWorksさんの『乙女どもよ。』はこちら↓  <br><br>
+								 https://takanenonadeshiko.jp/?p=404  <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=JAA4CaJdXc8">https://www.youtube.com/watch?v=JAA4CaJdXc8</a>`
+                },
+                {
+                    title: "【MV】ユメムスビ／高嶺のなでしこ【HoneyWorks】",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "03:47",
+                    thumbnail: "高嶺のなでしこ/img/qgYnKvdcMJQ.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】ユメムスビ／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.6m",
+                    date: "2022/10/01",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `頑張ろう！頑張ろう！   <br>
+								 大好きを持って     <br>
+								 消すことのできない  <br>
+								 情熱を持って <br><br>
+								 2022年10月26日(水)発売 <br>
+								 高嶺のなでしこ 1stシングル「アンチファン」収録曲 <br><br>
+								 ★音楽配信サイトにて楽曲配信中！ <br>
+								 https://linkco.re/8NCaQgFT <br><br>
+								 「ユメムスビ」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=qgYnKvdcMJQ">https://www.youtube.com/watch?v=qgYnKvdcMJQ</a>`
+                },
+                {
+                    title: "【MV】アンチファン／高嶺のなでしこ【HoneyWorks】",
+                    channel: "High嶺のなでしこ Official",
+                    duration: "04:03",
+                    thumbnail: "高嶺のなでしこ/img/dzOGNlmCi7Y.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【MV】アンチファン／高嶺のなでしこ【HoneyWorks】.mp4",
+                    subtitleSrc: "",
+                    views: "1.5m",
+                    date: "2022/08/27",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `後悔してももう遅いわ   <br>
+								 あなたのためには泣かない <br><br>
+								 2022年10月26日(水)発売 <br>
+								 高嶺のなでしこ 1stシングル「アンチファン」収録曲 <br><br>
+								 ★音楽配信サイトにて楽曲配信中！ <br>
+								 https://linkco.re/8NCaQgFT <br><br>
+								 「アンチファン」 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=dzOGNlmCi7Y">https://www.youtube.com/watch?v=dzOGNlmCi7Y</a>`
+                },
+                {
+                    title: "【overture】We are TAKANE NO NADESHIKO／高嶺のなでしこ",
+                    channel: "高嶺のなでしこ Official",
+                    duration: "01:05",
+                    thumbnail: "高嶺のなでしこ/img/YcGoOQcXjO8.jpg",
+                    videoSrc: "高嶺のなでしこ/vid/【overture】We are TAKANE NO NADESHIKO／高嶺のなでしこ.mp4",
+                    subtitleSrc: "",
+                    views: "188k",
+                    date: "2022/08/05",
+                    tags: ["#高嶺のなでしこ", "#MV"],
+                    description: `10人組のアイドルグループ「高嶺のなでしこ」   <br><br>
+								 ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー✿ー・ー <br><br>
+								 城月菜央（KIZUKI NAO) <br>
+								 涼海 すう（SUZUMI SU） <br>
+								 橋本桃呼（HASHIMOTO MOMOKO） <br>
+								 葉月紗蘭（HAZUKI SAARA） <br>
+								 春野莉々（HARUNO RIRI） <br>
+								 東山 恵里沙（HIGASHIYAMA ERISA） <br>
+								 日向端ひな（HINAHATA HINA） <br>
+								 星谷美来（HOSHITANI MIKURU） <br>
+								 松本ももな（MATSUMOTO MOMONA） <br>
+								 籾山ひめり（MOMIYAMA HIMERI） <br><br>
+								 サウンドプロデュースはクリエイターユニットHoneyWorksが担当。 <br>
+                                —<br>
+                                ▼ 配信はこちら<br>
+                                <a href="https://www.youtube.com/watch?v=YcGoOQcXjO8">https://www.youtube.com/watch?v=YcGoOQcXjO8</a>`
                 }
             ];
 
@@ -903,6 +1458,7 @@
             }
 
             const video = document.getElementById('mainVideo');
+            const previewVideo = document.getElementById('previewVideo'); 
             const videoContainerDOM = document.getElementById('videoContainer');
             const mainVideoTitle = document.getElementById('mainVideoTitle');
             const descContent = document.getElementById('descContent');
@@ -916,12 +1472,160 @@
             
             const playPauseBtn = document.getElementById('playPauseBtn');
             const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            
+            const volumeSlider = document.getElementById('volumeSlider');
+            const muteBtn = document.getElementById('muteBtn');
+            
             const progressBar = document.getElementById('progressBar');
             const progressFilled = document.getElementById('progressFilled');
+            const progressPreview = document.getElementById('progressPreview');
+            const previewTime = document.getElementById('previewTime');
+            
             const timeDisplay = document.getElementById('timeDisplay');
-            const muteBtn = document.getElementById('muteBtn');
+            const pipBtn = document.getElementById('pipBtn'); 
+            const ccBtn = document.getElementById('ccBtn');
             const fullscreenBtn = document.getElementById('fullscreenBtn');
             const showMoreBtn = document.getElementById('showMoreBtn');
+            const sortBtn = document.getElementById('sortBtn');
+
+            // Custom Subtitle Parser Variables
+            let parsedCues = [];
+            let isCcEnabled = false;
+            const customSubtitleOverlay = document.getElementById('customSubtitleOverlay');
+
+            async function loadSubtitleFile(url) {
+                parsedCues = [];
+                if (!url) return;
+
+                // 1. Cek dulu apakah subtitle ini ditanam di sub.js (SUBTITLES)
+                //    Ini dipakai kalau file dibuka langsung via double-click (file://),
+                //    karena fetch() ke file lokal diblokir CORS oleh browser.
+                if (typeof SUBTITLES !== 'undefined' && SUBTITLES[url]) {
+                    parseVTT(SUBTITLES[url]);
+                    return;
+                }
+
+                // 2. Kalau bukan key di SUBTITLES (misal ini URL http:// beneran,
+                //    berarti dijalankan lewat server/localhost), coba fetch seperti biasa.
+                try {
+                    const response = await fetch(encodeURI(url));
+                    const text = await response.text();
+                    parseVTT(text);
+                } catch (e) {
+                    console.log("Gagal memuat subtitle:", e);
+                }
+            }
+
+            function parseVTT(vttText) {
+                const lines = vttText.split(/\r?\n/);
+                let i = 0;
+                while (i < lines.length) {
+                    if (lines[i].includes('-->')) {
+                        const times = lines[i].split('-->');
+                        const start = parseTimeToSeconds(times[0].trim());
+                        const end = parseTimeToSeconds(times[1].trim());
+                        i++;
+                        let textLines = [];
+                        while (i < lines.length && lines[i].trim() !== '') {
+                            textLines.push(lines[i].replace(/<\/?[^>]+(>|$)/g, ""));
+                            i++;
+                        }
+                        parsedCues.push({ start, end, text: textLines.join('<br>') });
+                    } else {
+                        i++;
+                    }
+                }
+            }
+
+            function parseTimeToSeconds(timeStr) {
+                const parts = timeStr.split(':');
+                let seconds = 0;
+                if (parts.length === 3) {
+                    seconds += parseInt(parts[0]) * 3600;
+                    seconds += parseInt(parts[1]) * 60;
+                    seconds += parseFloat(parts[2].replace(',', '.'));
+                } else if (parts.length === 2) {
+                    seconds += parseInt(parts[0]) * 60;
+                    seconds += parseFloat(parts[1].replace(',', '.'));
+                }
+                return seconds;
+            }
+
+            // Custom Scrollbar Elements
+            const customScrollTrack = document.getElementById('customScrollTrack');
+            const customScrollThumb = document.getElementById('customScrollThumb');
+
+            function updateCustomScrollbar() {
+                const scrollTop = playlistContainer.scrollTop;
+                const scrollHeight = playlistContainer.scrollHeight;
+                const clientHeight = playlistContainer.clientHeight;
+
+                if (scrollHeight <= clientHeight) {
+                    customScrollTrack.style.display = 'none';
+                    return;
+                } else {
+                    customScrollTrack.style.display = 'block';
+                }
+
+                const trackHeight = customScrollTrack.clientHeight;
+                const thumbHeight = Math.max((clientHeight / scrollHeight) * trackHeight, 30);
+                const maxScrollTop = scrollHeight - clientHeight;
+                const maxTrackScroll = trackHeight - thumbHeight;
+                const thumbTop = maxScrollTop > 0 ? (scrollTop / maxScrollTop) * maxTrackScroll : 0;
+
+                customScrollThumb.style.height = `${thumbHeight}px`;
+                customScrollThumb.style.transform = `translateY(${thumbTop}px)`;
+            }
+
+            playlistContainer.addEventListener('scroll', updateCustomScrollbar);
+            window.addEventListener('resize', updateCustomScrollbar);
+
+            let isDraggingScroll = false;
+            let startY = 0;
+            let startScrollTop = 0;
+
+            customScrollThumb.addEventListener('mousedown', (e) => {
+                isDraggingScroll = true;
+                startY = e.clientY;
+                startScrollTop = playlistContainer.scrollTop;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDraggingScroll) return;
+                const deltaY = e.clientY - startY;
+                const trackHeight = customScrollTrack.clientHeight;
+                const thumbHeight = customScrollThumb.clientHeight;
+                const scrollHeight = playlistContainer.scrollHeight;
+                const clientHeight = playlistContainer.clientHeight;
+                
+                const maxTrackScroll = trackHeight - thumbHeight;
+                if (maxTrackScroll <= 0) return;
+
+                const scrollRatio = deltaY / maxTrackScroll;
+                playlistContainer.scrollTop = startScrollTop + scrollRatio * (scrollHeight - clientHeight);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDraggingScroll = false;
+            });
+
+            customScrollTrack.addEventListener('click', (e) => {
+                if (e.target === customScrollThumb) return;
+                const rect = customScrollTrack.getBoundingClientRect();
+                const clickY = e.clientY - rect.top;
+                const trackHeight = customScrollTrack.clientHeight;
+                const thumbHeight = customScrollThumb.clientHeight;
+                const scrollHeight = playlistContainer.scrollHeight;
+                const clientHeight = playlistContainer.clientHeight;
+                
+                const maxTrackScroll = trackHeight - thumbHeight;
+                const targetTrackTop = Math.max(0, Math.min(clickY - thumbHeight / 2, maxTrackScroll));
+                const ratio = maxTrackScroll > 0 ? targetTrackTop / maxTrackScroll : 0;
+                playlistContainer.scrollTop = ratio * (scrollHeight - clientHeight);
+            });
 
             totalPlaylistText.textContent = playlistData.length;
             drawerCount.textContent = playlistData.length;
@@ -991,6 +1695,8 @@
                         }
                     });
                 });
+
+                setTimeout(updateCustomScrollbar, 50);
             }
 
             loadMoreBtn.addEventListener('click', () => {
@@ -1008,7 +1714,13 @@
                 }
                 
                 video.src = source || "";
+                previewVideo.src = source || ""; 
                 video.poster = data.thumbnail;
+
+                // Load subtitle file manual via fetch
+                loadSubtitleFile(data.subtitleSrc);
+                customSubtitleOverlay.style.display = 'none';
+
                 mainVideoTitle.textContent = data.title;
                 viewCount.textContent = `${data.views} 回視聴`;
                 publishDate.textContent = data.date;
@@ -1023,6 +1735,22 @@
             }
 
             loadVideoData(currentIndex);
+
+            // Tombol CC (Closed Captions) Toggle
+            ccBtn.addEventListener('click', () => {
+                isCcEnabled = !isCcEnabled;
+                
+                if (isCcEnabled) {
+                    ccBtn.style.color = 'var(--accent-pink)';
+                    ccBtn.classList.remove('fa-regular');
+                    ccBtn.classList.add('fa-solid');
+                } else {
+                    ccBtn.style.color = '';
+                    ccBtn.classList.remove('fa-solid');
+                    ccBtn.classList.add('fa-regular');
+                    customSubtitleOverlay.style.display = 'none';
+                }
+            });
 
             function formatTime(seconds) {
                 if (isNaN(seconds)) return "0:00";
@@ -1064,18 +1792,105 @@
                     progressFilled.style.width = `${percent}%`;
                     timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
                 }
+
+                // Render Subtitle Kustom Sesuai Waktu Video
+                if (isCcEnabled && parsedCues.length > 0) {
+                    const currentTime = video.currentTime;
+                    const currentCue = parsedCues.find(cue => currentTime >= cue.start && currentTime <= cue.end);
+                    
+                    if (currentCue) {
+                        customSubtitleOverlay.innerHTML = currentCue.text;
+                        customSubtitleOverlay.style.display = 'block';
+                    } else {
+                        customSubtitleOverlay.style.display = 'none';
+                    }
+                } else {
+                    customSubtitleOverlay.style.display = 'none';
+                }
             });
 
-            progressBar.addEventListener('click', (e) => {
-                if(video.duration) {
+            // Preview & Drag Logic
+            let isDraggingProgress = false;
+
+            function updateProgressFromEvent(e) {
+                const rect = progressBar.getBoundingClientRect();
+                let clickPosition = (e.clientX - rect.left) / rect.width;
+                clickPosition = Math.max(0, Math.min(1, clickPosition));
+                video.currentTime = clickPosition * video.duration;
+            }
+
+            progressBar.addEventListener('mousedown', (e) => {
+                isDraggingProgress = true;
+                updateProgressFromEvent(e);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDraggingProgress && video.duration) {
+                    updateProgressFromEvent(e);
+                    
                     const rect = progressBar.getBoundingClientRect();
-                    const clickPosition = (e.clientX - rect.left) / rect.width;
-                    video.currentTime = clickPosition * video.duration;
+                    let clickPosition = (e.clientX - rect.left) / rect.width;
+                    clickPosition = Math.max(0, Math.min(1, clickPosition));
+                    const hoverTime = clickPosition * video.duration;
+
+                    progressPreview.style.left = `${clickPosition * 100}%`;
+                    progressPreview.style.display = 'flex';
+                    previewTime.textContent = formatTime(hoverTime);
+                    
+                    if (previewVideo.readyState >= 1) {
+                        previewVideo.currentTime = hoverTime;
+                    }
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingProgress) {
+                    isDraggingProgress = false;
+                    progressPreview.style.display = 'none';
+                }
+            });
+
+            progressBar.addEventListener('mousemove', (e) => {
+                if (!isDraggingProgress && video.duration) {
+                    const rect = progressBar.getBoundingClientRect();
+                    let clickPosition = (e.clientX - rect.left) / rect.width;
+                    clickPosition = Math.max(0, Math.min(1, clickPosition));
+                    const hoverTime = clickPosition * video.duration;
+                    
+                    progressPreview.style.left = `${clickPosition * 100}%`;
+                    progressPreview.style.display = 'flex';
+                    previewTime.textContent = formatTime(hoverTime);
+                    
+                    if (previewVideo.readyState >= 1) {
+                        previewVideo.currentTime = hoverTime;
+                    }
+                }
+            });
+
+            progressBar.addEventListener('mouseleave', () => {
+                if (!isDraggingProgress) progressPreview.style.display = 'none';
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+                if (e.key === 'ArrowRight') {
+                    video.currentTime = Math.min(video.duration, video.currentTime + 5);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowLeft') {
+                    video.currentTime = Math.max(0, video.currentTime - 5);
+                    e.preventDefault();
                 }
             });
 
             nextBtn.addEventListener('click', () => {
                 currentIndex = (currentIndex + 1) % playlistData.length;
+                loadVideoData(currentIndex);
+                setTimeout(() => video.play().catch(e => console.log("Play error:", e)), 100);
+            });
+
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + playlistData.length) % playlistData.length;
                 loadVideoData(currentIndex);
                 setTimeout(() => video.play().catch(e => console.log("Play error:", e)), 100);
             });
@@ -1086,14 +1901,51 @@
                 setTimeout(() => video.play().catch(e => console.log("Play error:", e)), 100);
             });
 
+            function updateVolumeIcon() {
+                muteBtn.classList.remove('fa-volume-high', 'fa-volume-low', 'fa-volume-xmark');
+                
+                if (video.muted || video.volume === 0) {
+                    muteBtn.classList.add('fa-volume-xmark');
+                    volumeSlider.value = 0;
+                } else if (video.volume < 0.5) {
+                    muteBtn.classList.add('fa-volume-low');
+                    volumeSlider.value = video.volume;
+                } else {
+                    muteBtn.classList.add('fa-volume-high');
+                    volumeSlider.value = video.volume;
+                }
+                
+                const percent = volumeSlider.value * 100;
+                volumeSlider.style.background = `linear-gradient(to right, var(--accent-pink) ${percent}%, rgba(255, 255, 255, 0.4) ${percent}%)`;
+            }
+
+            volumeSlider.addEventListener('input', (e) => {
+                video.volume = e.target.value;
+                video.muted = (video.volume === 0);
+                updateVolumeIcon();
+            });
+
             muteBtn.addEventListener('click', () => {
                 video.muted = !video.muted;
                 if(video.muted) {
-                    muteBtn.classList.remove('fa-volume-high');
-                    muteBtn.classList.add('fa-volume-xmark');
+                    video.volume = 0;
                 } else {
-                    muteBtn.classList.remove('fa-volume-xmark');
-                    muteBtn.classList.add('fa-volume-high');
+                    video.volume = 1; 
+                }
+                updateVolumeIcon();
+            });
+            
+            updateVolumeIcon();
+
+            pipBtn.addEventListener('click', async () => {
+                try {
+                    if (document.pictureInPictureElement) {
+                        await document.exitPictureInPicture();
+                    } else if (document.pictureInPictureEnabled) {
+                        await video.requestPictureInPicture();
+                    }
+                } catch (error) {
+                    console.log("PiP error:", error);
                 }
             });
 
@@ -1142,6 +1994,39 @@
             openDrawerBtn.addEventListener('click', openDrawer);
             closeDrawerBtn.addEventListener('click', closeDrawer);
             drawerBackdrop.addEventListener('click', closeDrawer);
+
+            let isSortedOldest = false;
+            sortBtn.addEventListener('click', () => {
+                isSortedOldest = !isSortedOldest;
+                
+                const sortText = sortBtn.querySelector('span');
+                const sortIcon = sortBtn.querySelector('i');
+                if (isSortedOldest) {
+                    sortText.textContent = 'Terlama';
+                    sortIcon.className = 'fa-solid fa-arrow-up-wide-short';
+                } else {
+                    sortText.textContent = 'Terbaru';
+                    sortIcon.className = 'fa-solid fa-arrow-down-short-wide';
+                }
+
+                const activeVideo = playlistData[currentIndex];
+
+                playlistData.sort((a, b) => {
+                    if (isSortedOldest) {
+                        return a.date.localeCompare(b.date);
+                    } else {
+                        return b.date.localeCompare(a.date);
+                    }
+                });
+
+                currentIndex = playlistData.indexOf(activeVideo);
+
+                if (currentIndex >= visibleCount) {
+                    visibleCount = Math.ceil((currentIndex + 1) / 5) * 5;
+                }
+
+                renderPlaylist();
+            });
         });
     </script>
 </body>
