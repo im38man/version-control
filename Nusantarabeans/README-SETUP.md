@@ -1,4 +1,5 @@
 # Panduan Setup — Nusantara Beans (PHP)
+nusantarabeans.page.gd / firmandirector
 
 ## 1. Import Database
 Import `sql/schema.sql` ke MySQL (phpMyAdmin atau CLI). Ini akan membuat
