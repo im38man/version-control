@@ -1,4 +1,5 @@
 # MANCARE - PHP + MySQL (siap upload ke InfinityFree)
+mancares.wuaze.com / gamerzindoasia
 
 Versi ini mengubah dashboard Mancare dari localStorage murni menjadi aplikasi
 PHP + MySQL dengan sistem akun sungguhan: Register, Login, Logout, Ganti Akun,
