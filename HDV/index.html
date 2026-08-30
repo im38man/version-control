@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDV.com - Single Page App</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a1a2e'/><text x='50%' y='57%' dominant-baseline='middle' text-anchor='middle' font-family='Poppins, sans-serif' font-weight='700' font-size='40' fill='%23e94560'>HDV</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Auth Overlay Styling (Login & Register SPA) */
+        #authOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .auth-container {
+            background: #16213e;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 400px;
+            color: #fff;
+        }
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #30475e;
+            background: #0f3460;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus {
+            border-color: #e94560;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #e94560;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        .auth-btn:hover {
+            background-color: #d63853;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .toggle-link span {
+            color: #e94560;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .toggle-link span:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            display: none;
+            text-align: center;
+        }
+        .alert.error {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border: 1px solid #e94560;
+        }
+        .alert.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1a1a2e;
+            padding: 15px 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            flex-wrap: nowrap;
+        }
+
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e94560;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-menu > li > a, .nav-menu > li > button {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: inline-block;
+            padding: 10px 0;
+        }
+
+        .nav-menu > li > a:hover, .nav-menu > li > button:hover {
+            color: #e94560;
+        }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mobile-icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input {
+            padding: 8px 35px 8px 15px;
+            width: 180px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 0.9rem;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .clear-search-btn:hover {
+            color: #e94560;
+        }
+
+        .search-btn {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #d63853;
+            transform: scale(1.05);
+        }
+
+        .mobile-search-modal {
+            display: none;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a2e;
+            padding: 15px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 99;
+        }
+
+        .mobile-search-modal.active {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mobile-search-modal input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .mobile-search-modal button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: transparent;
+            color: white;
+            padding: 10px 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .dropbtn:hover {
+            color: #e94560;
+        }
+
+        .flag-btn {
+            padding: 6px 10px;
+            border: none;
+            background-color: transparent;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .dots-btn {
+            background-color: transparent;
+            color: white;
+            border: none;
+            width: 38px;
+            height: 38px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            left: 0;
+            background-color: #fff;
+            width: 280px;
+            max-height: 350px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            z-index: 101;
+            list-style: none;
+            padding: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: grid;
+        }
+
+        .dropdown.right-align .dropdown-content {
+            left: auto;
+            right: 0;
+            width: 180px;
+            display: none;
+            grid-template-columns: 1fr;
+        }
+        .dropdown.right-align:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown.profile-menu .dropdown-content {
+            width: 190px;
+            padding: 6px;
+        }
+
+        .dropdown-content li {
+            width: 100%;
+        }
+
+        .dropdown-content li a, .dropdown-content li button {
+            color: #333;
+            padding: 8px 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .dropdown-content li a:hover, .dropdown-content li button:hover {
+            background-color: #e94560;
+            color: white;
+        }
+
+        .dropdown-content li.see-all-item {
+            grid-column: span 2;
+        }
+
+        .dropdown-content li.see-all-item a {
+            background-color: #1a1a2e;
+            color: white;
+            font-weight: 600;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Views */
+        .view-section {
+            display: none;
+            flex: 1;
+            width: 100%;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        /* Container & Grid (Home View) */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .search-info {
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            object-position: top;
+            background-color: #ddd;
+        }
+
+        .card-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tag {
+            background-color: #e94560;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tag:hover {
+            opacity: 0.85;
+        }
+
+        .tag-region {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #333;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1a1a2e;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-rating {
+            color: #f39c12;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-bio {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.4;
+            margin-top: auto;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* View All Categories / Studios / Models Page Styling */
+        .categories-grid-container {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        .categories-grid-container.active {
+            display: block;
+        }
+        .categories-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f4f7f6;
+            padding-bottom: 10px;
+        }
+        .tags-button-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tag-filter-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag-filter-btn:hover {
+            background-color: #e94560;
+            color: white;
+            border-color: #e94560;
+        }
+
+        /* See All Models Directory Grid Card */
+        .model-card-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .model-card-item:hover {
+            transform: translateY(-5px);
+        }
+        .model-card-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #e94560;
+        }
+        .model-card-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .model-card-bio {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Model Detail View */
+        .model-profile-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .model-profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #e94560;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .model-profile-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .model-profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .model-profile-bio {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background-color: #f1f1f1;
+            border-color: #bbb;
+        }
+
+        .page-btn.active {
+            background-color: #e94560;
+            color: white;
+            border-color: #e94560;
+        }
+
+        .page-dots {
+            padding: 8px 6px;
+            color: #777;
+            font-weight: 500;
+        }
+
+        .page-btn:disabled {
+            background-color: #f9f9f9;
+            color: #ccc;
+            border-color: #eee;
+            cursor: not-allowed;
+        }
+
+        /* Watch Layout (Player View) */
+        .watch-container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .watch-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .player-wrapper {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 20px;
+        }
+
+        .video-box {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .video-box video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .video-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .video-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .fav-action-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .fav-action-btn.favorited {
+            background-color: #ffe3e6;
+            color: #e94560;
+            border-color: #ff8787;
+        }
+
+        .video-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .video-meta {
+            font-size: 0.9rem;
+            color: #777;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rating-widget {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .stars-container i {
+            color: #ccc;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .stars-container i.rated {
+            color: #f39c12;
+        }
+
+        .video-bio {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .video-hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .hashtag-link {
+            font-size: 0.85rem;
+            color: #1a1a2e;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .hashtag-link:hover {
+            color: #e94560;
+            text-decoration: underline;
+        }
+
+        .download-section {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .download-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            background-color: #1a1a2e;
+            color: white;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .download-btn:hover {
+            background-color: #0f3460;
+            transform: translateY(-2px);
+        }
+
+        .related-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .related-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f4f7f6;
+        }
+
+        .related-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-card {
+            display: flex;
+            gap: 12px;
+            text-decoration: none;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s ease, background 0.2s ease;
+            padding: 6px;
+            cursor: pointer;
+        }
+
+        .related-card:hover {
+            transform: translateY(-2px);
+            background: #f1f3f5;
+        }
+
+        .related-thumb {
+            width: 110px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+            background-color: #ddd;
+        }
+
+        .related-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            overflow: hidden;
+        }
+
+        .related-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .related-card-meta {
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        .view-more-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #1a1a2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .view-more-btn:hover {
+            background-color: #e94560;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 40px 20px 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e94560;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .footer-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background-color: #e94560;
+            transform: translateY(-3px);
+        }
+
+        .footer-divider {
+            border: none;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .footer-copyright {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        @media (max-width: 1024px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 12px 20px;
+            }
+            .mobile-icon-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .nav-actions {
+                display: none; 
+            }
+            .nav-menu {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                order: 3;
+                margin-top: 15px;
+                padding-top: 15px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .navbar.active .nav-menu {
+                display: flex;
+            }
+            .watch-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AUTH OVERLAY (LOGIN & REGISTER SPA) -->
+    <div id="authOverlay">
+        <div class="auth-container">
+            <!-- Form Login -->
+            <div id="loginBox">
+                <h2>Login HDV.com</h2>
+                <div id="loginAlert" class="alert"></div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUser" required placeholder="Masukkan username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPass" required placeholder="Masukkan password">
+                    </div>
+                    <button type="submit" class="auth-btn">Login</button>
+                </form>
+                <div class="toggle-link">
+                    Belum punya akun? <span onclick="switchAuthMode('register')">Register di sini</span>
+                </div>
+            </div>
+
+            <!-- Form Register -->
+            <div id="registerBox" style="display: none;">
+                <h2>Register Akun</h2>
+                <div id="regAlert" class="alert"></div>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Username Baru</label>
+                        <input type="text" id="regUser" required placeholder="Buat username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password Baru</label>
+                        <input type="password" id="regPass" required placeholder="Buat password">
+                    </div>
+                    <div class="form-group" id="tokenGroup">
+                        <label id="tokenLabel">Token Master</label>
+                        <input type="text" id="regToken" placeholder="Masukkan token master">
+                        <small id="tokenInfo" style="color: #888; font-size: 0.75rem; display: block; margin-top: 4px;"></small>
+                    </div>
+                    <button type="submit" class="auth-btn">Daftar</button>
+                </form>
+                <div class="toggle-link">
+                    Sudah punya akun? <span onclick="switchAuthMode('login')">Login di sini</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <a class="nav-brand" onclick="switchView('home', 'All')">HDV.com</a>
+        
+        <ul class="nav-menu">
+            <li><a href="#" onclick="switchView('home', 'All')">Home</a></li>
+            
+            <li class="dropdown">
+                <button class="dropbtn">Categories</button>
+                <ul class="dropdown-content" id="categoriesDropdown"></ul>
+            </li>
+
+            <li class="dropdown">
+                <button class="dropbtn">Studio</button>
+                <ul class="dropdown-content" id="studioDropdown"></ul>
+            </li>
+
+            <li class="dropdown">
+                <button class="dropbtn">Model</button>
+                <ul class="dropdown-content" id="modelDropdown"></ul>
+            </li>
+
+            <li><a href="#" onclick="switchView('home', 'All')">Live</a></li>
+        </ul>
+
+        <div class="nav-right-group">
+            <div class="nav-actions">
+                <div class="search-group">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search & press Enter...">
+                        <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <button type="button" id="searchIconBtn" class="search-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+
+            <button class="mobile-icon-btn" id="mobileSearchToggle" title="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <div class="dropdown right-align">
+                <button class="flag-btn">
+                    <img src="img/japan.png" alt="Region" class="flag-icon" id="currentFlag"> 
+                    <span id="currentRegionText">Region</span>
+                </button>
+                <ul class="dropdown-content">
+                    <li><a href="#" onclick="filterByRegion('All')"><img src="img/japan.png" class="flag-icon"> All Regions</a></li>
+                    <li><a href="#" onclick="filterByRegion('Japan')"><img src="img/japan.png" class="flag-icon"> Japan</a></li>
+                    <li><a href="#" onclick="filterByRegion('China')"><img src="img/china.png" class="flag-icon"> China</a></li>
+                    <li><a href="#" onclick="filterByRegion('Korea')"><img src="img/korea.png" class="flag-icon"> Korea</a></li>
+                    <li><a href="#" onclick="filterByRegion('Indonesia')"><img src="img/indonesia.png" class="flag-icon"> Indonesia</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown right-align profile-menu">
+				<button class="dots-btn" title="More Menu">
+					<i class="fa-solid fa-ellipsis-vertical"></i>
+				</button>
+				<ul class="dropdown-content">
+					<li><a href="#" onclick="switchView('home', 'All')"><i class="fa-solid fa-user"></i> <span id="welcomeUserText">Welcome</span></a></li>
+					<li id="masterTokenMenu" style="display: none;"><button type="button" onclick="showMasterTokenModal()"><i class="fa-solid fa-key"></i> Generate Token</button></li>
+					<li><button type="button" onclick="filterView('favorites')"><i class="fa-solid fa-heart"></i> My Favorites</button></li>
+					<li><button type="button" onclick="filterView('recent')"><i class="fa-solid fa-clock-rotate-left"></i> Recent Watch</button></li>
+					<li><button type="button" onclick="exportUserData()"><i class="fa-solid fa-file-arrow-down"></i> Export Data</button></li>
+					<li><button type="button" onclick="triggerImportData()"><i class="fa-solid fa-file-arrow-up"></i> Import Data</button></li>
+					<li><a href="#" onclick="logoutUser()" style="color: #e94560;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+				</ul>
+			</div>
+
+			<input type="file" id="importFileinput" accept=".json" style="display: none;" onchange="importUserData(event)">
+
+            <button class="mobile-icon-btn" id="menuToggle" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="mobile-search-modal" id="mobileSearchModal">
+            <input type="text" id="mobileSearchInput" placeholder="Search movies, codes, models...">
+            <button type="button" id="mobileSearchSubmitBtn">Search</button>
+        </div>
+    </nav>
+
+    <!-- Home View -->
+    <div id="homeView" class="view-section active">
+        <main class="container">
+            <div class="categories-grid-container" id="allCategoriesBox">
+                <h3 class="categories-title" id="filterBoxTitle">All Categories / Tags</h3>
+                <div class="tags-button-grid" id="tagsButtonGrid"></div>
+            </div>
+
+            <div class="search-info">
+                <span id="searchInfoText"></span>
+                <button id="resetFilterBtn" style="display:none; background:#e94560; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="filterView('all')">Show All</button>
+            </div>
+
+            <div class="card-grid" id="cardContainer"></div>
+            <div class="pagination" id="paginationContainer"></div>
+        </main>
+    </div>
+
+    <!-- See All Models View (Directory) -->
+    <div id="allModelsView" class="view-section">
+        <main class="container">
+            <div class="search-info">
+                <span id="allModelsSearchInfoText">Showing All Models</span>
+                <button style="background:#e94560; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="switchView('home', 'All')">Back to Home</button>
+            </div>
+            <div class="card-grid" id="allModelsCardContainer"></div>
+        </main>
+    </div>
+
+    <!-- Single Model Detail View -->
+    <div id="modelView" class="view-section">
+        <main class="container">
+            <div class="model-profile-header" id="modelProfileHeader">
+                <img src="" alt="Model Photo" class="model-profile-img" id="modelProfileImg">
+                <div class="model-profile-info">
+                    <h2 class="model-profile-name" id="modelProfileName">Model Name</h2>
+                    <p class="model-profile-bio" id="modelProfileBio">Model biography goes here...</p>
+                </div>
+            </div>
+            <div class="search-info">
+                <span id="modelSearchInfoText">Videos featuring this model</span>
+                <button style="background:#1a1a2e; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="showAllModelsDirectory()">Back to All Models</button>
+            </div>
+            <div class="card-grid" id="modelCardContainer"></div>
+        </main>
+    </div>
+
+    <!-- Player View -->
+    <div id="playerView" class="view-section">
+        <div class="watch-container">
+            <div class="watch-layout">
+                <div class="player-wrapper">
+                    <div class="video-box">
+                        <video id="mainVideo" controls poster="">
+                            <source id="videoSource" src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-details">
+                        <div class="video-header-flex">
+                            <div class="video-tags" id="videoTagsContainer"></div>
+                            <button type="button" id="favBtn" class="fav-action-btn">
+                                <i class="fa-regular fa-heart" id="favIcon"></i> <span id="favText">Save to Favorites</span>
+                            </button>
+                        </div>
+
+                        <h1 class="video-title" id="videoTitle">Loading...</h1>
+                        
+                        <div class="video-meta">
+                            <span><i class="fa-regular fa-calendar"></i> <span id="videoDate">----</span></span>
+                            <span><i class="fa-regular fa-clock"></i> <span id="videoDuration">--</span> Min</span>
+                            
+                            <div class="rating-widget">
+                                <div class="stars-container" id="starContainer">
+                                    <i class="fa-solid fa-star" data-value="1"></i>
+                                    <i class="fa-solid fa-star" data-value="2"></i>
+                                    <i class="fa-solid fa-star" data-value="3"></i>
+                                    <i class="fa-solid fa-star" data-value="4"></i>
+                                    <i class="fa-solid fa-star" data-value="5"></i>
+                                </div>
+                                <span id="ratingScoreText" style="font-size: 0.85rem; font-weight: 600; color: #333;">0.0</span>
+                            </div>
+                        </div>
+
+                        <p class="video-bio" id="videoBio">Loading description...</p>
+                        
+                        <div class="video-hashtags" id="hashtagContainer"></div>
+
+                        <div class="download-section">
+                            <div class="download-title"><i class="fa-solid fa-download"></i> Download Links</div>
+                            <div class="download-buttons">
+                                <a href="#" class="download-btn"><i class="fa-solid fa-cloud-arrow-down"></i> Original</a>
+                                <a href="#" class="download-btn">Alt 1</a>
+                                <a href="#" class="download-btn">Alt 2</a>
+                                <a href="#" class="download-btn">Alt 3</a>
+                                <a href="#" class="download-btn">Alt 4</a>
+                                <a href="#" class="download-btn">Alt 5</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="related-section">
+                    <h3 class="related-title">Related Videos</h3>
+                    <div class="related-list" id="relatedListContainer"></div>
+                    <button type="button" id="viewMoreBtn" class="view-more-btn">View More</button>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">HDV.com</div>
+            <p class="footer-desc">Your ultimate video and movie gallery platform. Easily discover exciting content from various regions, categories, and exclusive studios.</p>
+            
+            <div class="social-icons">
+                <a href="#" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" title="Discord"><i class="fa-brands fa-discord"></i></a>
+            </div>
+
+            <hr class="footer-divider">
+            <p class="footer-copyright">&copy; 2026 HDV.com. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Panggil File Data Eksternal -->
+    <script src="data.js"></script>
+    <script src="moredata.js"></script>
+
+    <script>
+        // --- AUTHENTICATION & SPA SYSTEM ---
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('hdv_users')) || [];
+        }
+
+        function updateLoginUI() {
+            const session = JSON.parse(localStorage.getItem('hdv_logged_in'));
+            const authOverlay = document.getElementById('authOverlay');
+            const welcomeUserText = document.getElementById('welcomeUserText');
+            const masterTokenMenu = document.getElementById('masterTokenMenu');
+
+            if (session) {
+                authOverlay.style.display = 'none';
+                if (welcomeUserText) {
+                    welcomeUserText.innerText = `Welcome, ${session.username}`;
+                }
+                if (masterTokenMenu) {
+                    if (session.role === 'master') {
+                        masterTokenMenu.style.display = 'block';
+                    } else {
+                        masterTokenMenu.style.display = 'none';
+                    }
+                }
+            } else {
+                authOverlay.style.display = 'flex';
+                checkMasterStatus();
+            }
+        }
+
+        function checkMasterStatus() {
+            const users = getUsers();
+            const tokenGroup = document.getElementById('tokenGroup');
+            const tokenInput = document.getElementById('regToken');
+            const tokenInfo = document.getElementById('tokenInfo');
+
+            if (users.length === 0) {
+                tokenGroup.style.display = 'none';
+                tokenInput.removeAttribute('required');
+                tokenInfo.innerText = "*Akun pertama yang dibuat akan otomatis menjadi Master.";
+            } else {
+                tokenGroup.style.display = 'block';
+                tokenInput.setAttribute('required', 'true');
+                tokenInfo.innerText = "*Pendaftaran memerlukan Token Master dari akun Master.";
+            }
+        }
+
+        function switchAuthMode(mode) {
+            if (mode === 'register') {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('registerBox').style.display = 'block';
+                checkMasterStatus();
+            } else {
+                document.getElementById('registerBox').style.display = 'none';
+                document.getElementById('loginBox').style.display = 'block';
+            }
+            clearAuthAlerts();
+        }
+
+        function showAuthAlert(boxId, message, type) {
+            const alertEl = document.getElementById(boxId);
+            alertEl.innerText = message;
+            alertEl.className = `alert ${type}`;
+            alertEl.style.display = 'block';
+        }
+
+        function clearAuthAlerts() {
+            document.querySelectorAll('.alert').forEach(el => el.style.display = 'none');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUser').value.trim();
+            const password = document.getElementById('regPass').value.trim();
+            const tokenInput = document.getElementById('regToken').value.trim();
+
+            let users = getUsers();
+
+            if (users.some(u => u.username === username)) {
+                showAuthAlert('regAlert', 'Username sudah digunakan!', 'error');
+                return;
+            }
+
+            let role = 'member';
+
+            if (users.length === 0) {
+                role = 'master';
+                localStorage.setItem('hdv_master_token', 'MASTERKEY123');
+            } else {
+                const savedToken = localStorage.getItem('hdv_master_token') || 'MASTERKEY123';
+                if (tokenInput !== savedToken) {
+                    showAuthAlert('regAlert', 'Token Master salah!', 'error');
+                    return;
+                }
+            }
+
+            users.push({ username, password, role });
+            localStorage.setItem('hdv_users', JSON.stringify(users));
+
+            showAuthAlert('regAlert', `Registrasi berhasil! (${role === 'master' ? 'Akun Master' : 'Akun Member'}). Silakan login.`, 'success');
+            document.getElementById('registerForm').reset();
+            setTimeout(() => switchAuthMode('login'), 1500);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+
+            const users = getUsers();
+            const validUser = users.find(u => u.username === username && u.password === password);
+
+            if (validUser) {
+                localStorage.setItem('hdv_logged_in', JSON.stringify({
+                    username: validUser.username,
+                    role: validUser.role
+                }));
+                document.getElementById('loginForm').reset();
+                updateLoginUI();
+                init();
+            } else {
+                showAuthAlert('loginAlert', 'Username atau password salah!', 'error');
+            }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('hdv_logged_in');
+            updateLoginUI();
+        }
+
+        function showMasterTokenModal() {
+            let currentToken = localStorage.getItem('hdv_master_token') || 'MASTERKEY123';
+            let action = prompt(`Token Master saat ini: [ ${currentToken} ]\n\nKetik token baru jika ingin mengubahnya, atau tekan OK untuk membiarkannya.`);
+            
+            if (action !== null && action.trim() !== "") {
+                localStorage.setItem('hdv_master_token', action.trim());
+                alert(`Token Master berhasil diperbarui menjadi: ${action.trim()}`);
+            }
+        }
+
+        // --- APP LOGIC ---
+        const menuToggle = document.getElementById('menuToggle');
+        const navbar = document.getElementById('navbar');
+        const mobileSearchModal = document.getElementById('mobileSearchModal');
+        const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+
+        menuToggle.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+            mobileSearchModal.classList.remove('active');
+            const icon = menuToggle.querySelector('i');
+            if (navbar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        mobileSearchToggle.addEventListener('click', () => {
+            mobileSearchModal.classList.toggle('active');
+            navbar.classList.remove('active');
+            const barIcon = menuToggle.querySelector('i');
+            barIcon.classList.remove('fa-xmark');
+            barIcon.classList.add('fa-bars');
+        });
+
+        const regionFlags = {
+            'Japan': 'img/japan.png',
+            'China': 'img/china.png',
+            'Korea': 'img/korea.png',
+            'Indonesia': 'img/indonesia.png',
+            'All': 'img/japan.png'
+        };
+		
+		function triggerImportData() {
+			const fileInput = document.getElementById('importFileinput');
+			if (fileInput) {
+				fileInput.click();
+			}
+		}
+
+		function exportUserData() {
+			try {
+				const userData = {
+					favorites: JSON.parse(localStorage.getItem('favorites')) || [],
+					recentWatch: JSON.parse(localStorage.getItem('recentWatch')) || [],
+					movieRatings: JSON.parse(localStorage.getItem('movieRatings')) || {}
+				};
+
+				const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
+				const downloadAnchor = document.createElement('a');
+				downloadAnchor.setAttribute("href", dataStr);
+				downloadAnchor.setAttribute("download", `hdv_backup_${new Date().toISOString().slice(0, 10)}.json`);
+				document.body.appendChild(downloadAnchor);
+				downloadAnchor.click();
+				downloadAnchor.remove();
+			} catch (error) {
+				console.error("Gagal melakukan export data:", error);
+				alert("Terjadi kesalahan saat mengexport data.");
+			}
+		}
+
+		function importUserData(event) {
+			const fileReader = new FileReader();
+			if (event.target.files && event.target.files[0]) {
+				fileReader.readAsText(event.target.files[0], "UTF-8");
+				fileReader.onload = (e) => {
+					try {
+						const parsedData = JSON.parse(e.target.result);
+						if (parsedData.favorites && Array.isArray(parsedData.favorites)) {
+							localStorage.setItem('favorites', JSON.stringify(parsedData.favorites));
+						}
+						if (parsedData.recentWatch && Array.isArray(parsedData.recentWatch)) {
+							localStorage.setItem('recentWatch', JSON.stringify(parsedData.recentWatch));
+						}
+						if (parsedData.movieRatings && typeof parsedData.movieRatings === 'object') {
+							localStorage.setItem('movieRatings', JSON.stringify(parsedData.movieRatings));
+						}
+
+						alert("Data berhasil diimport! Halaman akan dimuat ulang.");
+						window.location.reload();
+					} catch (error) {
+						console.error("Gagal memparsing file JSON:", error);
+						alert("Format file tidak valid atau rusak.");
+					}
+				};
+			}
+		}
+
+        let current_page = 1;
+        const rows_per_page = 12;
+        let filteredData = typeof movieData !== 'undefined' ? movieData : [];
+
+        const cardContainer = document.getElementById('cardContainer');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchIconBtn = document.getElementById('searchIconBtn');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        const mobileSearchSubmitBtn = document.getElementById('mobileSearchSubmitBtn');
+        const currentFlag = document.getElementById('currentFlag');
+        const currentRegionText = document.getElementById('currentRegionText');
+        const searchInfoText = document.getElementById('searchInfoText');
+        const resetFilterBtn = document.getElementById('resetFilterBtn');
+        const allCategoriesBox = document.getElementById('allCategoriesBox');
+        const tagsButtonGrid = document.getElementById('tagsButtonGrid');
+        const filterBoxTitle = document.getElementById('filterBoxTitle');
+
+        function getStoredRatings() {
+            return JSON.parse(localStorage.getItem('movieRatings')) || {};
+        }
+
+        function generateNavigationMenus() {
+            if (typeof movieData === 'undefined') return;
+            const categoriesDropdown = document.getElementById('categoriesDropdown');
+            let tagCounts = {};
+            movieData.forEach(movie => {
+                if (movie.tags && Array.isArray(movie.tags)) {
+                    movie.tags.forEach(tag => {
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    });
+                }
+            });
+            let sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
+
+            categoriesDropdown.innerHTML = "";
+            let top4Tags = sortedTags.slice(0, 4);
+            top4Tags.forEach(tag => {
+                let li = document.createElement('li');
+                li.innerHTML = `<a href="#" onclick="filterByCategory('${tag}')">${tag}</a>`;
+                categoriesDropdown.appendChild(li);
+            });
+            let seeAllCats = document.createElement('li');
+            seeAllCats.className = "see-all-item";
+            seeAllCats.innerHTML = `<a href="#" onclick="showAllFilterView('category')">See All</a>`;
+            categoriesDropdown.appendChild(seeAllCats);
+
+            const studioDropdown = document.getElementById('studioDropdown');
+            let studioCounts = {};
+            movieData.forEach(movie => {
+                let studioName = movie.studio ? movie.studio.trim() : 'Unknown';
+                studioCounts[studioName] = (studioCounts[studioName] || 0) + 1;
+            });
+            let sortedStudios = Object.keys(studioCounts).sort((a, b) => studioCounts[b] - studioCounts[a]);
+
+            studioDropdown.innerHTML = "";
+            let top4Studios = sortedStudios.slice(0, 4);
+            top4Studios.forEach(studio => {
+                let li = document.createElement('li');
+                li.innerHTML = `<a href="#" onclick="filterByStudio('${studio}')">${studio}</a>`;
+                studioDropdown.appendChild(li);
+            });
+            let seeAllStudios = document.createElement('li');
+            seeAllStudios.className = "see-all-item";
+            seeAllStudios.innerHTML = `<a href="#" onclick="showAllFilterView('studio')">See All</a>`;
+            studioDropdown.appendChild(seeAllStudios);
+
+            const modelDropdown = document.getElementById('modelDropdown');
+            let modelCounts = {};
+            movieData.forEach(movie => {
+                let modelName = movie.model ? movie.model.trim() : 'Unknown';
+                modelCounts[modelName] = (modelCounts[modelName] || 0) + 1;
+            });
+            let sortedModels = Object.keys(modelCounts).sort((a, b) => modelCounts[b] - modelCounts[a]);
+
+            modelDropdown.innerHTML = "";
+            let top4Models = sortedModels.slice(0, 4);
+            top4Models.forEach(modelName => {
+                let li = document.createElement('li');
+                li.innerHTML = `<a href="#" onclick="filterByModel('${modelName}')">${modelName}</a>`;
+                modelDropdown.appendChild(li);
+            });
+            let seeAllModels = document.createElement('li');
+            seeAllModels.className = "see-all-item";
+            seeAllModels.innerHTML = `<a href="#" onclick="showAllModelsDirectory()">See All Models</a>`;
+            modelDropdown.appendChild(seeAllModels);
+        }
+
+        function showAllFilterView(type) {
+            switchView('home');
+            allCategoriesBox.classList.add('active');
+            tagsButtonGrid.innerHTML = "";
+
+            if (type === 'category') {
+                filterBoxTitle.innerText = "All Categories / Tags";
+                let tagCounts = {};
+                movieData.forEach(m => m.tags?.forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1));
+                let sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
+
+                let allBtn = document.createElement('button');
+                allBtn.className = "tag-filter-btn";
+                allBtn.innerText = "All Categories";
+                allBtn.onclick = () => filterByCategory('All');
+                tagsButtonGrid.appendChild(allBtn);
+
+                sortedTags.forEach(tag => {
+                    let btn = document.createElement('button');
+                    btn.className = "tag-filter-btn";
+                    btn.innerText = tag;
+                    btn.onclick = () => filterByCategory(tag);
+                    tagsButtonGrid.appendChild(btn);
+                });
+            } else if (type === 'studio') {
+                filterBoxTitle.innerText = "All Studios";
+                let studioCounts = {};
+                movieData.forEach(m => {
+                    let s = m.studio ? m.studio.trim() : 'Unknown';
+                    studioCounts[s] = (studioCounts[s] || 0) + 1;
+                });
+                let sortedStudios = Object.keys(studioCounts).sort((a, b) => studioCounts[b] - studioCounts[a]);
+
+                let allBtn = document.createElement('button');
+                allBtn.className = "tag-filter-btn";
+                allBtn.innerText = "All Studios";
+                allBtn.onclick = () => filterByStudio('All');
+                tagsButtonGrid.appendChild(allBtn);
+
+                sortedStudios.forEach(studio => {
+                    let btn = document.createElement('button');
+                    btn.className = "tag-filter-btn";
+                    btn.innerText = studio;
+                    btn.onclick = () => filterByStudio(studio);
+                    tagsButtonGrid.appendChild(btn);
+                });
+            }
+
+            searchInfoText.innerHTML = `Showing All <strong>${type.toUpperCase()}</strong>`;
+            resetFilterBtn.style.display = "block";
+            cardContainer.innerHTML = "";
+            paginationContainer.style.display = "none";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showAllModelsDirectory() {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('allModelsView').classList.add('active');
+            
+            const allModelsCardContainer = document.getElementById('allModelsCardContainer');
+            allModelsCardContainer.innerHTML = "";
+
+            let modelCounts = {};
+            movieData.forEach(movie => {
+                let modelName = movie.model ? movie.model.trim() : 'Unknown';
+                modelCounts[modelName] = (modelCounts[modelName] || 0) + 1;
+            });
+            let sortedModels = Object.keys(modelCounts).sort((a, b) => modelCounts[b] - modelCounts[a]);
+
+            sortedModels.forEach(modelName => {
+                let profileInfo = (typeof modelProfiles !== 'undefined' && modelProfiles[modelName])
+                    ? modelProfiles[modelName]
+                    : { photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60", bio: "No biography available." };
+
+                let modelCard = document.createElement('div');
+                modelCard.className = "model-card-item";
+                modelCard.onclick = () => filterByModel(modelName);
+
+                modelCard.innerHTML = `
+                    <img src="${profileInfo.photo}" alt="${modelName}" class="model-card-img" loading="lazy">
+                    <h3 class="model-card-name">${modelName}</h3>
+                    <p class="model-card-bio">${profileInfo.bio}</p>
+                `;
+                allModelsCardContainer.appendChild(modelCard);
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterByModel(modelName) {
+            allCategoriesBox.classList.remove('active');
+            switchView('model', modelName);
+        }
+
+        function filterByCategory(categoryName) {
+            current_page = 1;
+            allCategoriesBox.classList.remove('active');
+            
+            if (categoryName === 'All' || !categoryName) {
+                filteredData = movieData;
+                searchInfoText.innerHTML = `Showing all items`;
+            } else {
+                filteredData = movieData.filter(movie => movie.tags && movie.tags.includes(categoryName));
+                searchInfoText.innerHTML = `Showing items for category: "<strong>${categoryName}</strong>"`;
+            }
+            
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('homeView').classList.add('active');
+            
+            resetFilterBtn.style.display = "block";
+            displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'category');
+            setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterByStudio(studioName) {
+            current_page = 1;
+            allCategoriesBox.classList.remove('active');
+            
+            if (studioName === 'All' || !studioName) {
+                filteredData = movieData;
+                searchInfoText.innerHTML = `Showing all items`;
+            } else {
+                filteredData = movieData.filter(movie => {
+                    let movieStudio = movie.studio ? movie.studio.trim().toLowerCase() : '';
+                    return movieStudio === studioName.trim().toLowerCase();
+                });
+                searchInfoText.innerHTML = `Showing items for studio: "<strong>${studioName}</strong>"`;
+            }
+            
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('homeView').classList.add('active');
+            
+            resetFilterBtn.style.display = "block";
+            displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'studio');
+            setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterByRegion(regionName) {
+            current_page = 1;
+            allCategoriesBox.classList.remove('active');
+            
+            if (regionName === 'All') {
+                filteredData = movieData;
+                currentRegionText.innerText = "Region";
+                currentFlag.src = "img/japan.png";
+                searchInfoText.innerHTML = `Showing all items`;
+            } else {
+                filteredData = movieData.filter(movie => movie.region && movie.region.toLowerCase() === regionName.toLowerCase());
+                currentRegionText.innerText = regionName;
+                currentFlag.src = regionFlags[regionName] || 'img/japan.png';
+                searchInfoText.innerHTML = `Showing items for region: "<strong>${regionName}</strong>"`;
+            }
+
+            searchInput.value = "";
+            mobileSearchInput.value = "";
+            clearSearchBtn.style.display = "none";
+            
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('homeView').classList.add('active');
+            
+            resetFilterBtn.style.display = "block";
+            displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'all');
+            setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchView(viewName, param = null) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            
+            if (viewName === 'home') {
+                document.getElementById('homeView').classList.add('active');
+                if (param === 'All' || !param) {
+                    allCategoriesBox.classList.remove('active');
+                    filteredData = movieData;
+                    displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'all');
+                    setupPagination(filteredData, paginationContainer, rows_per_page, "");
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (viewName === 'model') {
+                document.getElementById('modelView').classList.add('active');
+                loadModelProfile(param);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (viewName === 'player') {
+                allCategoriesBox.classList.remove('active');
+                document.getElementById('playerView').classList.add('active');
+                loadPlayer(param);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function loadModelProfile(modelName) {
+            const profileNameEl = document.getElementById('modelProfileName');
+            const profileBioEl = document.getElementById('modelProfileBio');
+            const profileImgEl = document.getElementById('modelProfileImg');
+            const modelCardContainer = document.getElementById('modelCardContainer');
+
+            let modelDataInfo = (typeof modelProfiles !== 'undefined' && modelProfiles[modelName]) 
+                ? modelProfiles[modelName] 
+                : { photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60", bio: "No biography available for this model." };
+
+            profileNameEl.innerText = modelName;
+            profileBioEl.innerText = modelDataInfo.bio;
+            profileImgEl.src = modelDataInfo.photo;
+
+            let matchingMovies = movieData.filter(m => m.model.trim().toLowerCase() === modelName.trim().toLowerCase());
+            modelCardContainer.innerHTML = "";
+            const ratingsMap = getStoredRatings();
+
+            if (matchingMovies.length === 0) {
+                modelCardContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#777; padding:40px;">No videos found for this model.</p>`;
+                return;
+            }
+
+            matchingMovies.forEach(movie => {
+                renderCardItem(movie, modelCardContainer, ratingsMap);
+            });
+        }
+
+        function displayCards(data, wrapper, rowsPerPage, page, searchTerm = "", viewMode = 'all') {
+            wrapper.innerHTML = "";
+            const ratingsMap = getStoredRatings();
+            
+            if (viewMode === 'favorites') {
+                allCategoriesBox.classList.remove('active');
+                searchInfoText.innerHTML = `Showing <strong>Favorite</strong> videos`;
+                resetFilterBtn.style.display = "block";
+                paginationContainer.style.display = "none";
+            } else if (viewMode === 'recent') {
+                allCategoriesBox.classList.remove('active');
+                searchInfoText.innerHTML = `Showing <strong>Recent Watch</strong> history`;
+                resetFilterBtn.style.display = "block";
+                paginationContainer.style.display = "none";
+            } else if (viewMode === 'category' || viewMode === 'studio') {
+                paginationContainer.style.display = "flex";
+            } else {
+                resetFilterBtn.style.display = "none";
+                paginationContainer.style.display = "flex";
+                if (searchTerm !== "") {
+                    if (data.length === 0) {
+                        searchInfoText.innerHTML = `Sorry, no results found for keyword: "<strong>${searchTerm}</strong>"`;
+                    } else {
+                        searchInfoText.innerHTML = `Showing ${data.length} items from search: "<strong>${searchTerm}</strong>"`;
+                    }
+                } else if (viewMode === 'all') {
+                    searchInfoText.innerHTML = `Showing all ${data.length} items in total`;
+                }
+            }
+
+            if (viewMode !== 'all' && viewMode !== 'category' && viewMode !== 'studio') {
+                if (data.length === 0) {
+                    wrapper.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#777; padding:40px;">No items found in this section.</p>`;
+                }
+                data.forEach(movie => renderCardItem(movie, wrapper, ratingsMap));
+                return;
+            }
+
+            page--;
+            let start = rowsPerPage * page;
+            let end = start + rowsPerPage;
+            let paginatedItems = data.slice(start, end);
+
+            if (paginatedItems.length === 0) {
+                wrapper.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#777; padding:40px;">No items found.</p>`;
+                return;
+            }
+
+            paginatedItems.forEach(movie => renderCardItem(movie, wrapper, ratingsMap));
+        }
+
+        function renderCardItem(movie, wrapper, ratingsMap) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            const flagSrc = regionFlags[movie.region] || 'img/japan.png';
+            let currentRating = ratingsMap[movie.title] !== undefined ? ratingsMap[movie.title] : 0.0;
+
+            card.addEventListener('click', (e) => {
+                if(e.target.classList.contains('model-link-tag')) return;
+
+                let recent = JSON.parse(localStorage.getItem('recentWatch')) || [];
+                recent = recent.filter(t => t !== movie.title);
+                recent.unshift(movie.title);
+                localStorage.setItem('recentWatch', JSON.stringify(recent));
+
+                switchView('player', movie.title);
+            });
+
+            card.innerHTML = `
+                <img src="${movie.imgurl}" alt="${movie.title}" class="card-image" loading="lazy">
+                <div class="card-content">
+                    <div class="card-tags">
+                        <span class="tag model-link-tag" onclick="filterByModel('${movie.model}')">${movie.model}</span>
+                        <span class="tag" style="background:#0f3460">${movie.code}</span>
+                        <span class="tag-region"><img src="${flagSrc}" class="flag-icon" style="width:14px; height:10px;"> ${movie.region}</span>
+                    </div>
+                    <h3 class="card-title">${movie.title}</h3>
+                    <div class="card-meta">
+                        <span><i class="fa-regular fa-calendar"></i> ${movie.releaseDate}</span>
+                        <span><i class="fa-regular fa-clock"></i> ${movie.duration} Min</span>
+                        <span class="card-rating"><i class="fa-solid fa-star"></i> ${Number(currentRating).toFixed(1)}</span>
+                    </div>
+                    <p class="card-bio">${movie.bio}</p>
+                </div>
+            `;
+            wrapper.appendChild(card);
+        }
+
+        function setupPagination(data, wrapper, rowsPerPage, searchTerm = "") {
+            wrapper.innerHTML = "";
+            let pageCount = Math.ceil(data.length / rowsPerPage);
+
+            if (pageCount <= 1) return;
+
+            let prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+            prevBtn.classList.add('page-btn');
+            prevBtn.disabled = current_page === 1;
+            prevBtn.addEventListener('click', () => {
+                if (current_page > 1) goToPage(current_page - 1, data, searchTerm);
+            });
+            wrapper.appendChild(prevBtn);
+
+            let pagesToShow = [];
+            if (pageCount <= 7) {
+                for (let i = 1; i <= pageCount; i++) pagesToShow.push(i);
+            } else {
+                if (current_page <= 3) {
+                    pagesToShow = [1, 2, 3, '...', pageCount - 1, pageCount];
+                } else if (current_page >= pageCount - 2) {
+                    pagesToShow = [1, 2, '...', pageCount - 2, pageCount - 1, pageCount];
+                } else {
+                    pagesToShow = [1, '...', current_page - 1, current_page, current_page + 1, '...', pageCount];
+                }
+            }
+
+            pagesToShow.forEach(p => {
+                if (p === '...') {
+                    let span = document.createElement('span');
+                    span.innerText = "........";
+                    span.classList.add('page-dots');
+                    wrapper.appendChild(span);
+                } else {
+                    let btn = document.createElement('button');
+                    btn.innerText = p;
+                    btn.classList.add('page-btn');
+                    if (current_page === p) btn.classList.add('active');
+                    btn.addEventListener('click', () => goToPage(p, data, searchTerm));
+                    wrapper.appendChild(btn);
+                }
+            });
+
+            let nextBtn = document.createElement('button');
+            nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            nextBtn.classList.add('page-btn');
+            nextBtn.disabled = current_page === pageCount;
+            nextBtn.addEventListener('click', () => {
+                if (current_page < pageCount) goToPage(current_page + 1, data, searchTerm);
+            });
+            wrapper.appendChild(nextBtn);
+        }
+
+        function goToPage(pageNumber, data, searchTerm) {
+            current_page = pageNumber;
+            displayCards(data, cardContainer, rows_per_page, current_page, searchTerm, 'all');
+            setupPagination(data, paginationContainer, rows_per_page, searchTerm);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterView(type) {
+            switchView('home');
+            if (type === 'favorites') {
+                const favs = JSON.parse(localStorage.getItem('favorites')) || [];
+                const filtered = movieData.filter(m => favs.includes(m.title));
+                displayCards(filtered, cardContainer, rows_per_page, 1, "", 'favorites');
+            } else if (type === 'recent') {
+                const recent = JSON.parse(localStorage.getItem('recentWatch')) || [];
+                const filtered = recent.map(title => movieData.find(m => m.title === title)).filter(Boolean);
+                displayCards(filtered, cardContainer, rows_per_page, 1, "", 'recent');
+            } else {
+                allCategoriesBox.classList.remove('active');
+                filteredData = movieData;
+                displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'all');
+                setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            }
+        }
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') executeSearch(searchInput.value);
+        });
+        searchIconBtn.addEventListener('click', () => executeSearch(searchInput.value));
+
+        mobileSearchSubmitBtn.addEventListener('click', () => {
+            executeSearch(mobileSearchInput.value);
+            mobileSearchModal.classList.remove('active');
+        });
+        mobileSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                executeSearch(mobileSearchInput.value);
+                mobileSearchModal.classList.remove('active');
+            }
+        });
+
+        function executeSearch(query) {
+            const searchString = query.toLowerCase().trim();
+            switchView('home');
+            allCategoriesBox.classList.remove('active');
+            if (searchString === "") {
+                filteredData = movieData;
+                clearSearchBtn.style.display = "none";
+            } else {
+                filteredData = movieData.filter(movie => {
+                    return (
+                        movie.title.toLowerCase().includes(searchString) ||
+                        movie.code.toLowerCase().includes(searchString) ||
+                        movie.model.toLowerCase().includes(searchString) ||
+                        movie.region.toLowerCase().includes(searchString) ||
+                        (movie.studio && movie.studio.toLowerCase().includes(searchString))
+                    );
+                });
+                clearSearchBtn.style.display = "block";
+            }
+
+            current_page = 1;
+            displayCards(filteredData, cardContainer, rows_per_page, current_page, searchString, 'all');
+            setupPagination(filteredData, paginationContainer, rows_per_page, searchString);
+        }
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = "";
+            mobileSearchInput.value = "";
+            clearSearchBtn.style.display = "none";
+            filteredData = movieData;
+            current_page = 1;
+            displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'all');
+            setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            searchInput.focus();
+        });
+
+        function loadPlayer(title) {
+            let currentMovie = movieData.find(m => m.title === title) || movieData[0];
+
+            let recent = JSON.parse(localStorage.getItem('recentWatch')) || [];
+            recent = recent.filter(t => t !== currentMovie.title);
+            recent.unshift(currentMovie.title);
+            localStorage.setItem('recentWatch', JSON.stringify(recent));
+
+            document.getElementById('videoTitle').innerText = currentMovie.title;
+            document.getElementById('videoBio').innerText = currentMovie.bio;
+            document.getElementById('videoDate').innerText = currentMovie.releaseDate;
+            document.getElementById('videoDuration').innerText = currentMovie.duration;
+            
+            const mainVideo = document.getElementById('mainVideo');
+            const videoSource = document.getElementById('videoSource');
+            mainVideo.poster = currentMovie.imgurl;
+            videoSource.src = currentMovie.vidurl;
+            mainVideo.load();
+
+            document.getElementById('videoTagsContainer').innerHTML = `
+                <span class="tag" style="cursor:pointer;" onclick="filterByModel('${currentMovie.model}')">${currentMovie.model}</span>
+                <span class="tag" style="background:#0f3460">${currentMovie.code}</span>
+                ${currentMovie.studio ? `<span class="tag" style="background:#555; cursor:pointer;" onclick="filterByStudio('${currentMovie.studio}')">${currentMovie.studio}</span>` : ''}
+            `;
+
+            const hashtagContainer = document.getElementById('hashtagContainer');
+            hashtagContainer.innerHTML = "";
+            if (currentMovie.tags) {
+                currentMovie.tags.forEach(tag => {
+                    const a = document.createElement('a');
+                    a.className = "hashtag-link";
+                    a.innerText = tag;
+                    a.addEventListener('click', () => filterByCategory(tag));
+                    hashtagContainer.appendChild(a);
+                });
+            }
+
+            const favBtn = document.getElementById('favBtn');
+            const favIcon = document.getElementById('favIcon');
+            const favText = document.getElementById('favText');
+
+            function checkFavoriteStatus() {
+                let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+                if (favorites.includes(currentMovie.title)) {
+                    favBtn.classList.add('favorited');
+                    favIcon.className = "fa-solid fa-heart";
+                    favText.innerText = "Saved to Favorites";
+                } else {
+                    favBtn.classList.remove('favorited');
+                    favIcon.className = "fa-regular fa-heart";
+                    favText.innerText = "Save to Favorites";
+                }
+            }
+
+            favBtn.onclick = () => {
+                let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+                let index = favorites.indexOf(currentMovie.title);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                } else {
+                    favorites.push(currentMovie.title);
+                }
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                checkFavoriteStatus();
+            };
+            checkFavoriteStatus();
+
+            const stars = document.querySelectorAll('#starContainer i');
+            const ratingScoreText = document.getElementById('ratingScoreText');
+
+            function updateStarDisplay(score) {
+                const numScore = Number(score) || 0;
+                ratingScoreText.innerText = numScore.toFixed(1);
+                stars.forEach(star => {
+                    const val = parseInt(star.getAttribute('data-value'));
+                    if (val <= numScore) {
+                        star.classList.add('rated');
+                    } else {
+                        star.classList.remove('rated');
+                    }
+                });
+            }
+
+            let ratingsMap = getStoredRatings();
+            let initialScore = ratingsMap[currentMovie.title] !== undefined ? ratingsMap[currentMovie.title] : 0.0;
+            updateStarDisplay(initialScore);
+
+            stars.forEach(star => {
+                let newStar = star.cloneNode(true);
+                star.parentNode.replaceChild(newStar, star);
+            });
+
+            document.querySelectorAll('#starContainer i').forEach(star => {
+                star.addEventListener('click', () => {
+                    const userRating = parseInt(star.getAttribute('data-value'));
+                    let ratingsMap = getStoredRatings();
+                    ratingsMap[currentMovie.title] = userRating;
+                    localStorage.setItem('movieRatings', JSON.stringify(ratingsMap));
+                    
+                    updateStarDisplay(userRating);
+                });
+            });
+
+            let relatedData = movieData.filter(m => m.model === currentMovie.model && m.title !== currentMovie.title);
+            if (relatedData.length < 5) {
+                const extraData = movieData.filter(m => m.title !== currentMovie.title && !relatedData.includes(m));
+                relatedData = [...relatedData, ...extraData];
+            }
+
+            let visibleCount = 5;
+            const relatedListContainer = document.getElementById('relatedListContainer');
+            const viewMoreBtn = document.getElementById('viewMoreBtn');
+
+            function renderRelatedVideos() {
+                relatedListContainer.innerHTML = "";
+                const itemsToShow = relatedData.slice(0, visibleCount);
+
+                itemsToShow.forEach(video => {
+                    const rCard = document.createElement('div');
+                    rCard.classList.add('related-card');
+                    rCard.addEventListener('click', () => {
+                        loadPlayer(video.title);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    rCard.innerHTML = `
+                        <img src="${video.imgurl}" alt="${video.title}" class="related-thumb" loading="lazy">
+                        <div class="related-info">
+                            <h4 class="related-card-title">${video.title}</h4>
+                            <div class="related-card-meta">
+                                <span><i class="fa-regular fa-clock"></i> ${video.duration} Min</span>
+                            </div>
+                        </div>
+                    `;
+                    relatedListContainer.appendChild(rCard);
+                });
+
+                if (visibleCount >= relatedData.length) {
+                    viewMoreBtn.style.display = "none";
+                } else {
+                    viewMoreBtn.style.display = "block";
+                }
+            }
+
+            viewMoreBtn.onclick = () => {
+                visibleCount += 5;
+                renderRelatedVideos();
+            };
+
+            renderRelatedVideos();
+        }
+
+        function init() {
+            if (typeof movieData !== 'undefined' && movieData.length > 0) {
+                generateNavigationMenus();
+                filteredData = movieData;
+                displayCards(filteredData, cardContainer, rows_per_page, current_page, "", 'all');
+                setupPagination(filteredData, paginationContainer, rows_per_page, "");
+            } else {
+                cardContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#777; padding:40px;">Data movieData tidak ditemukan.</p>`;
+            }
+        }
+
+        // Jalankan saat halaman dibuka
+        updateLoginUI();
+        if (localStorage.getItem('hdv_logged_in')) {
+            init();
+        }
+    </script>
+</body>
+</html>
