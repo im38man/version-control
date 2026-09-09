@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Tentang - Portofolio Fotografi Firman Hidayat</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Cardo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <!-- File CSS Vendor -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  
+  <!-- Favicon Logo Kamera -->
+  <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22%23333333%22><path d=%22M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z%22/><path d=%22M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7%22/><path d=%22M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0%22/></svg>">
+
+  <!-- File CSS Utama -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Desain CSS Tambahan & Custom Scrollbar -->
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333333;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555555;
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #333333 #121212;
+    }
+
+    .search-toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 0.25rem 0.4rem;
+      transition: color 0.3s ease;
+    }
+    .search-toggle-btn:hover {
+      color: var(--accent-color, #ffffff);
+    }
+    .search-dropdown-panel {
+      display: none;
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      padding: 20px 0;
+    }
+    .search-dropdown-panel.active {
+      display: block;
+      animation: slideDown 0.25s ease-in-out;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 1199px) {
+      .header .container-fluid {
+        flex-direction: row !important;
+      }
+      .logo {
+        order: 1 !important;
+        margin-right: auto !important;
+      }
+      .custom-right-actions {
+        order: 2 !important;
+        margin-right: 10px !important;
+      }
+      .mobile-nav-toggle {
+        order: 3 !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="about-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+
+      <!-- 1. Logo Brand di Kiri -->
+      <a href="index.html" class="logo d-flex align-items-center">
+        <i class="bi bi-camera"></i>
+        <h1 class="sitename">Firman Hidayat</h1>
+      </a>
+
+      <!-- 2. Navigasi Menu -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Beranda<br></a></li>
+          <li><a href="about.html" class="active">Tentang</a></li>
+          
+          <!-- Dropdown Galeri Dinamis -->
+          <li class="dropdown"><a href="gallery.html"><span>Galeri</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul id="nav-category-dropdown">
+              <!-- Kategori akan terisi otomatis dari data.js melalui script -->
+            </ul>
+          </li>
+
+          <li><a href="services.html">Layanan</a></li>
+          <li><a href="contact.html">Kontak</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <!-- 3. Tombol Search & Sosmed di Kanan -->
+      <div class="custom-right-actions d-flex align-items-center gap-2">
+        <!-- Tombol Ikon Search -->
+        <button type="button" id="searchToggleBtn" class="search-toggle-btn" title="Cari Foto">
+          <i class="bi bi-search"></i>
+        </button>
+
+        <!-- Ikon Sosmed -->
+        <div class="header-social-links d-flex align-items-center gap-1">
+          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Search Dropdown yang Muncul Kebawah (Langsung mengarah ke index.html?search=...) -->
+    <div id="searchDropdownPanel" class="search-dropdown-panel">
+      <div class="container">
+        <form action="index.html" method="GET">
+          <div class="input-group input-group-lg">
+            <input type="text" name="search" id="searchInput" class="form-control ps-3 shadow-none rounded-start-pill" placeholder="Ketik judul foto, lokasi, atau kategori yang ingin dicari..." required>
+            <button class="btn btn-dark px-4" type="submit" title="Cari">
+              <i class="bi bi-search"></i>
+            </button>
+            <button type="button" id="closeSearchPanel" class="btn btn-outline-secondary px-3 rounded-end-pill" title="Tutup"><i class="bi bi-x-lg"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Judul Halaman -->
+    <div class="page-title" data-aos="fade">
+      <div class="heading">
+        <div class="container">
+          <div class="row d-flex justify-content-center text-center">
+            <div class="col-lg-8">
+              <h1>Tentang Saya</h1>
+              <p class="mb-0">Mengenal lebih dekat perjalanan profesional, dedikasi, dan visi artistik Firman Hidayat di dunia fotografi.</p>
+              <a href="contact.html" class="cta-btn">Tersedia untuk Disewa<br></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="breadcrumbs">
+        <div class="container">
+          <ol>
+            <li><a href="index.html">Beranda</a></li>
+            <li class="current">Tentang</li>
+          </ol>
+        </div>
+      </nav>
+    </div><!-- Akhir Judul Halaman -->
+
+    <!-- Bagian Tentang -->
+    <section id="about" class="about section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4 justify-content-center">
+          <div class="col-lg-4">
+            <img src="assets/img/profile-img.jpg" class="img-fluid" alt="Firman Hidayat">
+          </div>
+          <div class="col-lg-5 content">
+            <h2>Fotografer Profesional &amp; Pemerhati Estetika Visual.</h2>
+            <p class="fst-italic py-3">
+              Berpengalaman dalam mengabadikan berbagai momen berharga melalui pendekatan visual yang dinamis, tajam, dan penuh makna.
+            </p>
+            <div class="row">
+              <div class="col-lg-6">
+                <ul>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Tanggal Lahir:</strong> <span>1 Mei 1995</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Situs Web:</strong> <span>www.firmanhidayat.com</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Telepon:</strong> <span>+62 812 3456 7890</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Kota:</strong> <span>Bandung, Indonesia</span></li>
+                </ul>
+              </div>
+              <div class="col-lg-6">
+                <ul>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Usia:</strong> <span>31</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Pendidikan:</strong> <span>Magister Seni Rupa & Desain</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>info@firmanhidayat.com</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Lepas (Freelance):</strong> <span>Tersedia</span></li>
+                </ul>
+              </div>
+            </div>
+            <p class="py-3">
+              Dedikasi tinggi terhadap dunia fotografi mendorong eksplorasi tanpa batas pada setiap sudut pandang objek. Mulai dari keindahan bentang alam, arsitektur modern, hingga potret personal yang sarat emosi.
+            </p>
+            <p class="m-0">
+              Setiap karya dirancang untuk bercerita secara visual, menghadirkan standar kualitas tinggi yang memuaskan ekspektasi klien serta memberikan kepuasan estetika tersendiri bagi penikmat seni fotografi.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Bagian Tentang -->
+
+    <!-- Bagian Testimoni -->
+    <section id="testimonials" class="testimonials section">
+
+      <!-- Judul Bagian -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Testimoni</h2>
+        <p>Apa kata mereka</p>
+      </div><!-- Akhir Judul Bagian -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              },
+              "breakpoints": {
+                "320": {
+                  "slidesPerView": 1,
+                  "spaceBetween": 40
+                },
+                "1200": {
+                  "slidesPerView": 3,
+                  "spaceBetween": 1
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p>
+                  Hasil jepretan foto pemandangannya sangat luar biasa dan bernyawa. Sangat profesional dalam menentukan sudut pengambilan gambar di lapangan.
+                </p>
+                <div class="profile mt-auto">
+                  <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+                  <h3>Budi Santoso</h3>
+                  <h4>CEO &amp; Pendiri</h4>
+                </div>
+              </div>
+            </div><!-- Akhir Item Testimoni -->
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p>
+                  Kualitas kerja yang sangat rapi, detail pencahayaan sangat diperhatikan dengan baik. Sangat memuaskan bekerja sama dengan Firman Hidayat.
+                </p>
+                <div class="profile mt-auto">
+                  <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
+                  <h3>Rina Kartika</h3>
+                  <h4>Desainer Senior</h4>
+                </div>
+              </div>
+            </div><!-- Akhir Item Testimoni -->
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p>
+                  Dokumentasi event yang dikerjakan berhasil menangkap momen-momen penting secara natural dan artistik tanpa cela sedikitpun.
+                </p>
+                <div class="profile mt-auto">
+                  <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
+                  <h3>Jena Karlis</h3>
+                  <h4>Pemilik Galeri</h4>
+                </div>
+              </div>
+            </div><!-- Akhir Item Testimoni -->
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p>
+                  Fotografer yang sangat komunikatif, paham betul apa yang diinginkan klien, dan hasil akhirnya selalu melebihi ekspektasi awal.
+                </p>
+                <div class="profile mt-auto">
+                  <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
+                  <h3>Dimas Pratama</h3>
+                  <h4>Pekerja Lepas</h4>
+                </div>
+              </div>
+            </div><!-- Akhir Item Testimoni -->
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p>
+                  Sentuhan editing dan ketajaman visualnya benar-benar berkelas tinggi. Sangat direkomendasikan untuk proyek komersial maupun personal.
+                </p>
+                <div class="profile mt-auto">
+                  <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
+                  <h3>John Larson</h3>
+                  <h4>Wirausahawan</h4>
+                </div>
+              </div>
+            </div><!-- Akhir Item Testimoni -->
+
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+      </div>
+
+    </section><!-- /Bagian Testimoni -->
+
+  </main>
+
+  <footer id="footer" class="footer">
+
+    <div class="container">
+      <div class="copyright text-center ">
+        <p>© <span>Hak Cipta</span> <strong class="px-1 sitename">Firman Hidayat</strong> <span>Seluruh Hak Cipta Dilindungi</span></p>
+      </div>
+      <div class="social-links d-flex justify-content-center">
+        <a href=""><i class="bi bi-twitter-x"></i></a>
+        <a href=""><i class="bi bi-facebook"></i></a>
+        <a href=""><i class="bi bi-instagram"></i></a>
+        <a href=""><i class="bi bi-linkedin"></i></a>
+      </div>
+      <div class="credits">
+        Dibuat oleh <a href="#">Tim Pengembang</a>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Gulir ke Atas -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Pramemuat (Preloader) -->
+  <div id="preloader">
+    <div class="line"></div>
+  </div>
+
+  <!-- Memuat File Data Dummy -->
+  <script src="data.js"></script>
+
+  <!-- Script untuk merender navbar kategori secara dinamis & toggle modal search -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const navCategoryDropdown = document.getElementById("nav-category-dropdown");
+      const searchInput = document.getElementById("searchInput");
+      const searchToggleBtn = document.getElementById("searchToggleBtn");
+      const searchDropdownPanel = document.getElementById("searchDropdownPanel");
+      const closeSearchPanel = document.getElementById("closeSearchPanel");
+
+      // Logika Toggle Panel Search Buka/Tutup
+      if (searchToggleBtn && searchDropdownPanel) {
+        searchToggleBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          searchDropdownPanel.classList.toggle("active");
+          if (searchDropdownPanel.classList.contains("active") && searchInput) {
+            searchInput.focus();
+          }
+        });
+
+        if (closeSearchPanel) {
+          closeSearchPanel.addEventListener("click", () => {
+            searchDropdownPanel.classList.remove("active");
+          });
+        }
+
+        document.addEventListener("click", (e) => {
+          if (!searchDropdownPanel.contains(e.target) && !searchToggleBtn.contains(e.target)) {
+            searchDropdownPanel.classList.remove("active");
+          }
+        });
+      }
+
+      // Render Kategori Navbar
+      if (typeof dataGaleriFirman !== "undefined" && navCategoryDropdown) {
+        const uniqueCategories = [...new Set(dataGaleriFirman.map(item => item.category))];
+        
+        let navHtml = `<li><a href="gallery.html">Semua Galeri</a></li>`;
+        uniqueCategories.forEach(category => {
+          navHtml += `<li><a href="gallery.html?category=${encodeURIComponent(category)}">${category}</a></li>`;
+        });
+        
+        navCategoryDropdown.innerHTML = navHtml;
+      }
+    });
+  </script>
+
+  <!-- File JS Vendor -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- File JS Utama -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
