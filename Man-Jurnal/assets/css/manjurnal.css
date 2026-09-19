@@ -350,6 +350,13 @@
     .content a {
       margin-bottom: 1rem;
       text-decoration: none;
+      color: #007bff; /* Mengubah warna teks link menjadi biru */
+    }
+
+    /* Opsional: Tambahkan efek saat kursor diarahkan ke link (hover) */
+    .content a:hover {
+      color: #0056b3; 
+      text-decoration: underline; 
     }
 
     .btn-custom-primary {
