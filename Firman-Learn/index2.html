@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nihongo Master SPA - Belajar & Kuis (Anti-Crash Edition)</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Work Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Internal Sesuai Referensi & Responsive Full -->
+    <style>
+        :root {
+            --body-font : "Work Sans", sans-serif;
+            --bs-btn-font-family : "Work Sans", sans-serif;
+        }
+
+        :root {
+            --bs-blue: #4BA1A7;
+            --bs-red: #F0756C;
+            --bs-orange: #F5E9E9;
+            --bs-yellow: #EFEAEA;
+            --bs-green: #F5F8F1;
+            --bs-teal: #EFE8EF;
+            --bs-cyan: #F3F3F3;
+            --bs-black: #111111; 
+            --bs-white: #FFFFFF;
+            --bs-gray: #777777; 
+            
+            --bs-link-color: #111111;
+            --bs-link-hover-color: #F0756C;
+            
+            --bs-primary: #F0756C;
+            --bs-primary-rgb: 240, 117, 108;
+            --bs-body-color: #111111;   
+            --bs-info: #C3C3C3; 
+        }
+
+        /* Scrollbar Kustom */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bs-cyan); }
+        ::-webkit-scrollbar-thumb { background: var(--bs-info); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--bs-primary); }
+        * { scrollbar-width: thin; scrollbar-color: var(--bs-info) var(--bs-cyan); }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bs-cyan);
+            color: var(--bs-body-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2, h3, h4, h5, h6 { font-weight: 700; }
+
+        .btn-primary {
+            --bs-btn-color: var(--bs-black);
+            --bs-btn-bg: var(--bs-orange);
+            --bs-btn-border-color: var(--bs-orange);
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: var(--bs-black);
+            --bs-btn-hover-border-color: var(--bs-black);
+        }
+        
+        .btn-info-custom {
+            background-color: var(--bs-blue);
+            color: var(--bs-white);
+            border-color: var(--bs-blue);
+        }
+        .btn-info-custom:hover {
+            background-color: var(--bs-black);
+            color: var(--bs-white);
+        }
+
+        .bg-yellow { background-color: var(--bs-yellow) !important; }
+
+        .testimonial-card {
+            background: var(--bs-black);
+            color: var(--bs-white);
+            border-radius: 1rem;
+            width: 100%;
+        }
+
+        /* SPA View Controller */
+        .spa-view { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .spa-view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Grid Level Selector */
+        .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (min-width: 576px) { .level-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 768px) { .level-grid { grid-template-columns: repeat(5, 1fr); } }
+
+        .level-card {
+            background: var(--bs-yellow); color: var(--bs-black);
+            border: 2px solid transparent; border-radius: 12px;
+            padding: 15px 10px; text-align: center; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .level-card small { font-size: 0.7rem; font-weight: 400; color: var(--bs-gray); margin-top: 5px; }
+        .level-card:hover:not(.locked) { background: var(--bs-orange); border-color: var(--bs-primary); transform: translateY(-3px); }
+        .level-card.locked { background: var(--bs-info); color: var(--bs-gray); cursor: not-allowed; opacity: 0.6; }
+        .level-card.completed { border-color: var(--bs-blue); }
+
+        /* Custom Dialog Box Responsive */
+        .custom-dialog-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(17, 17, 17, 0.6); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1050; opacity: 0; visibility: hidden; transition: all 0.3s ease; padding: 15px;
+        }
+        .custom-dialog-overlay.active { opacity: 1; visibility: visible; }
+        .custom-dialog-box {
+            background: var(--bs-white); color: var(--bs-black); padding: 2rem;
+            border-radius: 16px; max-width: 420px; width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .custom-dialog-overlay.active .custom-dialog-box { transform: translateY(0); }
+
+        /* Quiz Options Styling */
+        .quiz-option {
+            background-color: var(--bs-yellow) !important; color: var(--bs-black) !important;
+            border: 2px solid var(--bs-yellow); transition: all 0.2s ease-in-out;
+            cursor: pointer; user-select: none; border-radius: 0.5rem; font-size: 0.95rem;
+        }
+        @media (min-width: 768px) { .quiz-option { font-size: 1.05rem; } }
+        .quiz-option:hover { background-color: var(--bs-orange) !important; border-color: var(--bs-primary) !important; color: var(--bs-black) !important; }
+        .quiz-option.selected { background-color: var(--bs-primary) !important; color: var(--bs-white) !important; border-color: var(--bs-primary) !important; }
+
+        /* Styling List Belajar */
+        .study-list-item { border-bottom: 1px dashed rgba(255,255,255,0.2); }
+        .study-list-item:last-child { border-bottom: none; }
+
+        /* Styling Review Jawaban Kuis */
+        .review-correct { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+        .review-wrong { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+        .review-card { background-color: var(--bs-cyan); color: var(--bs-black); }
+    </style>
+</head>
+<body>
+
+    <div class="container py-4 my-auto">
+        
+        <!-- ================= VIEW 1: MENU UTAMA ================= -->
+        <div id="view-home" class="spa-view active">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-12 col-md-10 col-lg-8 text-center">
+                    <div class="testimonial-card p-4 p-md-5 shadow-sm">
+                        <span class="badge bg-yellow text-dark mb-3 px-3 py-2"><i class="fa-solid fa-language me-1"></i> Nihongo Master SPA</span>
+                        <h1 class="display-5 display-md-4 mb-3" style="color: var(--bs-orange);">日本語クイズ</h1>
+                        <p class="lead mb-4 text-secondary fs-6 fs-md-5" style="color: var(--bs-info) !important;">
+                            Pelajari materi dengan *Furigana/Romaji*, lalu uji kemampuanmu dengan Kanji murni di Kuis. Syarat lulus minimal <b>70% (35 benar)</b>!
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <button class="btn btn-info-custom px-4 py-3 fs-6 w-100 w-sm-auto fw-bold" onclick="switchView('view-study')">
+                                <i class="fa-solid fa-book-open-reader me-2"></i> Belajar Materi
+                            </button>
+                            <button class="btn btn-primary px-4 py-3 fs-6 w-100 w-sm-auto fw-bold" onclick="switchView('view-levels')">
+                                <i class="fa-solid fa-gamepad me-2"></i> Mainkan Kuis
+                            </button>
+                            <button class="btn btn-outline-light px-4 py-3 w-100 w-sm-auto" onclick="resetProgress()">
+                                <i class="fa-solid fa-rotate-left me-1"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: MATERI BELAJAR ================= -->
+        <div id="view-study" class="spa-view">
+            <div class="row justify-content-center mb-3">
+                <div class="col-12 col-md-10 col-lg-8 d-flex justify-content-between align-items-center">
+                    <button class="btn btn-outline-dark btn-sm px-3" onclick="switchView('view-home')">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Menu Utama
+                    </button>
+                    <span class="text-muted fw-bold small"><i class="fa-solid fa-list-check me-1"></i> Kisi-kisi Materi</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="testimonial-card p-4 p-md-5 shadow-sm">
+                        <h3 class="mb-4 text-center fs-4" style="color: var(--bs-orange);">
+                            <i class="fa-solid fa-book me-2"></i> Buku Panduan Belajar
+                        </h3>
+                        <p class="text-center small mb-4" style="color: var(--bs-info);">
+                            Dilengkapi cara baca (Hiragana / Romaji) khusus untuk mode belajar.
+                        </p>
+                        <div id="study-content-list" style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+                            <!-- Konten List Belajar Dimuat via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 3: PILIH LEVEL ================= -->
+        <div id="view-levels" class="spa-view">
+            <div class="row justify-content-center mb-3">
+                <div class="col-12 col-md-10 col-lg-8 d-flex justify-content-between align-items-center">
+                    <button class="btn btn-outline-dark btn-sm px-3" onclick="switchView('view-home')">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Menu Utama
+                    </button>
+                    <span class="text-muted fw-bold small"><i class="fa-solid fa-map-location-dot me-1"></i> Peta Kesulitan</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="testimonial-card p-4 p-md-5 shadow-sm">
+                        <h3 class="mb-4 text-center fs-4 fs-md-3" style="color: var(--bs-orange);">
+                            <i class="fa-solid fa-layer-group me-2"></i> Daftar Level Kuis
+                        </h3>
+                        <div class="level-grid" id="levelGridContainer">
+                            <!-- Dimuat JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 4: RUANG KUIS & HASIL ================= -->
+        <div id="view-quiz" class="spa-view">
+            <div class="row justify-content-center mb-3">
+                <div class="col-12 col-md-10 col-lg-8 d-flex justify-content-between align-items-center">
+                    <button class="btn btn-outline-dark btn-sm px-3" onclick="switchView('view-levels')">
+                        <i class="fa-solid fa-person-running me-1"></i> Batal & Keluar
+                    </button>
+                    <span class="text-muted fw-bold small" id="level-title-indicator"><i class="fa-solid fa-flag me-1"></i> Level 1</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="testimonial-card p-4 p-md-5 shadow-sm">
+                        
+                        <!-- Kontainer Soal -->
+                        <div id="quiz-container">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-yellow text-dark px-3 py-2" id="quiz-progress"><i class="fa-solid fa-hashtag me-1"></i> Soal 1 / 50</span>
+                                <span class="badge bg-info text-dark px-3 py-2" id="quiz-category"><i class="fa-solid fa-tag me-1"></i> Kategori</span>
+                            </div>
+                            
+                            <h4 id="quiz-question" class="mb-4 fs-5 fs-md-4" style="line-height: 1.5;">Pertanyaan...</h4>
+                            
+                            <div class="d-grid gap-3 mb-4" id="quiz-options-list">
+                                <!-- Opsi dimuat JS -->
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <button class="btn btn-outline-light btn-sm px-3 px-md-4" id="prev-btn" onclick="prevQuestion()" disabled>
+                                    <i class="fa-solid fa-chevron-left me-1"></i> Sebelumnya
+                                </button>
+                                <button class="btn btn-primary px-4 py-2 fw-bold" id="next-btn" onclick="nextQuestion()">
+                                    Selanjutnya <i class="fa-solid fa-chevron-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Kontainer Hasil & Review -->
+                        <div id="quiz-result" class="text-center" style="display: none;">
+                            <h3 class="mb-3 fs-3" style="color: var(--bs-red);" id="result-title">Hasil</h3>
+                            <p class="lead mb-2 fs-5" id="score-text">Benar: 0 / 50</p>
+                            <p class="lead mb-4 fs-6" id="percentage-text">Persentase: 0%</p>
+                            <div class="alert bg-black border border-secondary text-info mb-4" id="unlock-msg"></div>
+                            
+                            <div class="d-flex justify-content-center gap-3 flex-wrap mb-4 pb-4 border-bottom border-secondary">
+                                <button class="btn btn-primary px-4 py-2 fw-bold" onclick="restartLevel()">
+                                    <i class="fa-solid fa-rotate-right me-1"></i> Ulangi Level
+                                </button>
+                                <button class="btn btn-outline-light px-4 py-2" onclick="switchView('view-levels')">
+                                    <i class="fa-solid fa-list me-1"></i> Daftar Level
+                                </button>
+                            </div>
+
+                            <!-- Bagian Review Jawaban -->
+                            <div class="text-start mt-2">
+                                <h4 class="mb-3 fs-5" style="color: var(--bs-orange);"><i class="fa-solid fa-clipboard-check me-2"></i>Review Jawaban Anda</h4>
+                                <div id="quiz-review-list" style="max-height: 450px; overflow-y: auto;" class="pe-2">
+                                    <!-- List review dimuat oleh JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Responsive -->
+    <footer class="text-center py-3 text-muted small">
+        <i class="fa-solid fa-code me-1"></i> Nihongo Quiz SPA &copy; 2026 - Dilengkapi Strict Quiz Mode (Kanji Murni)
+    </footer>
+
+    <!-- Custom Dialog Box -->
+    <div class="custom-dialog-overlay" id="dialogOverlay">
+        <div class="custom-dialog-box text-center">
+            <h4 id="dialogTitle" class="mb-2 fs-5"><i class="fa-solid fa-circle-exclamation text-warning me-2"></i> Judul</h4>
+            <p id="dialogMessage" class="mb-4 text-secondary small">Pesan...</p>
+            <button class="btn btn-primary w-100 py-2 fw-bold" onclick="closeDialog()">Mengerti <i class="fa-solid fa-check ms-1"></i></button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const levelNames = [
+            "L1: Pemula (Salam & Kosakata Dasar N5)", 
+            "L2: Pemula Lanjut (Waktu, Angka & Kata Kerja)", 
+            "L3: Dasar (Partikel & Kata Sifat N5)", 
+            "L4: Pra-Menengah (Bentuk Te & Ta N4)", 
+            "L5: Menengah (Potensial & Keharusan N4)", 
+            "L6: Menengah Lanjut (Pasif & Kausatif N3)", 
+            "L7: Pra-Mahir (Pengandaian & Keigo Dasar)", 
+            "L8: Mahir (Sonkeigo, Kenjougo N2)", 
+            "L9: Profesional (Tata Bahasa Ekstra N2)", 
+            "L10: Master (N1 Kanji, Idiom/Kotowaza)"
+        ];
+
+        // Databank Ekstensif (Dengan Hiragana & Romaji)
+        const db = {
+            salam: [
+                ["おはよう (ohayou)", "Selamat pagi", "Selamat malam", "Halo", "Sampai jumpa"],
+                ["こんばんは (konbanwa)", "Selamat malam", "Selamat pagi", "Maaf", "Terima kasih"],
+                ["さようなら (sayounara)", "Selamat tinggal", "Permisi", "Halo", "Sama-sama"],
+                ["ありがとう (arigatou)", "Terima kasih", "Maaf", "Tolong", "Sama-sama"],
+                ["すみません (sumimasen)", "Permisi/Maaf", "Halo", "Terima kasih", "Selamat jalan"],
+                ["いただきます (itadakimasu)", "Selamat makan", "Terima kasih", "Kenyang", "Enak"],
+                ["ごちそうさま (gochisousama)", "Terima kasih (setelah makan)", "Selamat makan", "Maaf", "Halo"],
+                ["はじめまして (hajimemashite)", "Senang berkenalan", "Sampai jumpa", "Terima kasih", "Maaf"],
+                ["ただいま (tadaima)", "Saya pulang", "Selamat datang", "Hati-hati", "Permisi"],
+                ["おかえり (okaeri)", "Selamat datang (di rumah)", "Saya pergi", "Sampai jumpa", "Hati-hati"]
+            ],
+            angkaDasar: [
+                "Satu:一 (いち / ichi)", "Dua:二 (に / ni)", "Tiga:三 (さん / san)", "Empat:四 (よん / yon)", "Lima:五 (ご / go)", 
+                "Enam:六 (ろく / roku)", "Tujuh:七 (なな / nana)", "Delapan:八 (はち / hachi)", "Sembilan:九 (きゅう / kyuu)", 
+                "Sepuluh:十 (じゅう / juu)", "Sebelas:十一 (じゅういち / juuichi)", "Dua belas:十二 (じゅうに / juuni)", 
+                "Dua puluh:二十 (にじゅう / nijuu)", "Seratus:百 (ひゃく / hyaku)", "Seribu:千 (せん / sen)", 
+                "Sepuluh ribu:万 (まん / man)", "Nol:零 (ゼロ / zero)", "Tiga belas:十三 (じゅうさん / juusan)", 
+                "Tiga Ratus:三百 (さんびゃく / sanbyaku)", "Tiga Ribu:三千 (さんぜん / sanzen)"
+            ],
+            bendaN5: [
+                "Buku:本 (ほん / hon)", "Mobil:車 (くるま / kuruma)", "Tas:鞄 (かばん / kaban)", "Sepatu:靴 (くつ / kutsu)", 
+                "Kucing:猫 (ねこ / neko)", "Anjing:犬 (いぬ / inu)", "Air:水 (みず / mizu)", "Pohon:木 (き / ki)", 
+                "Sekolah:学校 (がっこう / gakkou)", "Guru:先生 (せんせい / sensei)", "Siswa:学生 (がくせい / gakusei)", 
+                "Teman:友達 (ともだち / tomodachi)", "Rumah:家 (いえ / ie)", "Stasiun:駅 (えき / eki)", 
+                "Kamar:部屋 (へや / heya)", "Meja:机 (つくえ / tsukue)", "Kursi:椅子 (いす / isu)", 
+                "Payung:傘 (かさ / kasa)", "Koran:新聞 (しんぶん / shinbun)", "Kamus:辞書 (じしょ / jisho)"
+            ],
+            hariWaktu: [
+                "Senin:月曜日 (げつようび / getsuyoubi)", "Selasa:火曜日 (かようび / kayoubi)", "Rabu:水曜日 (すいようび / suiyoubi)", 
+                "Kamis:木曜日 (もくようび / mokuyoubi)", "Jumat:金曜日 (きんようび / kinyoubi)", "Sabtu:土曜日 (どようび / doyoubi)", 
+                "Minggu:日曜日 (にちようび / nichiyoubi)", "Hari ini:今日 (きょう / kyou)", "Besok:明日 (あした / ashita)", 
+                "Kemarin:昨日 (きのう / kinou)", "Lusa:明後日 (あさって / asatte)", "Sekarang:今 (いま / ima)", 
+                "Pagi:朝 (あさ / asa)", "Siang:昼 (ひる / hiru)", "Malam:夜 (よる / yoru)", "Jam 1:一時 (いちじ / ichiji)", 
+                "Jam 2:二時 (にじ / niji)", "Setengah (Jam):半 (はん / han)", "Tahun ini:今年 (ことし / kotoshi)", "Bulan depan:来月 (らいげつ / raigetsu)"
+            ],
+            kerjaMasu: [
+                "Makan:食べます (たべます / tabemasu)", "Minum:飲みます (のみます / nomimasu)", "Tidur:寝ます (ねます / nemasu)", 
+                "Bangun:起きます (おきます / okimasu)", "Melihat:見ます (みます / mimasu)", "Mendengar:聞きます (ききます / kikimasu)", 
+                "Membaca:読みます (よみます / yomimasu)", "Menulis:書きます (かきます / kakimasu)", "Membeli:買います (かいます / kaimasu)", 
+                "Pergi:行きます (いきます / ikimasu)", "Datang:来ます (きます / kimasu)", "Pulang:帰ります (かえります / kaerimasu)", 
+                "Bertemu:会います (あいます / aimasu)", "Bekerja:働きます (はたらきます / hatarakimasu)", "Bermain:遊びます (あそびます / asobimasu)", 
+                "Berbicara:話します (はなします / hanashimasu)", "Menunggu:待ちます (まちます / machimasu)", "Mengerti:分かります (わかります / wakarimasu)", 
+                "Membuat:作ります (つくります / tsukurimasu)", "Berenang:泳ぎます (およぎます / oyogimasu)"
+            ],
+            sifatN5: [
+                "Besar:大きい (おおきい / ookii)", "Kecil:小さい (ちいさい / chiisai)", "Baru:新しい (あたらしい / atarashii)", 
+                "Lama/Kuno:古い (ふるい / furui)", "Panas:暑い (あつい / atsui)", "Dingin (suhu):寒い (さむい / samui)", 
+                "Dingin (benda):冷たい (つめたい / tsumetai)", "Sulit:難しい (むずかしい / muzukashii)", "Mudah:優しい (やさしい / yasashii)", 
+                "Mahal/Tinggi:高い (たかい / takai)", "Murah:安い (やすい / yasui)", "Rendah:低い (ひくい / hikui)", 
+                "Menarik:面白い (おもしろい / omoshiroi)", "Membosankan:つまらない (つまらない / tsumaranai)", "Sibuk:忙しい (いそがしい / isogashii)", 
+                "Senang:楽しい (たのしい / tanoshii)", "Cantik/Bersih:綺麗な (きれいな / kireina)", "Tenang:静かな (しずかな / shizukana)", 
+                "Terkenal:有名な (ゆうめいな / yuumeina)", "Ramai:賑やかな (にぎやかな / nigiyakana)", "Suka:好きな (すきな / sukina)", 
+                "Benci:嫌いな (きらいな / kiraina)", "Praktis:便利な (べんりな / benrina)", "Sehat:元気な (げんきな / genkina)",
+                "Baik:良い (いい / ii)" // Tambahan item ke-25 agar loop tidak crash
+            ],
+            partikel: [
+                ["Topik kalimat (Subject marker)", "は (wa)", "を (wo)", "に (ni)", "で (de)"],
+                ["Objek kalimat", "を (wo)", "が (ga)", "の (no)", "へ (e)"],
+                ["Kepemilikan (Posesif)", "の (no)", "に (ni)", "と (to)", "や (ya)"],
+                ["Lokasi kejadian (Di)", "で (de)", "に (ni)", "へ (e)", "を (wo)"],
+                ["Arah / Tujuan (Ke)", "へ (e)", "を (wo)", "が (ga)", "の (no)"]
+            ],
+            bentukTe: [
+                "Makan:食べて (たべて / tabete)", "Minum:飲んで (のんで / nonde)", "Membaca:読んで (よんで / yonde)", 
+                "Berbicara:話して (はなして / hanashite)", "Mendengar:聞いて (きいて / kiite)", "Pergi:行って (いって / itte)", 
+                "Menulis:書いて (かいて / kaite)", "Menunggu:待って (まって / matte)", "Membeli:買って (かって / katte)", 
+                "Berenang:泳いで (およいで / oyoide)", "Bermain:遊んで (あそんで / asonde)", "Datang:来て (きて / kite)", 
+                "Melakukan:して (して / shite)", "Melihat:見て (みて / mite)", "Tidur:寝て (ねて / nete)", 
+                "Bangun:起きて (おきて / okite)", "Meminjam:借りて (かりて / karite)", "Mandi:浴びて (あびて / abite)", 
+                "Mati:死んで (しんで / shinde)", "Berdiri:立って (たって / tatte)", "Duduk:座って (すわって / suwatte)", 
+                "Masuk:入って (はいって / haitte)", "Keluar:出て (でて / dete)", "Membuka:開けて (あけて / akete)", "Menutup:閉めて (しめて / shimete)"
+            ],
+            bentukTa: [
+                "Makan:食べた (たべた / tabeta)", "Minum:飲んだ (のんだ / nonda)", "Membaca:読んだ (よんだ / yonda)", 
+                "Berbicara:話した (はなした / hanashita)", "Mendengar:聞いた (きいた / kiita)", "Pergi:行った (いった / itta)", 
+                "Menulis:書いた (かいた / kaita)", "Menunggu:待った (まった / matta)", "Membeli:買った (かった / katta)", 
+                "Berenang:泳いだ (およいだ / oyoida)", "Bermain:遊んだ (あそんだ / asonda)", "Datang:来た (きた / kita)", 
+                "Melakukan:した (した / shita)", "Melihat:見た (みた / mita)", "Tidur:寝た (ねた / neta)", 
+                "Bangun:起きた (おきた / okita)", "Meminjam:借りた (かりた / karita)", "Mandi:浴びた (あびた / abita)", 
+                "Mati:死んだ (しんだ / shinda)", "Berdiri:立った (たった / tatta)", "Duduk:座った (すわった / suwatta)", 
+                "Masuk:入った (はいった / haitta)", "Keluar:出た (でた / deta)", "Membuka:開けた (あけた / aketa)", "Menutup:閉めた (しめた / shimeta)"
+            ],
+            kanoukei: [
+                "Bisa Makan:食べられる (たべられる / taberareru)", "Bisa Minum:飲める (のめる / nomeru)", "Bisa Pergi:行ける (いける / ikeru)", 
+                "Bisa Membaca:読める (よめる / yomeru)", "Bisa Berbicara:話せる (はなせる / hanaseru)", "Bisa Datang:来られる (こられる / korareru)", 
+                "Bisa Melakukan:できる (できる / dekiru)", "Bisa Melihat:見られる (みられる / mirareru)", "Bisa Mendengar:聞ける (きける / kikeru)", 
+                "Bisa Menulis:書ける (かける / kakeru)"
+            ],
+            shieki: [
+                "Menyuruh Makan:食べさせる (たべさせる / tabesaseru)", "Menyuruh Minum:飲ませる (のませる / nomaseru)", 
+                "Menyuruh Pergi:行かせる (いかせる / ikaseru)", "Menyuruh Datang:来させる (こさせる / kosaseru)", 
+                "Menyuruh Melakukan:させる (させる / saseru)", "Menyuruh Menulis:書かせる (かかせる / kakaseru)", 
+                "Menyuruh Membaca:読ませる (よませる / yomaseru)", "Menyuruh Berbicara:話させる (はなさせる / hanasaseru)", 
+                "Menyuruh Berenang:泳がせる (およがせる / oyogaseru)", "Menyuruh Bermain:遊ばせる (あそばせる / asobaseru)"
+            ],
+            ukemi: [
+                "Dimakan:食べられる (たべられる / taberareru)", "Diminum:飲まれる (のまれる / nomareru)", "Dilihat:見られる (みられる / mirareru)", 
+                "Ditegur/Marah:怒られる (おこられる / okorareru)", "Diundang:呼ばれる (よばれる / yobareru)", "Dibuat:作られる (つくられる / tsukurareru)", 
+                "Dipuji:褒められる (ほめられる / homerareru)", "Diinjak:踏まれる (ふまれる / fumareru)", "Dicuri:盗まれる (ぬすまれる / nusumareru)", 
+                "Ditinggalkan:残される (のこされる / nokosareru)"
+            ],
+            keigoSon: [
+                "Makan/Minum (Hormat):召し上がる (めしあがる / meshiagaru)", "Melihat (Hormat):ご覧になる (ごらんになる / goran ni naru)", 
+                "Mengatakan (Hormat):おっしゃる (おっしゃる / ossharu)", "Tahu (Hormat):ご存じだ (ごぞんじだ / gozonji da)", 
+                "Melakukan (Hormat):なさる (なさる / nasaru)", "Pergi/Datang/Ada (Hormat):いらっしゃる (いらっしゃる / irassharu)", 
+                "Memberi (Hormat):くださる (くださる / kudasaru)", "Mendengar (Hormat):お聞きになる (おききになる / okiki ni naru)", 
+                "Tidur (Hormat):お休みになる (おやすみになる / oyasumi ni naru)", "Membaca (Hormat):お読みになる (およみになる / oyomi ni naru)"
+            ],
+            keigoKen: [
+                "Makan/Minum (Merendah):いただく (いただく / itadaku)", "Melihat (Merendah):拝見する (はいけんする / haiken suru)", 
+                "Mengatakan (Merendah):申す (もうす / mousu)", "Tahu (Merendah):存じている (ぞんじている / zonjiteiru)", 
+                "Melakukan (Merendah):いたす (いたす / itasu)", "Pergi/Datang (Merendah):参る (まいる / mairu)", 
+                "Bertemu (Merendah):お目にかかる (おめにかかる / ome ni kakaru)", "Mendengar/Bertanya (Merendah):伺う (うかがう / ukagau)", 
+                "Ada (Merendah):おる (おる / oru)", "Menerima (Merendah):いただく (いただく / itadaku)"
+            ],
+            n2Grammar: [
+                ["~に違いない (~ni chigainai)", "Pasti / Tidak salah lagi", "Karena", "Meskipun", "Tergantung pada"],
+                ["~によって (~ni yotte)", "Oleh / Tergantung pada", "Pasti", "Seharusnya", "Sambil"],
+                ["~ざるを得ない (~zaru wo enai)", "Terpaksa harus", "Tidak mungkin", "Sedang", "Hanya"],
+                ["~わけがない (~wake ga nai)", "Tidak mungkin", "Bisa jadi", "Daripada", "Harus"],
+                ["~に対して (~ni taishite)", "Terhadap / Berlawanan dengan", "Sambil", "Meskipun", "Pasti"],
+                ["~べきだ (~beki da)", "Seharusnya / Sepatutnya", "Dilarang", "Pasti", "Boleh saja"],
+                ["~かねない (~kanenai)", "Bisa jadi (hal buruk terjadi)", "Pasti tidak", "Sedang", "Harus"],
+                ["~どころか (~dokoro ka)", "Jangankan... / Apalagi", "Meskipun", "Karena", "Sementara"],
+                ["~っぱなし (~ppanashi)", "Dibiarkan begitu saja terus", "Baru saja", "Tidak pernah", "Sedang terjadi"],
+                ["~つつある (~tsutsu aru)", "Sedang dalam proses (perubahan)", "Telah selesai", "Baru mulai", "Akan datang"]
+            ],
+            kotowaza: [
+                ["猿も木から落ちる (さるもきからおちる / saru mo ki kara ochiru)", "Sepandai-pandai tupai melompat, jatuh juga", "Sedikit demi sedikit lama-lama menjadi bukit", "Sekali merengkuh dayung", "Bagaikan air di daun talas"],
+                ["花より団子 (はなよりだんご / hana yori dango)", "Kenyataan (makanan) lebih baik dari keindahan", "Tiada gading yang tak retak", "Bunga mekar di pagi hari", "Sambil menyelam minum air"],
+                ["猫に小判 (ねこにこばん / neko ni koban)", "Memberikan sesuatu yang berharga pada orang yang tidak mengerti", "Kucing sembunyi kuku", "Bagai kucing dan anjing", "Uang bukan segalanya"],
+                ["一石二鳥 (いっせきにちょう / isseki nichou)", "Sambil menyelam minum air / Sekali tepuk dua lalat", "Satu untuk semua", "Kecil-kecil cabe rawit", "Cepat tapi lambat"],
+                ["塵も積もれば山となる (ちりもつもればやまとなる / chiri mo tsumoreba yama to naru)", "Sedikit-sedikit lama-lama menjadi bukit", "Besar pasak dari tiang", "Bagaikan air dan api", "Sekali gagal mencoba lagi"]
+            ]
+        };
+
+        // --- SISTEM RENDER MATERI BELAJAR (Menampilkan Furigana) ---
+        const studyMapping = [
+            { title: "Sapaan (Salam)", key: "salam", type: "array" },
+            { title: "Angka Dasar", key: "angkaDasar", type: "colon" },
+            { title: "Kata Benda Dasar", key: "bendaN5", type: "colon" },
+            { title: "Hari & Waktu", key: "hariWaktu", type: "colon" },
+            { title: "Kata Kerja (~Masu)", key: "kerjaMasu", type: "colon" },
+            { title: "Kata Sifat", key: "sifatN5", type: "colon" },
+            { title: "Fungsi Partikel", key: "partikel", type: "array-rev" },
+            { title: "Kata Kerja (~Te)", key: "bentukTe", type: "colon" },
+            { title: "Kata Kerja (~Ta / Lampau)", key: "bentukTa", type: "colon" },
+            { title: "Bentuk Potensial (Bisa)", key: "kanoukei", type: "colon" },
+            { title: "Kausatif (Menyuruh)", key: "shieki", type: "colon" },
+            { title: "Pasif (Di-)", key: "ukemi", type: "colon" },
+            { title: "Sonkeigo (Hormat)", key: "keigoSon", type: "colon" },
+            { title: "Kenjougo (Merendah)", key: "keigoKen", type: "colon" },
+            { title: "Tata Bahasa N2", key: "n2Grammar", type: "array" },
+            { title: "Peribahasa Jepang (Kotowaza)", key: "kotowaza", type: "array" }
+        ];
+
+        function renderStudyMaterials() {
+            const container = document.getElementById('study-content-list');
+            container.innerHTML = '';
+
+            studyMapping.forEach(section => {
+                let html = `<div class="mb-4">
+                    <h5 class="p-2 rounded mb-0 fw-bold" style="background: var(--bs-yellow); color: var(--bs-black);">
+                        <i class="fa-solid fa-bookmark me-2 text-secondary"></i>${section.title}
+                    </h5>
+                    <div class="px-2 pt-2">`;
+                
+                db[section.key].forEach(item => {
+                    let jpText = "", idText = "";
+                    if (section.type === "colon") {
+                        let parts = item.split(":");
+                        idText = parts[0]; jpText = parts[1];
+                    } else if (section.type === "array") {
+                        jpText = item[0]; idText = item[1];
+                    } else if (section.type === "array-rev") {
+                        idText = item[0]; jpText = item[1];
+                    }
+                    html += `
+                        <div class="d-flex justify-content-between py-2 study-list-item align-items-center">
+                            <span class="fw-bold" style="color: var(--bs-orange);"><i class="fa-solid fa-caret-right me-2 opacity-50"></i>${jpText}</span>
+                            <span class="text-end small" style="color: var(--bs-info);">${idText}</span>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+        renderStudyMaterials();
+
+        // --- ALGORITMA PENYUSUNAN SOAL KUIS (CHALLENGE MODE) ---
+        function stripFurigana(text) {
+            return text.replace(/\s*\(.*?\)\s*/g, '');
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        const allLevelsData = {};
+
+        // Membuat soal 4 opsi dengan distractor yang sengaja mirip/menjebak,
+        // bukan sekadar mengambil arti yang sama sekali tidak berhubungan.
+        function makeQuestion(c, q, answer, distractors) {
+            const unique = [...new Set([answer, ...distractors])].filter(Boolean);
+            return {
+                c, q,
+                opts: shuffle(unique.slice(0, 4)),
+                ans: answer
+            };
+        }
+
+        function makeContextQuestion(c, q, answer, distractors) {
+            return makeQuestion(c, q, answer, distractors);
+        }
+
+        function generateLevelData() {
+            try {
+                for (let lvl = 1; lvl <= 10; lvl++) allLevelsData[lvl] = [];
+
+                // LEVEL 1 — bukan sekadar hafalan arti; mulai pakai konteks.
+                const l1 = [
+                    ["「朝、先生に会いました。」Saat bertemu guru pagi hari, ucapan yang paling sesuai?", "おはよう", ["こんばんは", "さようなら", "ごちそうさま"]],
+                    ["「ご飯を食べる前に何と言いますか。」", "いただきます", ["ごちそうさま", "おかえり", "さようなら"]],
+                    ["「友達と初めて会いました。」Ucapan pembuka yang tepat?", "はじめまして", ["ただいま", "おかえり", "ごちそうさま"]],
+                    ["「家に帰ってきました。」Apa yang biasanya diucapkan oleh orang yang baru pulang?", "ただいま", ["おかえり", "いってきます", "はじめまして"]],
+                    ["「家にいる人が帰ってきた人に言います。」", "おかえり", ["ただいま", "いってきます", "こんばんは"]]
+                ];
+                l1.forEach(x => allLevelsData[1].push(makeContextQuestion("Sapaan & Situasi", x[0], x[1], x[2])));
+                for (let i = 0; allLevelsData[1].length < 50; i++) {
+                    const item = db.bendaN5[i % db.bendaN5.length];
+                    const [id, jpRaw] = item.split(":");
+                    const jp = stripFurigana(jpRaw);
+                    const sameType = db.bendaN5.map(x => x.split(":")[0]).filter(x => x !== id);
+                    const reverse = db.bendaN5.map(x => stripFurigana(x.split(":")[1])).filter(x => x !== jp);
+                    if (i % 2 === 0) {
+                        allLevelsData[1].push(makeQuestion("Kosakata N5", `「${jp}」が表すものはどれですか？`, id, shuffle(sameType).slice(0,3)));
+                    } else {
+                        allLevelsData[1].push(makeQuestion("Kosakata N5", `「${id}」を日本語で言うとどれですか？`, jp, shuffle(reverse).slice(0,3)));
+                    }
+                }
+
+                // LEVEL 2 — angka/waktu + kata kerja dalam kalimat.
+                for (let i = 0; i < 25; i++) {
+                    const item = db.hariWaktu[i % db.hariWaktu.length];
+                    const [id, jpRaw] = item.split(":");
+                    const jp = stripFurigana(jpRaw);
+                    const others = shuffle(db.hariWaktu.map(x => stripFurigana(x.split(":")[1])).filter(x => x !== jp)).slice(0,3);
+                    allLevelsData[2].push(makeQuestion("Waktu & Hari", `「${id}」に合う日本語はどれですか？`, jp, others));
+                }
+                for (let i = 0; allLevelsData[2].length < 50; i++) {
+                    const item = db.kerjaMasu[i % db.kerjaMasu.length];
+                    const [id, jpRaw] = item.split(":");
+                    const jp = stripFurigana(jpRaw);
+                    const others = shuffle(db.kerjaMasu.map(x => x.split(":")[0]).filter(x => x !== id)).slice(0,3);
+                    const subject = ["私は", "毎朝、私は", "週末に友達と", "学校で"][i % 4];
+                    allLevelsData[2].push(makeQuestion("Kata Kerja N5", `${subject}「${jp}」ます。文脈に合う意味は？`, id, others));
+                }
+
+                // LEVEL 3 — partikel berdasarkan kalimat, bukan definisi label.
+                const particleQs = [
+                    ["私は毎日、日本語___勉強します。", "を", ["に", "で", "は"]],
+                    ["学校___日本語を勉強します。", "で", ["に", "へ", "を"]],
+                    ["明日、東京___行きます。", "へ", ["で", "を", "の"]],
+                    ["これは私___本です。", "の", ["に", "で", "が"]],
+                    ["田中さん___学生です。", "は", ["を", "で", "へ"]],
+                    ["友達___映画を見ました。", "と", ["を", "に", "の"]]
+                ];
+                for (let i = 0; allLevelsData[3].length < 50; i++) {
+                    const x = particleQs[i % particleQs.length];
+                    allLevelsData[3].push(makeQuestion("Partikel dalam Konteks", x[0], x[1], x[2]));
+                }
+
+                // Tambahan kata sifat: pilih bentuk yang cocok dengan nomina/struktur.
+                const adjQs = [
+                    ["この本は___です。", "面白い", ["面白く", "面白な", "面白くて"]],
+                    ["京都は___町です。", "静かな", ["静かい", "静かに", "静かだ"]],
+                    ["このかばんは___です。", "高い", ["高く", "高かな", "高いな"]],
+                    ["今日は___です。", "暑い", ["暑な", "暑くな", "暑かな"]]
+                ];
+                for (let i = 0; allLevelsData[3].length < 50; i++) {
+                    const x = adjQs[i % adjQs.length];
+                    allLevelsData[3].push(makeQuestion("Kata Sifat & Bentuk", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 4 — peserta harus mengenali pola perubahan TE/TA.
+                const teQs = [
+                    ["「食べる」→ bentuk て?", "食べて", ["食べた", "食んで", "食べって"]],
+                    ["「飲む」→ bentuk て?", "飲んで", ["飲みて", "飲って", "飲んだ"]],
+                    ["「書く」→ bentuk て?", "書いて", ["書きて", "書んで", "書った"]],
+                    ["「行く」→ bentuk て?", "行って", ["行いて", "行んで", "行った"]],
+                    ["「待つ」→ bentuk た?", "待った", ["待いて", "待んだ", "待てた"]],
+                    ["「泳ぐ」→ bentuk た?", "泳いだ", ["泳いた", "泳って", "泳んだ"]]
+                ];
+                for (let i = 0; allLevelsData[4].length < 50; i++) {
+                    const x = teQs[i % teQs.length];
+                    allLevelsData[4].push(makeQuestion("Konjugasi TE/TA", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 5 — bentuk potensial + keharusan berbasis makna.
+                const potQs = [
+                    ["「読む」の可能形は？", "読める", ["読られる", "読みれる", "読ませる"]],
+                    ["「話す」の可能形は？", "話せる", ["話される", "話られる", "話させる"]],
+                    ["「来る」の可能形は？", "来られる", ["来れる", "来させる", "来させられる"]],
+                    ["「する」の可能形は？", "できる", ["させる", "される", "しられる"]]
+                ];
+                for (let i = 0; allLevelsData[5].length < 50; i++) {
+                    const x = potQs[i % potQs.length];
+                    allLevelsData[5].push(makeQuestion("Potensial", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 6 — kausatif/pasif: bedakan makna pelaku dan korban tindakan.
+                const voiceQs = [
+                    ["先生は学生に宿題を___。『menyuruh mengerjakan』", "させました", ["されました", "できました", "しました"]],
+                    ["私は先生に褒め___。『saya dipuji guru』", "られました", ["させました", "られません", "ました"]],
+                    ["母は子供に野菜を食べ___。", "させました", ["られました", "ました", "できます"]],
+                    ["私は友達に写真を撮ら___。", "れました", ["せました", "れません", "ました"]]
+                ];
+                for (let i = 0; allLevelsData[6].length < 50; i++) {
+                    const x = voiceQs[i % voiceQs.length];
+                    allLevelsData[6].push(makeQuestion("Kausatif & Pasif", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 7 — keigo dalam situasi, bukan hafalan daftar.
+                const keigoQs = [
+                    ["Atasan akan makan. Bentuk hormat yang tepat?", "召し上がります", ["いただきます", "食べられます", "食べます"]],
+                    ["Saat berbicara tentang tindakan diri sendiri kepada klien: 'Saya akan pergi'.", "参ります", ["いらっしゃいます", "行かれます", "行きます"]],
+                    ["Berbicara kepada pelanggan: 'Silakan lihat dokumen ini'.", "ご覧ください", ["拝見してください", "見てください", "見られます"]],
+                    ["Memperkenalkan diri secara merendah: 'Saya berkata...'.", "申します", ["おっしゃいます", "言います", "言われます"]]
+                ];
+                for (let i = 0; allLevelsData[7].length < 50; i++) {
+                    const x = keigoQs[i % keigoQs.length];
+                    allLevelsData[7].push(makeQuestion("Keigo & Situasi", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 8 — N2 grammar dalam kalimat; jawaban tidak sekadar definisi.
+                const n2Qs = [
+                    ["彼は来る___ない。", "に違い", ["わけが", "かね", "どころ"]],
+                    ["会社の規則___、この方法は禁止されています。", "によって", ["に違い", "どころか", "つつある"]],
+                    ["こんなに遅れたら、計画を変更せ___。", "ざるを得ない", ["わけがない", "べきだ", "っぱなし"]],
+                    ["彼がそんなことをする___。", "わけがない", ["に違いない", "かねない", "によって"]],
+                    ["健康___仕事の成果も変わります。", "によって", ["に対して", "どころか", "っぱなし"]],
+                    ["もっと早く準備する___だ。", "べき", ["わけ", "かね", "つつ"]]
+                ];
+                for (let i = 0; allLevelsData[8].length < 50; i++) {
+                    const x = n2Qs[i % n2Qs.length];
+                    allLevelsData[8].push(makeQuestion("Grammar N2 - Context", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 9 — nuance: pilih pola berdasarkan maksud, bukan terjemahan mentah.
+                const nuanceQs = [
+                    ["『buruknya mungkin terjadi』 paling cocok dengan pola mana?", "～かねない", ["～に違いない", "～わけがない", "～べきだ"]],
+                    ["『mustahil dia melakukan itu』 paling cocok dengan?", "～わけがない", ["～かねない", "～に違いない", "～っぱなし"]],
+                    ["『sedang mengalami perubahan/proses』 paling cocok dengan?", "～つつある", ["～っぱなし", "～どころか", "～ざるを得ない"]],
+                    ["『terpaksa harus』 karena keadaan tidak memungkinkan pilihan lain?", "～ざるを得ない", ["～べきだ", "～に対して", "～に違いない"]],
+                    ["『jangankan A, malah B』 paling cocok dengan?", "～どころか", ["～つつある", "～かねない", "～によって"]]
+                ];
+                for (let i = 0; allLevelsData[9].length < 50; i++) {
+                    const x = nuanceQs[i % nuanceQs.length];
+                    allLevelsData[9].push(makeQuestion("Nuansa Grammar N2", x[0], x[1], x[2]));
+                }
+
+                // LEVEL 10 — idiom/kotowaza + kanji recognition dengan distractor dekat.
+                for (let i = 0; allLevelsData[10].length < 50; i++) {
+                    const k = db.kotowaza[i % db.kotowaza.length];
+                    const jp = stripFurigana(k[0]);
+                    const answer = i % 2 === 0 ? k[1] : jp;
+                    if (i % 2 === 0) {
+                        const dis = shuffle(db.kotowaza.map(x => x[1]).filter(x => x !== k[1])).slice(0,3);
+                        allLevelsData[10].push(makeQuestion("Kotowaza & Idiom", `Makna 「${jp}」 dalam konteks budaya/ungkapan adalah?`, answer, dis));
+                    } else {
+                        const dis = shuffle(db.kotowaza.map(x => stripFurigana(x[0])).filter(x => x !== jp)).slice(0,3);
+                        allLevelsData[10].push(makeQuestion("Kanji & Kotowaza", `Ungkapan Jepang yang berarti "${k[1]}" adalah?`, answer, dis));
+                    }
+                }
+
+                // Pastikan setiap level tepat 50 soal dan jawaban diacak ulang.
+                for (let lvl = 1; lvl <= 10; lvl++) {
+                    allLevelsData[lvl] = allLevelsData[lvl].slice(0, 50);
+                    allLevelsData[lvl].forEach(q => {
+                        q.opts = shuffle(q.opts);
+                        q.answerIndex = q.opts.indexOf(q.ans);
+                    });
+                    allLevelsData[lvl] = shuffle(allLevelsData[lvl]);
+                }
+            } catch (error) {
+                console.error("Generator Error: ", error);
+            }
+        }
+
+        generateLevelData();
+
+        // --- MANAJEMEN STATE & LOCALSTORAGE ---
+        let currentLevel = 1;
+        let maxUnlockedLevel = parseInt(localStorage.getItem('nihongo_master_max')) || 1;
+
+        function saveProgress(unlocked) {
+            if (unlocked > maxUnlockedLevel) {
+                maxUnlockedLevel = unlocked;
+                localStorage.setItem('nihongo_master_max', maxUnlockedLevel);
+            }
+        }
+
+        function resetProgress() {
+            localStorage.removeItem('nihongo_master_max');
+            maxUnlockedLevel = 1;
+            renderLevelGrid();
+            openDialog("Sukses", "Seluruh progress kuis telah direset! Anda kembali ke Level 1.");
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.spa-view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (viewId === 'view-levels') renderLevelGrid();
+        }
+
+        function renderLevelGrid() {
+            const gridContainer = document.getElementById('levelGridContainer');
+            gridContainer.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const card = document.createElement('div');
+                card.className = 'level-card';
+                if (i <= maxUnlockedLevel) {
+                    card.innerHTML = `<i class="fa-solid fa-star mb-1" style="color: var(--bs-orange);"></i> Lvl ${i} <small>${levelNames[i-1].split(":")[0]}</small>`;
+                    if (i < maxUnlockedLevel) card.classList.add('completed');
+                    card.onclick = () => startLevel(i);
+                } else {
+                    card.classList.add('locked');
+                    card.innerHTML = `<i class="fa-solid fa-lock mb-1"></i> Lvl ${i} <small>Terkunci</small>`;
+                    card.onclick = () => openDialog("Akses Ditolak", `Selesaikan Level ${i - 1} dengan minimal benar 35 soal (70%) untuk membuka level ini.`);
+                }
+                gridContainer.appendChild(card);
+            }
+        }
+
+        function openDialog(title, message) {
+            document.getElementById('dialogTitle').innerHTML = `<i class="fa-solid fa-bell text-warning me-2"></i> ${title}`;
+            document.getElementById('dialogMessage').innerText = message;
+            document.getElementById('dialogOverlay').classList.add('active');
+        }
+        function closeDialog() { document.getElementById('dialogOverlay').classList.remove('active'); }
+        window.onclick = function(event) { if (event.target === document.getElementById('dialogOverlay')) closeDialog(); }
+
+        // --- LOGIKA KUIS ---
+        let currentQuizData = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = {};
+
+        function startLevel(levelNum) {
+            currentLevel = levelNum;
+            currentQuizData = [...allLevelsData[levelNum]];
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            
+            document.getElementById('level-title-indicator').innerHTML = `<i class="fa-solid fa-flag me-1"></i> ${levelNames[levelNum-1]}`;
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('quiz-result').style.display = 'none';
+            
+            switchView('view-quiz');
+            loadQuiz();
+        }
+
+        function loadQuiz() {
+            const cq = currentQuizData[currentQuestionIndex];
+            document.getElementById('quiz-progress').innerHTML = `<i class="fa-solid fa-hashtag me-1"></i> Soal ${currentQuestionIndex + 1} / 50`;
+            document.getElementById('quiz-category').innerHTML = `<i class="fa-solid fa-tag me-1"></i> ${cq.c}`;
+            document.getElementById('quiz-question').innerText = cq.q;
+            
+            const list = document.getElementById('quiz-options-list');
+            list.innerHTML = '';
+            cq.opts.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-3 quiz-option ${userAnswers[currentQuestionIndex] === idx ? 'selected' : ''}`;
+                div.innerText = opt;
+                div.onclick = () => { userAnswers[currentQuestionIndex] = idx; loadQuiz(); };
+                list.appendChild(div);
+            });
+
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === 49) {
+                document.getElementById('next-btn').innerHTML = `Selesai & Cek Hasil <i class="fa-solid fa-check ms-1"></i>`;
+            } else {
+                document.getElementById('next-btn').innerHTML = `Selanjutnya <i class="fa-solid fa-chevron-right ms-1"></i>`;
+            }
+        }
+
+        function nextQuestion() {
+            if (userAnswers[currentQuestionIndex] === undefined) {
+                openDialog("Peringatan", "Pilih salah satu jawaban terlebih dahulu!");
+                return;
+            }
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 50) loadQuiz();
+            else showScore();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) { currentQuestionIndex--; loadQuiz(); }
+        }
+
+        // --- SISTEM PENILAIAN & RENDER REVIEW JAWABAN ---
+        function showScore() {
+            score = 0;
+            let reviewHTML = "";
+
+            currentQuizData.forEach((item, index) => {
+                const userIdx = userAnswers[index];
+                const correctIdx = item.answerIndex;
+                const isCorrect = userIdx === correctIdx;
+
+                if (isCorrect) score++;
+
+                const userChoiceText = userIdx !== undefined ? item.opts[userIdx] : "Tidak dijawab";
+                const correctChoiceText = item.opts[correctIdx];
+
+                reviewHTML += `
+                    <div class="mb-3 p-3 rounded shadow-sm review-card border border-secondary">
+                        <p class="mb-2 fw-bold small opacity-75">${index + 1}. ${item.q}</p>
+                `;
+
+                if (isCorrect) {
+                    reviewHTML += `
+                        <div class="p-2 rounded small review-correct">
+                            <i class="fa-solid fa-circle-check me-1"></i> Jawaban Anda: ${userChoiceText}
+                        </div>
+                    `;
+                } else {
+                    reviewHTML += `
+                        <div class="p-2 mb-2 rounded small review-wrong">
+                            <i class="fa-solid fa-circle-xmark me-1"></i> Jawaban Anda: ${userChoiceText}
+                        </div>
+                        <div class="p-2 rounded small review-correct">
+                            <i class="fa-solid fa-circle-check me-1"></i> Jawaban Benar: ${correctChoiceText}
+                        </div>
+                    `;
+                }
+                reviewHTML += `</div>`;
+            });
+
+            const percentage = Math.round((score / 50) * 100);
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('score-text').innerText = `Jawaban Benar: ${score} dari 50 Soal`;
+            document.getElementById('percentage-text').innerText = `Persentase Kelulusan: ${percentage}%`;
+            document.getElementById('quiz-review-list').innerHTML = reviewHTML;
+
+            const unlockMsg = document.getElementById('unlock-msg');
+            const title = document.getElementById('result-title');
+            
+            if (percentage >= 70) {
+                title.innerHTML = '<i class="fa-solid fa-trophy"></i> 合格 (LULUS!)';
+                title.style.color = "var(--bs-blue)";
+                if (currentLevel < 10) {
+                    saveProgress(currentLevel + 1);
+                    unlockMsg.innerHTML = `<strong><i class="fa-solid fa-unlock-keyhole me-1"></i> Selamat!</strong> Anda berhasil membuka Level ${currentLevel + 1}.`;
+                } else {
+                    unlockMsg.innerHTML = `<strong><i class="fa-solid fa-crown me-1 text-warning"></i> Luar Biasa!</strong> Anda telah menamatkan seluruh 10 Level Master Kuis ini!`;
+                }
+            } else {
+                title.innerHTML = '<i class="fa-solid fa-face-frown-open"></i> 不合格 (GAGAL)';
+                title.style.color = "var(--bs-red)";
+                let kurang = 35 - score;
+                unlockMsg.innerHTML = `<strong>Belum Memenuhi Syarat.</strong> Anda butuh 35 jawaban benar (kurang ${kurang} soal). Cek bagian <b>Review Jawaban</b> di bawah ini untuk melihat kesalahan Anda!`;
+            }
+        }
+
+        function restartLevel() { startLevel(currentLevel); }
+    </script>
+</body>
+</html>
