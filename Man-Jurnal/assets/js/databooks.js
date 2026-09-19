@@ -1,0 +1,77 @@
+const booksData = [
+    {
+        title: "CASHFLOW QUADRANT",
+        author: "ROBERT T.KIYOSAKI",
+        categories: ["Bisnis", "Manajemen", "Keuangan"],
+        price: "Rp 99.000",
+        cover: "assets/img/cashflow_quadrant.jpg",
+        backCover: "assets/img/back.jpg",
+        description1: "Rich Dad's CASHFLOW QUADRANT mengungkap bagaimana sejumlah orang bekerja lebih sedikit, menghasilkan lebih banyak uang, membayar pajak lebih rendah, dan belajar menjadi orang yang memiliki kebebasan keuangan.",
+        description2: "CASHFLOW QUADRANT ditulis bagi Anda jika Anda siap...\n1. Beranjak dari keamanan pekerjaan dan mulai mencari dunia kebebasan keuangan Anda sendiri\n2. Melakukan perubahan-perubahan signifikan dalam hidup Anda\n3. Memegang Kendali atas masa depan keuangan Anda",
+        synopsis: "Robert Kiyosaki telah menantang dan mengubah cara pikir puluhan juta orang di seluruh dunia tentang uang. Dengan perspektif yang kerap bertentangan dengan kebijaksanaan umum, Robert memiliki reputasi sebagai orang yang bicara secara apa adanya.",
+        detailLink: "detail-book.html",
+        readOnlineLink: "javascript:void(0)",
+        downloadLink: false, // Disetel false agar tombol hilang
+        buyLink: false       // Disetel false agar tombol hilang
+    },
+    {
+        title: "THE MAGIC OF THINKING BIG",
+        author: "DAVID J.SCHWARTZ, PH.D.",
+        categories: ["Motivasi", "Pengembangan Diri"],
+        price: "Rp 85.000",
+        cover: "assets/img/the_magic_of_thinking_big.jpg",
+        backCover: "assets/img/back.jpg",
+        description1: "DAHSYATNYA BERPIKIR BESAR, Jangan biarkan pemikiran yang salah menyetir hidup Anda karena, menurut David Schwartz, Anda adalah buah dari pola pikir Anda.",
+        description2: "Melalui hikmat dan pesan inspiratif yang termuat,\n1. Mengembangkan kekuatan keyakinan\n2. Merencanakan program membangun kesuksesan yang konkret\n3. Menambahkan nilai pada benda, orang lain, dan diri sendiri",
+        synopsis: "David membeberkan berbagai ide praktis sekaligus realistis, juga teknik dan prinsip yang memungkinkan Anda memanfaatkan kekuatan berpikir besar guna meraih kesuksesan, kebahagiaan, dan kepuasan yang Anda dambakan.",
+        detailLink: "detail-thinking-big.html",
+        readOnlineLink: "javascript:void(0)",
+        downloadLink: "javascript:void(0)",
+        buyLink: "javascript:void(0)"
+    },
+    {
+        title: "TUHAN BERI AKU ALASAN UNTUK TIDAK MENYERAH",
+        author: "Malik al Mughis & Luqman al Hakim",
+        categories: ["Religi", "Motivasi & Inspirasi"],
+        price: "Rp 75.000",
+        cover: "assets/img/tuhan_beri_aku_alasan_untuk_tidak_menyerah.jpg",
+        backCover: "assets/img/back.jpg",
+        description1: "\"Sesungguhnya yang berputus asa dari rahmat Allah, hanyalah orang-orang kafir.\" (QS. Yusuf: 87)",
+        description2: "Jika Engkau Gagal Hari Ini, Cobalah Sekali Lagi! , Karena Hari Ini Bukanlah Akhir dari Perjalananmu.",
+        synopsis: "Buku motivasi Islami yang membimbing pembaca untuk senantiasa bangkit dari keterpurukan dan tidak mudah berputus asa dalam menghadapi berbagai ujian hidup.",
+        detailLink: "detail-tuhan-beri-aku.html",
+        readOnlineLink: "javascript:void(0)",
+        downloadLink: "javascript:void(0)",
+        buyLink: "javascript:void(0)"
+    },
+    {
+        title: "THE PRINCIPLES OF POWER",
+        author: "DION YULIANTO",
+        categories: ["Psikologi", "Strategi"],
+        price: "Rp 90.000",
+        cover: "assets/img/the_principles_of_power.jpg",
+        backCover: "assets/img/back.jpg",
+        description1: "Rahasia Memanipulasi orang lain disegala situasi",
+        description2: "Buku ini bukanlah sekadar bacaan biasa, melainkan sebuah panduan praktis untuk menguasai dan memanipulasi orang lain dengan cara yang positif.",
+        synopsis: "Terdapat 33 kiat brilian di dalamnya yang akan membantu pembaca untuk membangun rasa hormat dari bawahan, mendapat perhatian dari atasan tanpa menjilat, serta bertahan dan meraih kesuksesan.",
+        detailLink: "detail-principles-of-power.html",
+        readOnlineLink: "javascript:void(0)",
+        downloadLink: "javascript:void(0)",
+        buyLink: "javascript:void(0)"
+    },
+    {
+        title: "THE PSYCHOLOGY OF MONEY",
+        author: "MORGAN HOUSEL",
+        categories: ["Keuangan", "Bisnis"],
+        price: "Rp 98.000",
+        cover: "assets/img/the_psychology_of_money.jpg",
+        backCover: "assets/img/back.jpg",
+        description1: "Pelajaran abadi mengenai kekayaan, ketamakan, dan kebahagiaan",
+        description2: "Kesuksesan dalam mengelola uang tidak selalu tentang apa yang anda ketahui. Ini tentang bagaimana Anda perilaku.",
+        synopsis: "Morgan Housel membagikan 19 cerita pendek yang mengeksplorasi cara pandang aneh manusia terhadap uang dan mengajarkan cara membuat keputusan finansial yang lebih baik.",
+        detailLink: "detail-psychology-of-money.html",
+        readOnlineLink: "javascript:void(0)",
+        downloadLink: "javascript:void(0)",
+        buyLink: "javascript:void(0)"
+    }
+];

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detail Buku - Man Jurnal</title>
+  
+  <link href="assets/css/manjurnal.css" rel="stylesheet">
+  
+  <!-- Favicon Ikon Buku Man Jurnal -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23384e41' d='M21 18H6C4.89543 18 4 17.1046 4 16V4C4 2.89543 4.89543 2 6 2H20C20.5523 2 21 2.44772 21 3V18ZM5 19.9381C5.64537 19.3499 6.51608 19 7.42533 19H21V21H7.42533C6.73602 21 6.07638 21.2721 5.58498 21.7583C5.3524 21.9882 5 21.8236 5 21.4938V19.9381Z'/></svg>">
+  
+  <!-- Bootstrap 5 & RemixIcon -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!--=============== FLOATING HEADER ===============-->
+  <header class="header">
+     <nav class="nav container">
+        <a href="index.html" class="nav__logo">
+           <i class="ri-book-3-fill"></i> Man Jurnal
+        </a>
+        
+        <div class="nav__menu" id="nav-menu">
+           <ul class="nav__list" id="nav-list">
+              <li><a href="index.html" class="nav__link"><i class="ri-home-5-line"></i> Home</a></li>
+              
+              <li class="desktop-search">
+                  <a href="javascript:void(0)" class="nav__link search-trigger"><i class="ri-search-2-line"></i> Search</a>
+              </li>
+              
+              <li><a href="index.html" class="nav__link"><i class="ri-bookmark-3-line"></i> Collections <span id="collection-badge" class="badge rounded-pill bg-secondary ms-1" style="font-size: 0.65rem;">0</span></a></li>
+              <li><a href="index.html" class="nav__link"><i class="ri-robot-2-line"></i> kataAi</a></li>
+              <li><a href="index.html" class="nav__link"><i class="ri-login-circle-line"></i> Login</a></li>
+           </ul>
+        </div>
+
+        <div class="nav__mobile-actions">
+           <i class="ri-search-2-line search-trigger" id="mobile-search-icon" title="Search"></i>
+           <div class="nav__toggle" id="nav-toggle">
+              <i class="ri-menu-line"></i>
+           </div>
+        </div>
+     </nav>
+  </header>
+
+  <!-- MODAL SEARCH -->
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content spotlight">
+        <div class="modal-header border-0 px-3 py-3 position-relative align-items-center d-flex">
+          <i class="ri-search-2-line position-absolute" style="left: 20px; font-size: 1.4rem; color: #a39f98; z-index: 5;"></i>
+          <input type="text" id="searchInput" class="form-control search-input-lg w-100 shadow-none" style="padding-left: 2.5rem; padding-right: 2.5rem; font-size: 1.1rem; border: none; background: transparent;" placeholder="Cari buku, penulis, atau artikel..." autocomplete="off">
+          <button type="button" class="btn-close position-absolute" style="right: 20px; z-index: 5;" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="min-height: 200px; background-color: #faf9f7;">
+          <div id="searchResultContainer" class="row g-3">
+            <div class="text-center w-100 mt-4">
+              <i class="ri-book-open-line text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+              <p class="text-muted mt-2 fw-medium">Ketik sesuatu untuk mulai mencari...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-toast-container" id="toastContainer"></div>
+
+  <!-- MAIN WRAPPER -->
+  <div class="page-wrapper" style="padding-top: 140px; padding-bottom: 80px;">
+    <div class="container">
+        
+        <!-- Tombol Kembali -->
+        <div class="mb-4">
+            <a href="index.html" class="text-muted text-decoration-none fw-medium d-inline-flex align-items-center gap-1">
+                <i class="ri-arrow-left-line"></i> Kembali ke Daftar Koleksi
+            </a>
+        </div>
+
+        <!-- Detail Kontainer Buku -->
+        <div id="book-detail-content" class="row g-5 align-items-start">
+            <!-- Akan diisi secara dinamis oleh JavaScript -->
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted mt-3">Memuat detail buku...</p>
+            </div>
+        </div>
+
+    </div>
+  </div>
+
+  <!-- ================= PROFESSIONAL FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row g-4 justify-content-between">
+        <div class="col-lg-4">
+          <a href="index.html" class="nav__logo mb-3 d-inline-flex">
+             <i class="ri-book-3-fill"></i> Man Jurnal
+          </a>
+          <p class="text-muted small mb-4" style="line-height: 1.7;">
+            "Ruang baca digital dan jurnal pengetahuan premium yang menghadirkan kurasi literatur terbaik untuk memperluas cakrawala berpikir Anda."
+          </p>
+          <div class="d-flex gap-2">
+            <a href="https://instagram.com" target="_blank" class="footer-social-icon" title="Instagram"><i class="ri-instagram-line"></i></a>
+            <a href="https://facebook.com" target="_blank" class="footer-social-icon" title="Facebook"><i class="ri-facebook-fill"></i></a>
+            <a href="https://tiktok.com" target="_blank" class="footer-social-icon" title="TikTok"><i class="ri-tiktok-fill"></i></a>
+            <a href="https://telegram.org" target="_blank" class="footer-social-icon" title="Telegram"><i class="ri-telegram-fill"></i></a>
+            <a href="https://whatsapp.com" target="_blank" class="footer-social-icon" title="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+          <h6 class="fw-bold text-brand-dark mb-3">Navigasi Utama</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2 small">
+            <li><a href="index.html" class="footer-link">Beranda</a></li>
+            <li><a href="index.html" class="footer-link">Koleksi Tersimpan</a></li>
+            <li><a href="javascript:void(0)" class="footer-link search-trigger">Pencarian Buku</a></li>
+            <li><a href="index.html" class="footer-link">Masuk Akun</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-4">
+          <h6 class="fw-bold text-brand-dark mb-3">Hubungi Kami</h6>
+          <p class="text-muted small mb-2">Punya pertanyaan atau masukan? Kirim email ke:</p>
+          <a href="mailto:firmanhidayat200138@gmail.com" class="text-brand-accent fw-bold text-decoration-none d-block mb-3 small">
+            <i class="ri-mail-line me-1"></i> firmanhidayat200138@gmail.com
+          </a>
+          <p class="text-muted small mb-1">Kunjungi website resmi utama kami:</p>
+          <a href="http://firman38.ct.ws" target="_blank" class="text-brand-primary fw-bold text-decoration-none small">
+            <i class="ri-global-line me-1"></i> firman38.ct.ws
+          </a>
+        </div>
+      </div>
+      
+      <hr class="my-4" style="border-color: rgba(0,0,0,0.08);">
+      
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="text-muted small mb-0">&copy; 2026 Man Jurnal. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+          <p class="text-muted small mb-0">Mansekai Project: Books Library & kataAi.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- LOAD DATA DUMMY -->
+  <script src="assets/js/databooks.js"></script>
+  <script src="assets/js/datakataai.js"></script>
+
+  <!-- SCRIPT HALAMAN DETAIL -->
+  <script>
+    function getSavedCollections() {
+        let saved = localStorage.getItem("man_jurnal_collections");
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    function updateCollectionBadge() {
+        let collections = getSavedCollections();
+        $("#collection-badge").text(collections.length);
+    }
+
+    function showNotification(message, iconClass = "ri-information-line") {
+        const toastContainer = $("#toastContainer");
+        const toastId = "toast_" + Date.now();
+        const toastHtml = `<div class="custom-toast" id="${toastId}"><i class="${iconClass}"></i><span>${message}</span></div>`;
+        toastContainer.append(toastHtml);
+        const toastEl = $(`#${toastId}`);
+        setTimeout(() => { toastEl.addClass("show"); }, 100);
+        setTimeout(() => {
+            toastEl.removeClass("show");
+            setTimeout(() => { toastEl.remove(); }, 300);
+        }, 3000);
+    }
+
+    $(function() {
+        updateCollectionBadge();
+
+        // Ambil parameter ID dari URL (contoh: detail-book.html?id=0)
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = parseInt(urlParams.get('id'));
+
+        if (isNaN(bookId) || typeof booksData === 'undefined' || !booksData[bookId]) {
+            $("#book-detail-content").html(`
+                <div class="col-12 text-center py-5">
+                    <i class="ri-error-warning-line text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    <h3 class="fw-bold mt-3 text-brand-dark">Buku Tidak Ditemukan</h3>
+                    <p class="text-muted">Maaf, data buku yang Anda cari tidak tersedia atau tautan tidak valid.</p>
+                    <a href="index.html" class="btn-custom-primary mt-3 text-decoration-none d-inline-block py-2 px-4">Kembali ke Beranda</a>
+                </div>
+            `);
+            return;
+        }
+
+        const book = booksData[bookId];
+        let collections = getSavedCollections();
+        let isSaved = collections.includes(book.title);
+        let bookmarkClass = isSaved ? "btn-bookmark saved" : "btn-bookmark";
+        let bookmarkIcon = isSaved ? "ri-bookmark-fill" : "ri-bookmark-line";
+        let badgesHtml = book.categories.map(cat => `<span class="category-badge">${cat}</span>`).join("");
+
+        let html = `
+            <!-- Kolom Cover Buku -->
+            <div class="col-lg-4 d-flex justify-content-center">
+              <div class="books" style="transform: scale(1.1); margin: 20px 0 40px 0;">
+                <div class="cover">
+                  <img src="${book.cover}" alt="${book.title}" />
+                  <img src="${book.backCover}" alt="back" />
+                </div>
+                <div class="content">
+                  <b>${book.author}</b>
+                  <b>${book.description1}</b>
+                  <b>${book.description2.replace(/\n/g, '<br>')}</b>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kolom Informasi Lengkap Buku -->
+            <div class="col-lg-8">
+              <div class="position-relative bg-white p-4 p-lg-5 rounded-4 shadow-sm border border-light">
+                
+                <button class="${bookmarkClass} toggle-bookmark-btn" data-title="${book.title}" title="Simpan ke Koleksi" style="top: 25px; right: 25px;">
+                    <i class="${bookmarkIcon}"></i>
+                </button>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  ${badgesHtml}
+                </div>
+
+                <h1 class="fw-bold mb-2 text-brand-dark" style="letter-spacing: -1px; font-size: 2.2rem;">${book.title}</h1>
+                <p class="text-muted fw-medium fs-5 mb-3">Penulis: <span class="text-brand-dark fw-bold">${book.author}</span></p>
+                
+                <h3 class="text-brand-accent fw-bold mb-4">${book.price}</h3>
+                
+                <div class="mb-4">
+                    <h5 class="fw-bold text-brand-dark mb-2">Sinopsis</h5>
+                    <p class="text-muted" style="line-height: 1.8; font-size: 1.05rem;">
+                      ${book.synopsis}
+                    </p>
+                </div>
+
+                <div class="mb-4 p-3 rounded-3" style="background-color: #faf9f7;">
+                    <h6 class="fw-bold text-brand-dark mb-2"><i class="ri-information-line me-1"></i> Informasi Tambahan</h6>
+                    <p class="text-muted small mb-1"><strong>Poin Utama:</strong> ${book.description1}</p>
+                    <p class="text-muted small mb-0">${book.description2}</p>
+                </div>
+                
+                <div class="pt-4 border-top d-flex flex-wrap gap-3 align-items-center">
+                  <a href="javascript:void(0)" class="btn-custom-primary text-decoration-none py-2 px-4 action-btn" data-action="Membaca buku secara online: ${book.title}" data-icon="ri-book-read-line">
+                      <i class="ri-book-read-line me-1"></i> Baca Online
+                  </a>
+                  <a href="javascript:void(0)" class="btn-custom-outline text-decoration-none py-2 px-4 action-btn" data-action="Mengunduh file buku: ${book.title}" data-icon="ri-download-cloud-2-line">
+                      <i class="ri-download-cloud-2-line me-1"></i> Unduh Buku
+                  </a>
+                </div>
+
+              </div>
+            </div>
+        `;
+
+        $("#book-detail-content").html(html);
+
+        // Mobile Menu Toggle
+        $("#nav-toggle").on("click", function() {
+            $("#nav-list").toggleClass("show-menu");
+            const icon = $(this).find("i");
+            if ($("#nav-list").hasClass("show-menu")) {
+                icon.removeClass("ri-menu-line").addClass("ri-close-line");
+            } else {
+                icon.removeClass("ri-close-line").addClass("ri-menu-line");
+            }
+        });
+
+        // Search Trigger Modal
+        $(".search-trigger").on("click", function(e) {
+            e.preventDefault();
+            var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+            searchModal.show();
+        });
+
+        document.getElementById('searchModal').addEventListener('shown.bs.modal', function () {
+            document.getElementById('searchInput').focus();
+        });
+
+        // Live Search di Modal
+        $("#searchInput").on("keyup", function() {
+            var keyword = $(this).val().toLowerCase().trim();
+            var container = $("#searchResultContainer");
+            container.empty();
+
+            if(keyword === "") {
+                container.html(`
+                    <div class="text-center w-100 mt-4">
+                      <i class="ri-book-open-line text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="text-muted mt-2 fw-medium">Ketik sesuatu untuk mulai mencari...</p>
+                    </div>
+                `);
+                return;
+            }
+
+            var filteredBooks = booksData.filter(book => {
+                return book.title.toLowerCase().includes(keyword) ||
+                       book.author.toLowerCase().includes(keyword) ||
+                       book.categories.some(cat => cat.toLowerCase().includes(keyword));
+            });
+
+            var filteredArticles = typeof kataAiData !== 'undefined' ? kataAiData.filter(item => {
+                return item.title.toLowerCase().includes(keyword) ||
+                       item.bio.toLowerCase().includes(keyword);
+            }) : [];
+
+            if(filteredBooks.length === 0 && filteredArticles.length === 0) {
+                container.html(`
+                    <div class="text-center w-100 mt-4">
+                      <i class="ri-emotion-sad-line" style="font-size: 3rem; color: #b05b3b; opacity: 0.7;"></i>
+                      <p class="mt-2 fw-medium" style="color: #b05b3b;">Hasil pencarian tidak ditemukan.</p>
+                    </div>
+                `);
+                return;
+            }
+
+            var resultHtml = "";
+            if(filteredBooks.length > 0) {
+                resultHtml += `<div class="col-12 text-muted small fw-bold text-uppercase mb-1">Buku & Jurnal (${filteredBooks.length})</div>`;
+                filteredBooks.forEach(book => {
+                    var originalIndex = booksData.indexOf(book);
+                    var searchBadgesHtml = book.categories.map(cat => `<span class="category-badge" style="font-size: 0.6rem; padding: 2px 8px;">${cat}</span>`).join("");
+
+                    resultHtml += `
+                    <div class="col-12">
+                        <a href="detail-book.html?id=${originalIndex}" class="text-decoration-none">
+                            <div class="search-item-card d-flex align-items-center p-3 bg-white rounded-4 shadow-sm transition-all" style="cursor: pointer; border: 1px solid #f0eee9;">
+                                <img src="${book.cover}" alt="${book.title}" class="rounded" style="width: 60px; height: 85px; object-fit: cover; flex-shrink: 0;">
+                                <div class="ms-3 w-100 overflow-hidden">
+                                    <div class="d-flex flex-wrap gap-1 mb-1">${searchBadgesHtml}</div>
+                                    <h6 class="fw-bold mb-1 text-brand-dark text-truncate">${book.title}</h6>
+                                    <p class="mb-0 text-muted small text-truncate">${book.author}</p>
+                                    <p class="mb-0 text-brand-accent small fw-semibold mt-1">${book.price}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`;
+                });
+            }
+            container.html(resultHtml);
+        });
+
+        // Aksi Bookmark di Halaman Detail
+        $(document).on("click", ".toggle-bookmark-btn", function(e){
+            e.stopPropagation();
+            let bookTitle = $(this).data("title");
+            let collections = getSavedCollections();
+            let index = collections.indexOf(bookTitle);
+            
+            if(index > -1) {
+                collections.splice(index, 1);
+                showNotification("Buku dihapus dari koleksi", "ri-bookmark-line");
+                $(this).removeClass("saved").find("i").removeClass("ri-bookmark-fill").addClass("ri-bookmark-line");
+            } else {
+                collections.push(bookTitle);
+                showNotification("Buku berhasil disimpan ke koleksi!", "ri-bookmark-fill");
+                $(this).addClass("saved").find("i").removeClass("ri-bookmark-line").addClass("ri-bookmark-fill");
+            }
+            
+            localStorage.setItem("man_jurnal_collections", JSON.stringify(collections));
+            updateCollectionBadge();
+        });
+
+        // Simulasi tombol aksi
+        $(document).on("click", ".action-btn", function(e) {
+            e.preventDefault();
+            var actionText = $(this).data("action");
+            var iconClass = $(this).data("icon") || "ri-notification-3-line";
+            showNotification(actionText, iconClass);
+        });
+    });
+  </script>
+</body>
+</html>

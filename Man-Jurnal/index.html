@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Man Jurnal - Premium Library</title>
+  
+  <link href="assets/css/manjurnal.css" rel="stylesheet">
+  
+  <!-- Favicon Ikon Buku Man Jurnal -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23384e41' d='M21 18H6C4.89543 18 4 17.1046 4 16V4C4 2.89543 4.89543 2 6 2H20C20.5523 2 21 2.44772 21 3V18ZM5 19.9381C5.64537 19.3499 6.51608 19 7.42533 19H21V21H7.42533C6.73602 21 6.07638 21.2721 5.58498 21.7583C5.3524 21.9882 5 21.8236 5 21.4938V19.9381Z'/></svg>">
+  
+  <!-- Bootstrap 5 & RemixIcon -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!--=============== FLOATING HEADER ===============-->
+  <header class="header">
+     <nav class="nav container">
+        <a href="javascript:void(0)" class="nav__logo" id="logo-home">
+           <i class="ri-book-3-fill"></i> Man Jurnal
+        </a>
+        
+        <div class="nav__menu" id="nav-menu">
+           <ul class="nav__list" id="nav-list">
+              <li><a href="javascript:void(0)" class="nav__link active-link" id="nav-home"><i class="ri-home-5-line"></i> Home</a></li>
+              
+              <li class="desktop-search">
+                  <a href="javascript:void(0)" class="nav__link search-trigger"><i class="ri-search-2-line"></i> Search</a>
+              </li>
+              
+              <li><a href="javascript:void(0)" class="nav__link" id="nav-collections"><i class="ri-bookmark-3-line"></i> Collections <span id="collection-badge" class="badge rounded-pill bg-secondary ms-1" style="font-size: 0.65rem;">0</span></a></li>
+              <li><a href="javascript:void(0)" class="nav__link" id="nav-kataai"><i class="ri-robot-2-line"></i> kataAi</a></li>
+              <li><a href="javascript:void(0)" class="nav__link" id="nav-login"><i class="ri-login-circle-line"></i> Login</a></li>
+           </ul>
+        </div>
+
+        <div class="nav__mobile-actions">
+           <i class="ri-search-2-line search-trigger" id="mobile-search-icon" title="Search"></i>
+           <div class="nav__toggle" id="nav-toggle">
+              <i class="ri-menu-line"></i>
+           </div>
+        </div>
+     </nav>
+  </header>
+
+  <!-- MODAL SEARCH -->
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content spotlight">
+        <div class="modal-header border-0 px-3 py-3 position-relative align-items-center d-flex">
+          <i class="ri-search-2-line position-absolute" style="left: 20px; font-size: 1.4rem; color: #a39f98; z-index: 5;"></i>
+          <input type="text" id="searchInput" class="form-control search-input-lg w-100 shadow-none" style="padding-left: 2.5rem; padding-right: 2.5rem; font-size: 1.1rem; border: none; background: transparent;" placeholder="Cari buku, penulis, atau artikel..." autocomplete="off">
+          <button type="button" class="btn-close position-absolute" style="right: 20px; z-index: 5;" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="min-height: 200px; background-color: #faf9f7;">
+          <div id="searchResultContainer" class="row g-3">
+            <div class="text-center w-100 mt-4">
+              <i class="ri-book-open-line text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+              <p class="text-muted mt-2 fw-medium">Ketik sesuatu untuk mulai mencari...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-toast-container" id="toastContainer"></div>
+
+  <!-- MAIN WRAPPER -->
+  <div class="page-wrapper" id="page-wrapper" style="padding-top: 130px;">
+    <div class="container"><br>
+        
+        <!-- VIEW 1: HOME & COLLECTIONS -->
+        <div id="library-view-container">
+            <div id="view-header" class="mb-5 d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <h3 class="fw-bold text-brand-dark mb-1" id="page-title">Jelajahi Koleksi Pilihan</h3>
+                    <p class="text-muted mb-0" id="page-subtitle">Temukan buku-buku terbaik untuk meningkatkan wawasan Anda.</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap justify-content-start justify-content-lg-end" id="header-filter-container">
+                    <span class="filter-chip active" data-category="Semua">Semua</span>
+                    <span class="filter-chip" data-category="Bisnis">Bisnis</span>
+                    <span class="filter-chip" data-category="Motivasi">Motivasi</span>
+                    <span class="filter-chip" data-category="Religi">Religi</span>
+                    <span class="filter-chip" data-category="Psikologi">Psikologi</span>
+                </div>
+            </div>
+
+            <div class="card-content" id="bookListContainer" style="display: none">
+              <div class="row" id="dynamic-books-row"></div>
+            </div>
+
+            <ul class="pagination-main" id="pagination-container">
+                <li class="page-item previous-page"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-left-s-line"></i></a></li>
+                <li class="page-item current-page active-page"><a class="page-link" href="javascript:void(0)">1</a></li>
+                <li class="page-item dots"><a class="page-link" href="javascript:void(0)">...</a></li>
+                <li class="page-item next-page"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-right-s-line"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- VIEW 2: KATAAI VIEW -->
+        <div id="kataai-view-container" style="display: none;">
+            <div class="mb-5 text-center">
+                <span class="category-badge mb-2 d-inline-block">Wawasan Medis</span>
+                <h3 class="fw-bold text-brand-dark mb-1">KataAi - Pengetahuan Medis</h3>
+                <p class="text-muted mb-0">Artikel dan informasi kesehatan terkurasi, diurutkan dari yang terbaru.</p>
+            </div>
+
+            <div class="row g-4" id="kataai-cards-row"></div>
+
+            <ul class="pagination-main" id="kataai-pagination-container" style="display: none;">
+                <li class="page-item kataai-prev"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-left-s-line"></i></a></li>
+                <li class="page-item kataai-page active-page"><a class="page-link" href="javascript:void(0)">1</a></li>
+                <li class="page-item kataai-next"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-right-s-line"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- VIEW 3: AUTHENTICATION CONTAINER -->
+        <div id="auth-view-container" style="display: none;">
+            
+            <div class="auth-card" id="form-login">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="javascript:void(0)" class="text-muted small text-decoration-none back-to-home-btn"><i class="ri-arrow-left-line"></i> Kembali ke Beranda</a>
+                </div>
+                <div class="text-center mb-4">
+                    <i class="ri-user-shared-line" style="font-size: 3rem; color: var(--brand-primary);"></i>
+                    <h3 class="fw-bold text-brand-dark mt-2">Selamat Datang Kembali</h3>
+                    <p class="text-muted small">Masuk untuk mengakses koleksi pribadi Anda.</p>
+                </div>
+                <form id="loginFormSubmit">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Email</label>
+                        <input type="email" class="form-control auth-form-control" placeholder="nama@domain.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label class="form-label fw-semibold small text-muted">Password</label>
+                            <a href="javascript:void(0)" class="small text-brand-accent text-decoration-none fw-semibold" id="to-forgot">Lupa password?</a>
+                        </div>
+                        <input type="password" class="form-control auth-form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-custom-primary w-100 py-3 mt-2">Masuk Sekarang</button>
+                </form>
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0">Belum punya akun? <a href="javascript:void(0)" class="text-brand-primary fw-bold text-decoration-none" id="to-register">Daftar di sini</a></p>
+                </div>
+            </div>
+
+            <div class="auth-card" id="form-register" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="javascript:void(0)" class="text-muted small text-decoration-none back-to-home-btn"><i class="ri-arrow-left-line"></i> Kembali ke Beranda</a>
+                </div>
+                <div class="text-center mb-4">
+                    <i class="ri-user-add-line" style="font-size: 3rem; color: var(--brand-primary);"></i>
+                    <h3 class="fw-bold text-brand-dark mt-2">Buat Akun Baru</h3>
+                    <p class="text-muted small">Bergabunglah dengan Man Jurnal Premium Library.</p>
+                </div>
+                <form id="registerFormSubmit">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Nama Lengkap</label>
+                        <input type="text" class="form-control auth-form-control" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Email</label>
+                        <input type="email" class="form-control auth-form-control" placeholder="nama@domain.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Password</label>
+                        <input type="password" class="form-control auth-form-control" placeholder="Minimal 6 karakter" required>
+                    </div>
+                    <button type="submit" class="btn-custom-primary w-100 py-3 mt-2">Daftar Akun</button>
+                </form>
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0">Sudah punya akun? <a href="javascript:void(0)" class="text-brand-primary fw-bold text-decoration-none" id="to-login-from-reg">Masuk</a></p>
+                </div>
+            </div>
+
+            <div class="auth-card" id="form-forgot" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="javascript:void(0)" class="text-muted small text-decoration-none back-to-home-btn"><i class="ri-arrow-left-line"></i> Kembali ke Beranda</a>
+                </div>
+                <div class="text-center mb-4">
+                    <i class="ri-lock-password-line" style="font-size: 3rem; color: var(--brand-accent);"></i>
+                    <h3 class="fw-bold text-brand-dark mt-2">Atur Ulang Password</h3>
+                    <p class="text-muted small">Masukkan email Anda untuk menerima instruksi pemulihan.</p>
+                </div>
+                <form id="forgotFormSubmit">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">Email Terdaftar</label>
+                        <input type="email" class="form-control auth-form-control" placeholder="nama@domain.com" required>
+                    </div>
+                    <button type="submit" class="btn-custom-primary w-100 py-3 mt-2">Kirim Instruksi</button>
+                </form>
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0"><a href="javascript:void(0)" class="text-brand-primary fw-bold text-decoration-none" id="to-login-from-forgot"><i class="ri-arrow-left-line"></i> Kembali ke Login</a></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+  </div>
+
+  <!-- ================= PROFESSIONAL FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row g-4 justify-content-between">
+        <div class="col-lg-4">
+          <a href="javascript:void(0)" class="nav__logo mb-3 d-inline-flex" id="logo-footer">
+             <i class="ri-book-3-fill"></i> Man Jurnal
+          </a>
+          <p class="text-muted small mb-4" style="line-height: 1.7;">
+            "Ruang baca digital dan jurnal pengetahuan premium yang menghadirkan kurasi literatur terbaik untuk memperluas cakrawala berpikir Anda."
+          </p>
+          <div class="d-flex gap-2">
+            <a href="https://instagram.com" target="_blank" class="footer-social-icon" title="Instagram"><i class="ri-instagram-line"></i></a>
+            <a href="https://facebook.com" target="_blank" class="footer-social-icon" title="Facebook"><i class="ri-facebook-fill"></i></a>
+            <a href="https://tiktok.com" target="_blank" class="footer-social-icon" title="TikTok"><i class="ri-tiktok-fill"></i></a>
+            <a href="https://telegram.org" target="_blank" class="footer-social-icon" title="Telegram"><i class="ri-telegram-fill"></i></a>
+            <a href="https://whatsapp.com" target="_blank" class="footer-social-icon" title="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-6">
+          <h6 class="fw-bold text-brand-dark mb-3">Navigasi Utama</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2 small">
+            <li><a href="javascript:void(0)" class="footer-link" id="footer-home">Beranda</a></li>
+            <li><a href="javascript:void(0)" class="footer-link" id="footer-collections">Koleksi Tersimpan</a></li>
+            <li><a href="javascript:void(0)" class="footer-link search-trigger">Pencarian Buku</a></li>
+            <li><a href="javascript:void(0)" class="footer-link" id="footer-login">Masuk Akun</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-4">
+          <h6 class="fw-bold text-brand-dark mb-3">Hubungi Kami</h6>
+          <p class="text-muted small mb-2">Punya pertanyaan atau masukan? Kirim email ke:</p>
+          <a href="mailto:firmanhidayat200138@gmail.com" class="text-brand-accent fw-bold text-decoration-none d-block mb-3 small">
+            <i class="ri-mail-line me-1"></i> firmanhidayat200138@gmail.com
+          </a>
+          <p class="text-muted small mb-1">Kunjungi website resmi utama kami:</p>
+          <a href="http://firman38.ct.ws" target="_blank" class="text-brand-primary fw-bold text-decoration-none small">
+            <i class="ri-global-line me-1"></i> firman38.ct.ws
+          </a>
+        </div>
+      </div>
+      
+      <hr class="my-4" style="border-color: rgba(0,0,0,0.08);">
+      
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="text-muted small mb-0">&copy; 2026 Man Jurnal. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+          <p class="text-muted small mb-0">Mansekai Project: Books Library & kataAi.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- LOAD DATA DUMMY EKSTERNAL -->
+  <script src="assets/js/databooks.js"></script>
+  <script src="assets/js/datakataai.js"></script>
+
+  <!-- INLINE JAVASCRIPT UTAMA -->
+  <script>
+    let isCollectionsView = false;
+    let selectedCategory = "Semua";
+    let currentPage = 1;
+    let limitPerPage = 3;
+
+    let currentKataAiPage = 1;
+    let limitPerKataAiPage = 12;
+
+    function getSavedCollections() {
+        let saved = localStorage.getItem("man_jurnal_collections");
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    function updateCollectionBadge() {
+        let collections = getSavedCollections();
+        $("#collection-badge").text(collections.length);
+    }
+
+    function showNotification(message, iconClass = "ri-information-line") {
+        const toastContainer = $("#toastContainer");
+        const toastId = "toast_" + Date.now();
+        
+        const toastHtml = `
+            <div class="custom-toast" id="${toastId}">
+                <i class="${iconClass}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        toastContainer.append(toastHtml);
+        const toastEl = $(`#${toastId}`);
+        
+        setTimeout(() => { toastEl.addClass("show"); }, 100);
+        setTimeout(() => {
+            toastEl.removeClass("show");
+            setTimeout(() => { toastEl.remove(); }, 300);
+        }, 3000);
+    }
+
+    function switchView(viewType, authSubView = 'login') {
+        $(".nav__link").removeClass("active-link");
+
+        $("#library-view-container").hide();
+        $("#kataai-view-container").hide();
+        $("#auth-view-container").hide();
+
+        if (viewType === 'home' || viewType === 'collections') {
+            $(".header").fadeIn(300); 
+            $(".footer").fadeIn(300);
+            $("#page-wrapper").css("padding-top", "130px");
+            $("#library-view-container").fadeIn(300);
+            
+            if (viewType === 'home') {
+                isCollectionsView = false;
+                selectedCategory = "Semua";
+                $(".filter-chip").removeClass("active");
+                $('.filter-chip[data-category="Semua"]').addClass("active");
+                $("#nav-home").addClass("active-link");
+            } else {
+                isCollectionsView = true;
+                $("#nav-collections").addClass("active-link");
+            }
+            renderBooks();
+        } else if (viewType === 'kataai') {
+            $(".header").fadeIn(300);
+            $(".footer").fadeIn(300);
+            $("#page-wrapper").css("padding-top", "130px");
+            $("#kataai-view-container").fadeIn(300);
+            $("#nav-kataai").addClass("active-link");
+            renderKataAi(currentKataAiPage);
+        } else if (viewType === 'auth') {
+            $(".header").fadeOut(300); 
+            $(".footer").fadeOut(300);
+            $("#page-wrapper").css("padding-top", "30px");
+            $("#auth-view-container").fadeIn(300);
+
+            $(".auth-card").hide();
+            if (authSubView === 'login') $("#form-login").fadeIn(300);
+            if (authSubView === 'register') $("#form-register").fadeIn(300);
+            if (authSubView === 'forgot') $("#form-forgot").fadeIn(300);
+        }
+        $('html, body').animate({ scrollTop: 0 }, 300);
+    }
+
+    function renderKataAi(page) {
+        if (typeof kataAiData === 'undefined') {
+            $("#kataai-cards-row").html(`<div class="col-12 text-center text-muted">Data KataAi belum dimuat.</div>`);
+            return;
+        }
+
+        kataAiData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        currentKataAiPage = page;
+        let totalPages = Math.ceil(kataAiData.length / limitPerKataAiPage);
+        let start = (currentKataAiPage - 1) * limitPerKataAiPage;
+        let end = start + limitPerKataAiPage;
+        let paginatedItems = kataAiData.slice(start, end);
+
+        let html = "";
+        paginatedItems.forEach((item, idx) => {
+            let originalIdx = kataAiData.indexOf(item);
+            html += `
+            <div class="col-12 col-md-4 mb-4" data-kataai-index="${originalIdx}">
+                <div class="kataai-grid-card">
+                    <img src="${item.image}" alt="${item.title}" class="kataai-grid-img">
+                    <div class="p-4 d-flex flex-column justify-content-between flex-grow-1">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                <span class="category-badge" style="font-size: 0.65rem; padding: 3px 10px;">Medis</span>
+                                <span class="text-muted" style="font-size: 0.75rem;"><i class="ri-calendar-line me-1"></i> ${item.date}</span>
+                            </div>
+                            <h5 class="fw-bold text-brand-dark mb-2" style="font-size: 1.1rem; line-height: 1.4;">${item.title}</h5>
+                            <p class="text-muted small mb-4" style="line-height: 1.6; font-size: 0.85rem;">${item.bio}</p>
+                        </div>
+                        <div>
+                            <a href="${item.readLink}" class="btn-custom-primary text-decoration-none d-inline-flex align-items-center gap-1 action-btn py-2 px-4" data-action="Membaca artikel: ${item.title}" data-icon="ri-book-open-line" style="font-size: 0.8rem;">
+                                <i class="ri-book-open-line"></i> Read Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        $("#kataai-cards-row").html(html);
+
+        if (totalPages > 1) {
+            let pagHtml = `<li class="page-item kataai-prev ${currentKataAiPage === 1 ? 'disable' : ''}"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-left-s-line"></i></a></li>`;
+            for (let i = 1; i <= totalPages; i++) {
+                pagHtml += `<li class="page-item kataai-page ${i === currentKataAiPage ? 'active-page' : ''}"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+            }
+            pagHtml += `<li class="page-item kataai-next ${currentKataAiPage === totalPages ? 'disable' : ''}"><a class="page-link" href="javascript:void(0)"><i class="ri-arrow-right-s-line"></i></a></li>`;
+            
+            $("#kataai-pagination-container").html(pagHtml).show();
+        } else {
+            $("#kataai-pagination-container").hide();
+        }
+    }
+
+    function goToPage(whichPage){
+        var $items =$(".card-content .pagination-base");
+        var numberOfItems = $items.length;
+        
+        if(numberOfItems === 0) {
+            $("#dynamic-books-row").html(`
+                <div class="col-12 text-center py-5">
+                    <i class="ri-emotion-sad-line text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    <h4 class="fw-bold mt-3 text-brand-dark">Tidak ada buku dalam kategori ini</h4>
+                    <p class="text-muted">Coba pilih kategori filter lainnya.</p>
+                </div>
+            `);
+            $("#pagination-container").hide();
+            $("#bookListContainer").show();
+            return;
+        }
+
+        var totalPages = Math.ceil(numberOfItems / limitPerPage);
+        if(whichPage < 1) whichPage = 1;
+        if(whichPage > totalPages) whichPage = totalPages;
+        currentPage = whichPage;
+
+        $items.hide().slice((currentPage - 1) * limitPerPage, currentPage * limitPerPage).stop(true, true).fadeIn(300);$("#pagination-container li").slice(1, -1).remove();
+
+        function range(start, end){
+            return Array.from(Array(end - start + 1), (_, i) => i + start);
+        }
+
+        var paginationSize = 7;
+        var sideWidth = paginationSize < 9 ? 1 : 2;
+        var leftWidth = (paginationSize - sideWidth * 2 - 3) >> 1;
+        var rightWidth = (paginationSize - sideWidth * 2 - 3) >> 1;
+        var pageList = totalPages <= paginationSize ? range(1, totalPages) : range(1, sideWidth).concat(0, range(currentPage - leftWidth, currentPage + rightWidth), 0, range(totalPages - sideWidth + 1, totalPages));
+
+        pageList.forEach(item => {
+            $("<li>").addClass("page-item").addClass(item ? "current-page" : "dots")
+            .toggleClass("active-page", item === currentPage).append($("<a>").addClass("page-link")
+            .attr({href: "javascript:void(0)"}).text(item || "...")).insertBefore("#pagination-container .next-page"); 
+        });
+
+        $("#pagination-container .previous-page").toggleClass("disable", currentPage === 1);
+        $("#pagination-container .next-page").toggleClass("disable", currentPage === totalPages);
+        
+        $("#pagination-container").show();
+        $(".card-content").show();
+    }
+
+    function renderBooks() {
+        let collections = getSavedCollections();
+        
+        if (typeof booksData !== 'undefined') {
+            booksData.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
+        let targetBooks = booksData;
+
+        if (isCollectionsView) {
+            targetBooks = booksData.filter(book => collections.includes(book.title));
+            $("#page-title").text("Koleksi Tersimpan (" + targetBooks.length + ")");
+            $("#page-subtitle").text("Daftar buku pilihan yang telah Anda simpan ke dalam koleksi pribadi.");
+            $("#header-filter-container").hide();
+            
+            if (targetBooks.length === 0) {
+                $("#dynamic-books-row").html(`
+                    <div class="col-12 text-center py-5">
+                        <i class="ri-bookmark-line text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <h4 class="fw-bold mt-3 text-brand-dark">Belum ada buku tersimpan</h4>
+                        <p class="text-muted">Klik ikon bookmark pada buku yang Anda sukai untuk menyimpannya di sini.</p>
+                        <button class="btn-custom-primary mt-3" id="btn-back-home">Jelajahi Buku</button>
+                    </div>
+                `);
+                $("#pagination-container").hide();
+                $("#bookListContainer").show();
+                return;
+            }
+        } else {
+            $("#page-title").text("Jelajahi Koleksi Pilihan");
+            $("#page-subtitle").text("Temukan buku-buku terbaik untuk meningkatkan wawasan Anda.");
+            $("#header-filter-container").show();
+
+            if (selectedCategory !== "Semua") {
+                targetBooks = booksData.filter(book => book.categories.some(cat => cat.toLowerCase() === selectedCategory.toLowerCase()));
+            }
+        }
+
+        let htmlContent = "";
+        targetBooks.forEach((book) => {
+            let originalIndex = booksData.findIndex(b => b.title === book.title);
+            let isSaved = collections.includes(book.title);
+            let bookmarkClass = isSaved ? "btn-bookmark saved" : "btn-bookmark";
+            let bookmarkIcon = isSaved ? "ri-bookmark-fill" : "ri-bookmark-line";
+
+            let badgesHtml = book.categories.map(cat => `<span class="category-badge">${cat}</span>`).join("");
+            
+            let readOnlineBtn = book.readOnlineLink ? `<a href="${book.readOnlineLink}" class="btn-custom-primary text-decoration-none d-inline-block mb-2 me-2 action-btn" data-action="Membuka mode baca: ${book.title}" data-icon="ri-book-read-line"><i class="ri-book-read-line"></i> Read</a>` : '';
+            
+            // TOMBOL DETAILS LANGSUNG MENUJU detail-book.html BERDASARKAN INDEKS DATA
+            let detailBtn = `<a href="detail-book.html?id=${originalIndex}" class="btn-custom-outline text-decoration-none d-inline-block mb-2 me-2"><i class="ri-file-text-line me-1"></i> Details</a>`;
+            
+            let downloadBtn = book.downloadLink ? `<a href="${book.downloadLink}" class="btn-custom-outline text-decoration-none d-inline-block mb-2 me-2 action-btn" data-action="Mengunduh buku: ${book.title}" data-icon="ri-download-cloud-2-line"><i class="ri-download-cloud-2-line"></i></a>` : '';
+
+            htmlContent += `
+            <div class="pagination-base col-12" data-book-index="${originalIndex}">
+              <div class="book-showcase-card d-flex flex-column flex-lg-row align-items-center gap-5">
+                
+                <button class="${bookmarkClass} toggle-bookmark-btn" data-title="${book.title}" title="Simpan ke Koleksi">
+                    <i class="${bookmarkIcon}"></i>
+                </button>
+
+                <div class="col-lg-4 d-flex justify-content-center">
+                  <div class="books">
+                    <div class="cover">
+                      <img src="${book.cover}" alt="${book.title}" />
+                      <img src="${book.backCover}" alt="back" />
+                    </div>
+                    <div class="content">
+                      <b>${book.author}</b>
+                      <b>${book.description1}</b>
+                      <b>${book.description2.replace(/\n/g, '<br>')}</b>
+                      <br><center><a href="detail-book.html?id=${originalIndex}" class="text-decoration-none text-white fw-bold">Baca Selengkapnya</a></center>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-8 text-center text-lg-start">
+                  <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start mb-3">
+                    ${badgesHtml}
+                  </div>
+                  <h2 class="fw-bold mb-1 text-brand-dark" style="letter-spacing: -1px;">${book.title}</h2>
+                  <p class="text-muted fw-medium mb-3">By <span class="text-brand-dark">${book.author}</span></p>
+                  
+                  <h4 class="text-brand-accent fw-bold mb-4">${book.price}</h4>
+                  
+                  <p class="text-muted mb-4" style="line-height: 1.8; font-size: 1.05rem;">
+                    ${book.synopsis}
+                  </p>
+                  
+                  <div class="mt-4 pt-4 border-top d-flex flex-wrap justify-content-center justify-content-lg-start align-items-center" style="border-color: rgba(0,0,0,0.05) !important;">
+                    ${readOnlineBtn}
+                    ${detailBtn}
+                    ${downloadBtn}
+                  </div>
+                </div>
+
+              </div>
+            </div>`;
+        });
+        
+        $("#dynamic-books-row").html(htmlContent);
+        
+        if (!isCollectionsView) {
+            goToPage(currentPage);
+        } else {
+            $("#pagination-container").hide();
+            $("#bookListContainer").show();
+            $(".card-content .pagination-base").show();
+        }
+    }
+
+    $(function(){
+        updateCollectionBadge();
+        renderBooks();
+
+        $("#logo-home, #nav-home, #logo-footer, #footer-home").on("click", function(e){
+            e.preventDefault();
+            switchView('home');
+        });
+
+        $("#nav-collections, #footer-collections").on("click", function(e){
+            e.preventDefault();
+            switchView('collections');
+        });
+
+        $("#nav-kataai").on("click", function(e){
+            e.preventDefault();
+            switchView('kataai');
+        });
+
+        $("#nav-login, #footer-login").on("click", function(e){
+            e.preventDefault();
+            switchView('auth', 'login');
+        });
+
+        $(".back-to-home-btn").on("click", function(e){
+            e.preventDefault();
+            switchView('home');
+        });
+
+        $("#to-register").on("click", function(){ switchView('auth', 'register'); });
+        $("#to-login-from-reg").on("click", function(){ switchView('auth', 'login'); });
+        $("#to-forgot").on("click", function(){ switchView('auth', 'forgot'); });
+        $("#to-login-from-forgot").on("click", function(){ switchView('auth', 'login'); });
+
+        $("#loginFormSubmit").on("submit", function(e){
+            e.preventDefault();
+            showNotification("Berhasil masuk! Mengarahkan ke beranda...", "ri-checkbox-circle-line");
+            setTimeout(() => { switchView('home'); }, 1200);
+        });
+
+        $("#registerFormSubmit").on("submit", function(e){
+            e.preventDefault();
+            showNotification("Akun berhasil didaftarkan! Silakan masuk.", "ri-user-add-line");
+            setTimeout(() => { switchView('auth', 'login'); }, 1200);
+        });
+
+        $("#forgotFormSubmit").on("submit", function(e){
+            e.preventDefault();
+            showNotification("Instruksi pemulihan password telah dikirim ke email Anda.", "ri-mail-send-line");
+            setTimeout(() => { switchView('auth', 'login'); }, 1500);
+        });
+
+        $(document).on("click", ".filter-chip", function(){
+            $(".filter-chip").removeClass("active");
+            $(this).addClass("active");
+            selectedCategory = $(this).data("category");
+            currentPage = 1; 
+            renderBooks();
+        });
+
+        $(document).on("click", "#btn-back-home", function(){
+            switchView('home');
+        });
+
+        $(document).on("click", ".toggle-bookmark-btn", function(e){
+            e.stopPropagation();
+            let bookTitle = $(this).data("title");
+            let collections = getSavedCollections();
+            
+            let index = collections.indexOf(bookTitle);
+            if(index > -1) {
+                collections.splice(index, 1);
+                showNotification("Buku dihapus dari koleksi", "ri-bookmark-line");
+            } else {
+                collections.push(bookTitle);
+                showNotification("Buku berhasil disimpan ke koleksi!", "ri-bookmark-fill");
+            }
+            
+            localStorage.setItem("man_jurnal_collections", JSON.stringify(collections));
+            updateCollectionBadge();
+            renderBooks();
+        });
+
+        $("#nav-toggle").on("click", function() {
+            $("#nav-list").toggleClass("show-menu");
+            const icon = $(this).find("i");
+            if ($("#nav-list").hasClass("show-menu")) {
+                icon.removeClass("ri-menu-line").addClass("ri-close-line");
+            } else {
+                icon.removeClass("ri-close-line").addClass("ri-menu-line");
+            }
+        });
+
+        $(".nav__link").on("click", function(){
+            $("#nav-list").removeClass("show-menu");
+            $("#nav-toggle i").removeClass("ri-close-line").addClass("ri-menu-line");
+        });
+
+        $(".search-trigger").on("click", function(e) {
+            e.preventDefault();
+            var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+            searchModal.show();
+        });
+        
+        document.getElementById('searchModal').addEventListener('shown.bs.modal', function () {
+            document.getElementById('searchInput').focus();
+        });
+
+        $("#searchInput").on("keyup", function() {
+            var keyword = $(this).val().toLowerCase().trim();
+            var container = $("#searchResultContainer");
+            container.empty();
+
+            if(keyword === "") {
+                container.html(`
+                    <div class="text-center w-100 mt-4">
+                      <i class="ri-book-open-line text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="text-muted mt-2 fw-medium">Ketik sesuatu untuk mulai mencari...</p>
+                    </div>
+                `);
+                return;
+            }
+
+            var filteredBooks = booksData.filter(book => {
+                return book.title.toLowerCase().includes(keyword) ||
+                       book.author.toLowerCase().includes(keyword) ||
+                       book.categories.some(cat => cat.toLowerCase().includes(keyword));
+            });
+
+            var filteredArticles = typeof kataAiData !== 'undefined' ? kataAiData.filter(item => {
+                return item.title.toLowerCase().includes(keyword) ||
+                       item.bio.toLowerCase().includes(keyword);
+            }) : [];
+
+            if(filteredBooks.length === 0 && filteredArticles.length === 0) {
+                container.html(`
+                    <div class="text-center w-100 mt-4">
+                      <i class="ri-emotion-sad-line" style="font-size: 3rem; color: #b05b3b; opacity: 0.7;"></i>
+                      <p class="mt-2 fw-medium" style="color: #b05b3b;">Hasil pencarian tidak ditemukan.</p>
+                    </div>
+                `);
+                return;
+            }
+
+            var resultHtml = "";
+            
+            if(filteredBooks.length > 0) {
+                resultHtml += `<div class="col-12 text-muted small fw-bold text-uppercase mb-1">Buku & Jurnal (${filteredBooks.length})</div>`;
+                filteredBooks.forEach(book => {
+                    var originalIndex = booksData.indexOf(book);
+                    var searchBadgesHtml = book.categories.map(cat => `<span class="category-badge" style="font-size: 0.6rem; padding: 2px 8px;">${cat}</span>`).join("");
+
+                    resultHtml += `
+                    <div class="col-12">
+                        <div class="search-item-card d-flex align-items-center p-3 bg-white rounded-4 shadow-sm transition-all" data-type="book" data-index="${originalIndex}" style="cursor: pointer; border: 1px solid #f0eee9;">
+                            <img src="${book.cover}" alt="${book.title}" class="rounded" style="width: 60px; height: 85px; object-fit: cover; box-shadow: 0 4px 12px rgba(43,41,39,0.1); flex-shrink: 0;">
+                            <div class="ms-3 w-100 overflow-hidden">
+                                <div class="d-flex flex-wrap gap-1 mb-1">
+                                    ${searchBadgesHtml}
+                                </div>
+                                <h6 class="fw-bold mb-1 text-brand-dark text-truncate">${book.title}</h6>
+                                <p class="mb-0 text-muted small text-truncate">${book.author}</p>
+                                <p class="mb-0 text-brand-accent small fw-semibold mt-1">${book.price}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            if(filteredArticles.length > 0) {
+                resultHtml += `<div class="col-12 text-muted small fw-bold text-uppercase mt-3 mb-1">Artikel Medis KataAi (${filteredArticles.length})</div>`;
+                filteredArticles.forEach(item => {
+                    var articleIndex = kataAiData.indexOf(item);
+                    resultHtml += `
+                    <div class="col-12">
+                        <div class="search-item-card d-flex align-items-center p-3 bg-white rounded-4 shadow-sm transition-all" data-type="article" data-index="${articleIndex}" style="cursor: pointer; border: 1px solid #f0eee9;">
+                            <img src="${item.image}" alt="${item.title}" class="rounded" style="width: 80px; height: 50px; object-fit: cover; box-shadow: 0 4px 12px rgba(43,41,39,0.1); flex-shrink: 0;">
+                            <div class="ms-3 w-100 overflow-hidden">
+                                <span class="category-badge mb-1 d-inline-block" style="font-size: 0.6rem; padding: 2px 8px;">Medis (${item.date})</span>
+                                <h6 class="fw-bold mb-1 text-brand-dark text-truncate">${item.title}</h6>
+                                <p class="mb-0 text-muted small text-truncate">${item.bio}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            container.html(resultHtml);
+        });
+
+        $(document).on("click", ".search-item-card", function() {
+            var type = $(this).data("type");
+            var index = $(this).data("index");
+            
+            var searchModalEl = document.getElementById('searchModal');
+            var modal = bootstrap.Modal.getInstance(searchModalEl);
+            if(modal) {
+                modal.hide();
+            }
+
+            if(type === 'book') {
+                switchView('home');
+                var targetPage = Math.floor(index / limitPerPage) + 1;
+                goToPage(targetPage);
+                
+                setTimeout(function() {
+                    var targetCard = $(`.pagination-base[data-book-index="${index}"]`);
+                    if(targetCard.length) {
+                        $('html, body').animate({
+                            scrollTop: targetCard.offset().top - 150
+                        }, 500);
+                        
+                        var cardBox = targetCard.find('.book-showcase-card');
+                        cardBox.css({
+                            'transform': 'scale(1.02)',
+                            'box-shadow': '0 25px 50px rgba(176, 91, 59, 0.25)',
+                            'transition': 'all 0.4s ease'
+                        });
+                        setTimeout(function() {
+                            cardBox.css({ 'transform': 'translateY(0)', 'box-shadow': '' });
+                        }, 1000);
+                    }
+                }, 300);
+            } else if(type === 'article') {
+                switchView('kataai');
+                var targetKataAiPage = Math.floor(index / limitPerKataAiPage) + 1;
+                renderKataAi(targetKataAiPage);
+
+                setTimeout(function() {
+                    var targetArticleCard = $(`div[data-kataai-index="${index}"]`);
+                    if(targetArticleCard.length) {
+                        $('html, body').animate({
+                            scrollTop: targetArticleCard.offset().top - 150
+                        }, 500);
+                        targetArticleCard.find('.kataai-grid-card').css({
+                            'transform': 'scale(1.03)',
+                            'box-shadow': '0 20px 40px rgba(56, 78, 65, 0.25)',
+                            'transition': 'all 0.4s ease'
+                        });
+                        setTimeout(function() {
+                            targetArticleCard.find('.kataai-grid-card').css({ 'transform': 'translateY(0)', 'box-shadow': '' });
+                        }, 1000);
+                    }
+                }, 300);
+            }
+        });
+
+        $(document).on("click", ".pagination-main li.current-page:not(.active-page)", function(){
+            return goToPage(+$(this).text());
+        });
+        $(".next-page").on("click", function(){
+            return goToPage(currentPage + 1);
+        });
+        $(".previous-page").on("click", function(){
+            return goToPage(currentPage - 1);
+        });
+
+        $(document).on("click", ".kataai-page:not(.active-page)", function(){
+            renderKataAi(+$(this).text());
+            $('html, body').animate({ scrollTop: 0 }, 300);                  });$(document).on("click", ".kataai-next", function(){
+            let maxPage = Math.ceil(kataAiData.length / limitPerKataAiPage);
+            if(currentKataAiPage < maxPage) {
+                renderKataAi(currentKataAiPage + 1);
+                $('html, body').animate({ scrollTop: 0 }, 300);                          }                  });$(document).on("click", ".kataai-prev", function(){
+            if(currentKataAiPage > 1) {
+                renderKataAi(currentKataAiPage - 1);
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            }
+        });
+
+        $(document).on("click", ".action-btn", function(e) {
+            e.preventDefault();
+            var actionText = $(this).data("action");
+            var iconClass = $(this).data("icon") || "ri-notification-3-line";
+            showNotification(actionText, iconClass);
+        });
+    });
+  </script>
+</body>
+</html>
