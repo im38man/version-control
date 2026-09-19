@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Man - Noto Pro</title>
+    
+    <!-- FAVICON BRAND NOTEPAD PRO -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect width=%2236%22 height=%2236%22 rx=%2210%22 fill=%22%23F0756C%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 fill=%22%23FFFFFF%22 font-family=%22Work Sans, sans-serif%22 font-weight=%22900%22 font-size=%2220%22>N</text></svg>">
+
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- ... sisa kode style lainnya ... -->
+    <style>
+        :root {
+            --body-font : "Work Sans", sans-serif;
+            --bs-btn-font-family : "Work Sans", sans-serif;
+            
+            --bs-blue: #4BA1A7;
+            --bs-red: #F0756C;
+            --bs-orange: #F5E9E9;
+            --bs-yellow: #EFEAEA;
+            --bs-green: #F5F8F1;
+            --bs-teal: #EFE8EF;
+            --bs-cyan: #F3F3F3;
+            --bs-black: #111111; 
+            --bs-white: #FFFFFF;
+            --bs-gray: #777777; 
+            
+            --bs-link-color: #111111;
+            --bs-link-hover-color: #F0756C;
+            
+            --bs-primary: #F0756C;
+            --bs-body-color: #111111;   
+            --bs-info: #C3C3C3; 
+        }
+
+        /* THEME GELAP */
+        body.dark-mode {
+            --bs-cyan: #1a1a1a;
+            --bs-white: #242424;
+            --bs-black: #f0f0f0;
+            --bs-body-color: #f0f0f0;
+            --bs-yellow: #333333;
+            --bs-green: #2a2f2a;
+            --bs-orange: #3a2828;
+            --bs-gray: #aaaaaa;
+            --bs-info: #666666;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bs-info);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bs-gray);
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bs-cyan);
+            color: var(--bs-body-color);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        button { font-family: var(--bs-btn-font-family); cursor: pointer; border: none; outline: none; background: transparent;}
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--bs-white);
+            border-right: 1px solid var(--bs-yellow);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--bs-yellow);
+        }
+
+        .sidebar-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            width: 36px;
+            height: 36px;
+            background-color: var(--bs-primary);
+            color: var(--bs-white);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--bs-black);
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-close-btn {
+            display: none;
+            background: transparent;
+            color: var(--bs-gray);
+            padding: 6px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .sidebar-close-btn:hover {
+            color: var(--bs-primary);
+            background: var(--bs-orange);
+        }
+
+        .sidebar-actions {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-menu-list {
+            flex: 1;
+            padding: 0 20px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-footer-settings {
+            padding: 20px;
+            border-top: 1px solid var(--bs-yellow);
+        }
+
+        .btn-settings {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--bs-black);
+            background: var(--bs-cyan);
+            border: 1px solid var(--bs-yellow);
+            transition: all 0.2s ease;
+        }
+        .btn-settings:hover {
+            background-color: var(--bs-orange);
+            color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+        .btn-settings svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--bs-gray);
+            margin-bottom: 8px;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .note-list-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--bs-black);
+            background: transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .note-list-item:hover, .note-list-item.active {
+            background-color: var(--bs-orange);
+            color: var(--bs-primary);
+        }
+
+        .note-list-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        .note-title-text {
+            width: 0;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background-color: var(--bs-primary);
+            color: var(--bs-white);
+            box-shadow: 0 4px 12px rgba(240, 117, 108, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: var(--bs-black);
+            box-shadow: 0 4px 12px rgba(17, 17, 17, 0.2);
+        }
+
+        .btn-outline {
+            background-color: var(--bs-white);
+            color: var(--bs-black);
+            border: 2px solid var(--bs-yellow);
+        }
+        .btn-outline:hover {
+            border-color: var(--bs-black);
+            background-color: var(--bs-yellow);
+        }
+
+        .btn-icon {
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--bs-gray);
+            background: var(--bs-white);
+            border: 1px solid var(--bs-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover { color: var(--bs-primary); border-color: var(--bs-primary); }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 30px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: var(--bs-white);
+            border: 1px solid var(--bs-yellow);
+            padding: 8px;
+            border-radius: 8px;
+            color: var(--bs-black);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--bs-black);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bs-white);
+            border: 2px solid var(--bs-yellow);
+            border-radius: 12px;
+            padding: 0 16px;
+            height: 48px;
+            width: 300px;
+            transition: border-color 0.2s;
+        }
+        .search-bar:focus-within { border-color: var(--bs-primary); }
+        .search-bar input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            height: 100%;
+            padding-left: 10px;
+            font-family: var(--body-font);
+            font-size: 0.95rem;
+            color: var(--bs-black);
+        }
+        .search-bar svg { color: var(--bs-gray); width: 20px; height: 20px; }
+
+        .view-container { display: none; flex: 1; flex-direction: column; }
+        .view-container.active { display: flex; }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            align-content: start;
+        }
+
+        .note-card, .add-card {
+            background: var(--bs-white);
+            border-radius: 16px;
+            padding: 24px;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid var(--bs-white);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bs-primary);
+            box-shadow: 0 12px 24px rgba(240, 117, 108, 0.1);
+        }
+
+        .note-card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--bs-black);
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .note-card-preview {
+            font-size: 0.95rem;
+            color: var(--bs-gray);
+            line-height: 1.5;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .note-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--bs-yellow);
+        }
+
+        .note-date { font-size: 0.8rem; color: var(--bs-info); font-weight: 500; }
+        .card-actions { display: flex; gap: 8px; }
+
+        .add-card {
+            background-color: var(--bs-green);
+            border: 2px dashed var(--bs-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+        .add-card:hover { background-color: var(--bs-white); border-color: var(--bs-primary); }
+        .add-card svg { width: 48px; height: 48px; color: var(--bs-blue); transition: all 0.2s; margin-bottom: 12px; flex-shrink: 0; }
+        .add-card:hover svg { color: var(--bs-primary); transform: scale(1.1); }
+        .add-card-text { font-weight: 700; color: var(--bs-black); font-size: 1.1rem; }
+
+        .editor-wrapper {
+            background: var(--bs-white);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .focus-toggle-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--bs-yellow);
+        }
+
+        .btn-focus-toggle {
+            background: var(--bs-cyan);
+            color: var(--bs-black);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            border: 1px solid var(--bs-yellow);
+        }
+        .btn-focus-toggle:hover {
+            background: var(--bs-primary);
+            color: var(--bs-white);
+            border-color: var(--bs-primary);
+        }
+
+        .editor-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            transition: all 0.3s ease;
+            max-height: 400px;
+            overflow: hidden;
+            opacity: 1;
+        }
+
+        .editor-wrapper.focus-active .editor-top-bar {
+            max-height: 0;
+            margin-bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            padding: 0;
+            border: none;
+        }
+
+        .editor-wrapper.focus-active .focus-toggle-bar {
+            margin-bottom: 8px;
+            border-bottom: none;
+        }
+
+        .filename-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bs-cyan);
+            border-radius: 10px;
+            padding: 4px 14px;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+            flex: 1;
+            max-width: 280px;
+        }
+        .filename-input-group:focus-within { border-color: var(--bs-primary); }
+        
+        .filename-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: var(--body-font);
+            font-size: 1rem;
+            color: var(--bs-black);
+            font-weight: 600;
+            padding: 8px 0;
+            width: 100%;
+        }
+
+        .mode-tabs {
+            display: flex;
+            background: var(--bs-cyan);
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+        .mode-tab {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            color: var(--bs-gray);
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .mode-tab.active {
+            background: var(--bs-white);
+            color: var(--bs-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .editor-textarea {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: var(--bs-green);
+            border-radius: 12px;
+            padding: 24px;
+            font-family: var(--body-font);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--bs-black);
+            resize: none;
+            outline: none;
+            min-height: 400px;
+            transition: min-height 0.3s;
+        }
+        .editor-textarea:focus { box-shadow: inset 0 0 0 2px var(--bs-yellow); }
+
+        .html-preview-pane {
+            flex: 1;
+            width: 100%;
+            background: var(--bs-white);
+            border-radius: 12px;
+            padding: 24px;
+            overflow-y: auto;
+            border: 2px solid var(--bs-yellow);
+            min-height: 400px;
+            display: none;
+            font-family: var(--body-font);
+            line-height: 1.6;
+        }
+        .html-preview-pane.active {
+            display: block;
+        }
+
+        .html-preview-pane table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .html-preview-pane th, .html-preview-pane td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--bs-yellow);
+            font-size: 0.95rem;
+            color: var(--bs-black);
+        }
+        .html-preview-pane th {
+            font-weight: 700;
+            color: var(--bs-black);
+            background-color: var(--bs-cyan);
+        }
+        .html-preview-pane tr:hover {
+            background-color: var(--bs-green);
+        }
+
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            color: var(--bs-gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bs-orange);
+            color: var(--bs-primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(17, 17, 17, 0.5);
+            z-index: 90;
+            backdrop-filter: blur(2px);
+        }
+
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 17, 17, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.2s ease;
+        }
+        .custom-modal-overlay.active { display: flex; }
+
+        .custom-modal {
+            background: var(--bs-white);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .custom-modal h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--bs-black);
+        }
+
+        .custom-modal p {
+            font-size: 0.95rem;
+            color: var(--bs-gray);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .custom-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .custom-modal-actions .btn { flex: 1; }
+
+        #toastContainer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bs-black);
+            color: var(--bs-white);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .toast.success { background: var(--bs-blue); color: var(--bs-white); }
+        .toast.error { background: var(--bs-red); color: var(--bs-white); }
+        
+        .toast-undo-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--bs-white);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toast-undo-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .mobile-menu-btn { display: block; }
+            .sidebar-overlay.active { display: block; }
+            .search-bar { width: 100%; max-width: 300px; }
+            .sidebar-close-btn { display: flex; align-items: center; justify-content: center; }
+        }
+
+        @media (max-width: 576px) {
+            .main-header { flex-direction: column; align-items: stretch; }
+            .search-bar { max-width: 100%; }
+            
+            .editor-top-bar { 
+                flex-direction: column; 
+                align-items: stretch; 
+                max-height: 400px; 
+            }
+            .filename-input-group { max-width: 100%; }
+            
+            .editor-top-bar > div:last-child {
+                width: 100%;
+                display: flex;
+            }
+            .editor-top-bar > div:last-child .btn {
+                flex: 1;
+            }
+        }
+        
+        #hiddenFileInput { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- CUSTOM MODAL KONFIRMASI -->
+    <div class="custom-modal-overlay" id="customModalOverlay">
+        <div class="custom-modal">
+            <h3 id="modalTitle">Konfirmasi</h3>
+            <p id="modalMessage">Apakah Anda yakin?</p>
+            <div class="custom-modal-actions">
+                <button class="btn btn-outline" id="modalCancelBtn">Batal</button>
+                <button class="btn btn-primary" id="modalConfirmBtn" style="background-color: var(--bs-red);">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INFO IMPOR FILE -->
+    <div class="custom-modal-overlay" id="importInfoModal">
+        <div class="custom-modal">
+            <h3 id="txtModalImportTitle">Impor Berkas Catatan</h3>
+            <p id="txtModalImportDesc">Anda dapat mengimpor file berformat JavaScript (.js), JSON (.json), maupun Text Biasa (.txt) ke dalam aplikasi ini.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="proceedChooseFile()" id="txtChooseFile">Pilih File</button>
+            </div>
+            <button class="btn btn-outline" style="width: 100%;" onclick="closeImportInfoModal()" id="txtCancel">Batal</button>
+        </div>
+    </div>
+
+    <!-- MODAL PILIHAN FORMAT DOWNLOAD -->
+    <div class="custom-modal-overlay" id="downloadModalOverlay">
+        <div class="custom-modal">
+            <h3 id="txtModalDownloadTitle">Pilih Format Unduhan</h3>
+            <p id="txtModalDownloadDesc">Pilih format file yang ingin Anda gunakan untuk menyimpan catatan ini:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-outline" onclick="executeDownload('js')">📄 File JavaScript (.js)</button>
+                <button class="btn btn-outline" onclick="executeDownload('json')">📦 File JSON (.json)</button>
+                <button class="btn btn-outline" onclick="executeDownload('txt')">📝 Text Biasa (.txt)</button>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; background-color: var(--bs-gray);" onclick="closeDownloadModal()" id="txtDownloadCancel">Batal</button>
+        </div>
+    </div>
+
+    <!-- MODAL PENGATURAN (SETTINGS) -->
+    <div class="custom-modal-overlay" id="settingsModalOverlay">
+        <div class="custom-modal" style="text-align: left;">
+            <h3 id="txtSettingsTitle" style="text-align: center; margin-bottom: 20px;">Pengaturan Aplikasi</h3>
+            
+            <div style="margin-bottom: 16px;">
+                <label id="txtThemeLabel" style="font-size: 0.85rem; font-weight: 700; color: var(--bs-gray); display: block; margin-bottom: 8px;">TAMPILAN MODE</label>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-outline" style="flex: 1;" onclick="setTheme('light')" id="btnLightMode">☀️ Terang</button>
+                    <button class="btn btn-outline" style="flex: 1;" onclick="setTheme('dark')" id="btnDarkMode">🌙 Gelap</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label id="txtLangLabel" style="font-size: 0.85rem; font-weight: 700; color: var(--bs-gray); display: block; margin-bottom: 8px;">BAHASA</label>
+                <select id="languageSelect" onchange="changeLanguage(this.value)" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--bs-yellow); background: var(--bs-cyan); color: var(--bs-black); font-family: var(--body-font); font-weight: 600; outline: none;">
+                    <option value="id">🇮🇩 Indonesia</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="jp">🇯🇵 日本語</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeSettingsModal()" id="txtCloseSettings">Tutup</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer"></div>
+
+    <aside class="sidebar" id="appSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo-area">
+                <div class="sidebar-logo">N</div>
+                <div class="sidebar-title">Noto Pro</div>
+            </div>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()" title="Tutup Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        
+        <div class="sidebar-actions">
+            <button class="btn btn-primary" style="width: 100%;" onclick="createNewNote()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span id="txtNewNote">Catatan Baru</span>
+            </button>
+            <button class="btn btn-outline" style="width: 100%;" onclick="openImportInfoModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span id="txtImportFile">Impor File</span>
+            </button>
+            <input type="file" id="hiddenFileInput" accept=".js,.json,.txt" onchange="importAnyFile(event)" />
+        </div>
+
+        <div class="sidebar-menu-list">
+            <div class="menu-label" id="txtSavedNotesLabel">Catatan Tersimpan</div>
+            <div id="sidebarNoteList"></div>
+        </div>
+
+        <div class="sidebar-footer-settings">
+            <button class="btn-settings" onclick="openSettingsModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span id="txtSettingsBtn">Pengaturan</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            </div>
+            
+            <div class="search-bar" id="searchBarContainer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="searchInput" placeholder="Cari catatan..." oninput="filterNotes()">
+            </div>
+        </header>
+
+        <div id="dashboardView" class="view-container active">
+            <div class="notes-grid" id="notesGrid"></div>
+        </div>
+
+        <div id="editorView" class="view-container">
+            <div class="editor-wrapper" id="editorWrapper">
+                
+                <div class="focus-toggle-bar">
+                    <button class="btn-focus-toggle" onclick="toggleFocusMode()" id="focusToggleBtn">
+                        <svg id="focusIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                        <span id="focusText">Sembunyikan Menu Atas</span>
+                    </button>
+                </div>
+
+                <div class="editor-top-bar">
+                    <button class="btn btn-outline" onclick="showDashboard()" id="btnBack">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Kembali
+                    </button>
+                    
+                    <div class="filename-input-group">
+                        <input type="text" class="filename-input" id="filenameInput" placeholder="Judul catatan" />
+                    </div>
+
+                    <div class="mode-tabs">
+                        <button class="mode-tab active" id="tabEditor" onclick="switchEditorMode('editor')">Edit Teks</button>
+                        <button class="mode-tab" id="tabPreview" onclick="switchEditorMode('preview')">Preview HTML</button>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-outline" onclick="saveNoteOnly()" title="Simpan ke penyimpanan lokal" id="btnSave">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Simpan
+                        </button>
+                        <button class="btn btn-primary" onclick="openDownloadModal()" title="Unduh file catatan" id="btnDownload">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download
+                        </button>
+                    </div>
+                </div>
+
+                <textarea class="editor-textarea" id="editorContent" placeholder="Ketik catatan teks atau tag HTML..."></textarea>
+                
+                <div class="html-preview-pane" id="htmlPreviewPane"></div>
+                
+                <div class="editor-footer">
+                    <div class="status-badge" id="saveStatus">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span id="txtSavedStatus">Tersimpan Lokal</span>
+                    </div>
+                    <div id="charCount">0 Karakter</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const sidebar = document.getElementById('appSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const dashboardView = document.getElementById('dashboardView');
+        const editorView = document.getElementById('editorView');
+        const pageTitle = document.getElementById('pageTitle');
+        const searchContainer = document.getElementById('searchBarContainer');
+        const notesGrid = document.getElementById('notesGrid');
+        const sidebarNoteList = document.getElementById('sidebarNoteList');
+        
+        const filenameInput = document.getElementById('filenameInput');
+        const editorContent = document.getElementById('editorContent');
+        const htmlPreviewPane = document.getElementById('htmlPreviewPane');
+        const tabEditor = document.getElementById('tabEditor');
+        const tabPreview = document.getElementById('tabPreview');
+        const editorWrapper = document.getElementById('editorWrapper');
+        const focusToggleBtn = document.getElementById('focusToggleBtn');
+        const focusIcon = document.getElementById('focusIcon');
+        const focusText = document.getElementById('focusText');
+
+        const saveStatus = document.getElementById('saveStatus');
+        const charCount = document.getElementById('charCount');
+        const searchInput = document.getElementById('searchInput');
+
+        // Modals
+        const modalOverlay = document.getElementById('customModalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+        const downloadModalOverlay = document.getElementById('downloadModalOverlay');
+        const importInfoModal = document.getElementById('importInfoModal');
+        const settingsModalOverlay = document.getElementById('settingsModalOverlay');
+        const languageSelect = document.getElementById('languageSelect');
+
+        let notes = [];
+        let currentEditingId = null;
+        let currentMode = 'editor';
+        let isFocusMode = false;
+        let currentLang = 'id';
+
+        // Variabel penampung untuk fitur Undo Hapus Terakhir
+        let lastDeletedNote = null;
+
+        // KAMUS BAHASA
+        const translations = {
+            id: {
+                newNote: "Catatan Baru",
+                importFile: "Impor File",
+                savedNotes: "Catatan Tersimpan",
+                settings: "Pengaturan",
+                dashboard: "Dashboard",
+                newNoteCard: "Buat Catatan Baru",
+                searchPlaceholder: "Cari catatan...",
+                hideMenu: "Sembunyikan Menu Atas",
+                showMenu: "Tampilkan Menu Atas",
+                back: "Kembali",
+                editText: "Edit Teks",
+                previewHtml: "Preview HTML",
+                save: "Simpan",
+                download: "Download",
+                savedLocal: "Tersimpan Lokal",
+                ready: "Siap",
+                chars: "Karakter",
+                emptyNotesSidebar: "Belum ada catatan.",
+                emptyPreview: "Belum ada konten HTML atau tabel untuk ditampilkan.",
+                confirmTitle: "Konfirmasi",
+                confirmDeleteMsg: "Apakah Anda yakin ingin menghapus catatan ini secara permanen?",
+                cancel: "Batal",
+                yesDelete: "Ya, Hapus",
+                importTitle: "Impor Berkas Catatan",
+                importDesc: "Anda dapat mengimpor file berformat JavaScript (.js), JSON (.json), maupun Text Biasa (.txt) ke dalam aplikasi ini.",
+                chooseFile: "Pilih File",
+                downloadTitle: "Pilih Format Unduhan",
+                downloadDesc: "Pilih format file yang ingin Anda gunakan untuk menyimpan catatan ini:",
+                settingsTitle: "Pengaturan Aplikasi",
+                themeLabel: "TAMPILAN MODE",
+                lightMode: "☀️ Terang",
+                darkMode: "🌙 Gelap",
+                langLabel: "BAHASA",
+                close: "Tutup",
+                undoText: "Batalkan",
+                deleteSuccessMsg: "Catatan berhasil dihapus",
+                undoSuccessMsg: "Penghapusan dibatalkan!"
+            },
+            en: {
+                newNote: "New Note",
+                importFile: "Import File",
+                savedNotes: "Saved Notes",
+                settings: "Settings",
+                dashboard: "Dashboard",
+                newNoteCard: "Create New Note",
+                searchPlaceholder: "Search notes...",
+                hideMenu: "Hide Top Menu",
+                showMenu: "Show Top Menu",
+                back: "Back",
+                editText: "Edit Text",
+                previewHtml: "HTML Preview",
+                save: "Save",
+                download: "Download",
+                savedLocal: "Locally Saved",
+                ready: "Ready",
+                chars: "Characters",
+                emptyNotesSidebar: "No notes yet.",
+                emptyPreview: "No HTML content or tables to display.",
+                confirmTitle: "Confirmation",
+                confirmDeleteMsg: "Are you sure you want to permanently delete this note?",
+                cancel: "Cancel",
+                yesDelete: "Yes, Delete",
+                importTitle: "Import Note File",
+                importDesc: "You can import JavaScript (.js), JSON (.json), or Plain Text (.txt) files into this application.",
+                chooseFile: "Choose File",
+                downloadTitle: "Choose Download Format",
+                downloadDesc: "Select the file format you want to use to save this note:",
+                settingsTitle: "App Settings",
+                themeLabel: "THEME MODE",
+                lightMode: "☀️ Light",
+                darkMode: "🌙 Dark",
+                langLabel: "LANGUAGE",
+                close: "Close",
+                undoText: "Undo",
+                deleteSuccessMsg: "Note successfully deleted",
+                undoSuccessMsg: "Deletion undone!"
+            },
+            jp: {
+                newNote: "新規メモ",
+                importFile: "ファイルインポート",
+                savedNotes: "保存されたメモ",
+                settings: "設定",
+                dashboard: "ダッシュボード",
+                newNoteCard: "新しいメモを作成",
+                searchPlaceholder: "メモを検索...",
+                hideMenu: "上部メニューを隠す",
+                showMenu: "上部メニューを表示",
+                back: "戻る",
+                editText: "テキスト編集",
+                previewHtml: "HTMLプレビュー",
+                save: "保存",
+                download: "ダウンロード",
+                savedLocal: "ローカル保存済み",
+                ready: "準備完了",
+                chars: "文字",
+                emptyNotesSidebar: "メモはありません。",
+                emptyPreview: "表示するHTMLコンテンツまたはテーブルはありません。",
+                confirmTitle: "確認",
+                confirmDeleteMsg: "このメモを完全に削除してもよろしいですか？",
+                cancel: "キャンセル",
+                yesDelete: "はい、削除します",
+                importTitle: "メモファイルをインポート",
+                importDesc: "JavaScript (.js)、JSON (.json)、またはテキスト (.txt) ファイルをインポートできます。",
+                chooseFile: "ファイルを選択",
+                downloadTitle: "ダウンロード形式を選択",
+                downloadDesc: "このメモを保存するファイル形式を選択してください：",
+                settingsTitle: "アプリ設定",
+                themeLabel: "テーマモード",
+                lightMode: "☀️ ライト",
+                darkMode: "🌙 ダーク",
+                langLabel: "言語",
+                close: "閉じる",
+                undoText: "元に戻す",
+                deleteSuccessMsg: "メモが削除されました",
+                undoSuccessMsg: "削除が取り消されました！"
+            }
+        };
+
+        function init() {
+            loadSettings();
+            loadNotes();
+            renderDashboard();
+            renderSidebar();
+        }
+
+        function loadSettings() {
+            const savedTheme = localStorage.getItem('notepad_theme') || 'light';
+            setTheme(savedTheme, false);
+
+            const savedLang = localStorage.getItem('notepad_lang') || 'id';
+            currentLang = savedLang;
+            languageSelect.value = savedLang;
+            applyLanguage();
+        }
+
+        function setTheme(theme, save = true) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            if (save) {
+                localStorage.setItem('notepad_theme', theme);
+                showToast(currentLang === 'jp' ? "テーマが変更されました" : currentLang === 'en' ? "Theme updated successfully" : "Tema berhasil diperbarui", "success");
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('notepad_lang', lang);
+            applyLanguage();
+            renderSidebar();
+            if(dashboardView.classList.contains('active')) {
+                renderDashboard(searchInput.value);
+            }
+        }
+
+        function applyLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('txtNewNote').textContent = t.newNote;
+            document.getElementById('txtImportFile').textContent = t.importFile;
+            document.getElementById('txtSavedNotesLabel').textContent = t.savedNotes;
+            document.getElementById('txtSettingsBtn').textContent = t.settings;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            
+            if(dashboardView.classList.contains('active')) {
+                pageTitle.textContent = t.dashboard;
+            }
+
+            document.getElementById('focusText').textContent = isFocusMode ? t.showMenu : t.hideMenu;
+            document.getElementById('btnBack').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> ${t.back}`;
+            tabEditor.textContent = t.editText;
+            tabPreview.textContent = t.previewHtml;
+            document.getElementById('btnSave').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> ${t.save}`;
+            document.getElementById('btnDownload').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> ${t.download}`;
+            document.getElementById('txtSavedStatus').textContent = t.savedLocal;
+            updateCharCount();
+
+            // Modal elements
+            document.getElementById('txtModalImportTitle').textContent = t.importTitle;
+            document.getElementById('txtModalImportDesc').textContent = t.importDesc;
+            document.getElementById('txtChooseFile').textContent = t.chooseFile;
+            document.getElementById('txtCancel').textContent = t.cancel;
+            document.getElementById('txtModalDownloadTitle').textContent = t.downloadTitle;
+            document.getElementById('txtModalDownloadDesc').textContent = t.downloadDesc;
+            document.getElementById('txtDownloadCancel').textContent = t.cancel;
+            document.getElementById('txtSettingsTitle').textContent = t.settingsTitle;
+            document.getElementById('txtThemeLabel').textContent = t.themeLabel;
+            document.getElementById('btnLightMode').textContent = t.lightMode;
+            document.getElementById('btnDarkMode').textContent = t.darkMode;
+            document.getElementById('txtLangLabel').textContent = t.langLabel;
+            document.getElementById('txtCloseSettings').textContent = t.close;
+        }
+
+        function showToast(message, type = 'success', undoCallback = null) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let htmlContent = `<span>${type === 'success' ? '✔' : '⚠'}</span><span style="flex:1;">${message}</span>`;
+            if (undoCallback) {
+                const t = translations[currentLang];
+                htmlContent += `<button class="toast-undo-btn" id="toastUndoBtn">${t.undoText}</button>`;
+            }
+            
+            toast.innerHTML = htmlContent;
+            container.appendChild(toast);
+
+            if (undoCallback) {
+                const undoBtn = toast.querySelector('#toastUndoBtn');
+                undoBtn.onclick = () => {
+                    undoCallback();
+                    toast.remove();
+                };
+            }
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(20px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
+
+        function showConfirmModal(title, message, onConfirm) {
+            const t = translations[currentLang];
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalOverlay.classList.add('active');
+
+            // Ambil elemen tombol yang aktif saat ini di DOM (bukan variabel global yang terputus)
+            let currentConfirmBtn = document.getElementById('modalConfirmBtn');
+            let currentCancelBtn = document.getElementById('modalCancelBtn');
+
+            currentCancelBtn.textContent = t.cancel;
+            currentConfirmBtn.textContent = t.yesDelete;
+
+            // Kloning dan ganti elemen untuk menghapus event listener lama
+            const newConfirmBtn = currentConfirmBtn.cloneNode(true);
+            currentConfirmBtn.parentNode.replaceChild(newConfirmBtn, currentConfirmBtn);
+            
+            const newCancelBtn = currentCancelBtn.cloneNode(true);
+            currentCancelBtn.parentNode.replaceChild(newCancelBtn, currentCancelBtn);
+
+            // Pasang event listener baru dengan ID catatan yang tepat
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                modalOverlay.classList.remove('active');
+                onConfirm();
+            };
+
+            document.getElementById('modalCancelBtn').onclick = () => {
+                modalOverlay.classList.remove('active');
+            };
+        }
+
+        function openSettingsModal() {
+            closeSidebarMobile();
+            settingsModalOverlay.classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            settingsModalOverlay.classList.remove('active');
+        }
+
+        function openImportInfoModal() {
+            closeSidebarMobile();
+            importInfoModal.classList.add('active');
+        }
+
+        function closeImportInfoModal() {
+            importInfoModal.classList.remove('active');
+        }
+
+        function proceedChooseFile() {
+            closeImportInfoModal();
+            document.getElementById('hiddenFileInput').click();
+        }
+
+        function openDownloadModal() {
+            autoSaveNote();
+            let customName = filenameInput.value.trim();
+            if (!customName) {
+                showToast(currentLang === 'jp' ? "ファイル名を入力してください！" : currentLang === 'en' ? "Please enter a filename first!" : "Harap masukkan nama file terlebih dahulu!", "error");
+                filenameInput.focus();
+                return;
+            }
+            downloadModalOverlay.classList.add('active');
+        }
+
+        function closeDownloadModal() {
+            downloadModalOverlay.classList.remove('active');
+        }
+
+        function loadNotes() {
+            const saved = localStorage.getItem('notepad_pro_data');
+            if (saved) {
+                notes = JSON.parse(saved);
+            }
+        }
+
+        function saveNotesToLocal() {
+            localStorage.setItem('notepad_pro_data', JSON.stringify(notes));
+            renderSidebar();
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebarMobile() {
+            if (window.innerWidth <= 992) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        function toggleFocusMode() {
+            isFocusMode = !isFocusMode;
+            const t = translations[currentLang];
+            if (isFocusMode) {
+                editorWrapper.classList.add('focus-active');
+                focusText.textContent = t.showMenu;
+                focusIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+            } else {
+                editorWrapper.classList.remove('focus-active');
+                focusText.textContent = t.hideMenu;
+                focusIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+            }
+        }
+
+        function switchEditorMode(mode) {
+            currentMode = mode;
+            const t = translations[currentLang];
+            if (mode === 'editor') {
+                tabEditor.classList.add('active');
+                tabPreview.classList.remove('active');
+                editorContent.style.display = 'block';
+                htmlPreviewPane.classList.remove('active');
+                editorContent.focus();
+            } else {
+                tabPreview.classList.add('active');
+                tabEditor.classList.remove('active');
+                editorContent.style.display = 'none';
+                htmlPreviewPane.classList.add('active');
+                htmlPreviewPane.innerHTML = editorContent.value.trim() 
+                    ? editorContent.value 
+                    : `<div style="color: var(--bs-gray); text-align: center; padding: 40px;">${t.emptyPreview}</div>`;
+            }
+        }
+
+        function showDashboard() {
+            dashboardView.classList.add('active');
+            editorView.classList.remove('active');
+            pageTitle.textContent = translations[currentLang].dashboard;
+            searchContainer.style.display = 'flex';
+            
+            if(currentEditingId !== null || (filenameInput.value.trim() || editorContent.value.trim())) {
+                autoSaveNote();
+            }
+            
+            currentEditingId = null;
+            switchEditorMode('editor');
+            searchInput.value = '';
+            renderDashboard();
+            closeSidebarMobile();
+        }
+
+        function showEditor(isNew = false) {
+            dashboardView.classList.remove('active');
+            editorView.classList.add('active');
+            searchContainer.style.display = 'none';
+            closeSidebarMobile();
+
+            switchEditorMode('editor');
+
+            if (isNew) {
+                currentEditingId = null;
+                filenameInput.value = '';
+                editorContent.value = '';
+                pageTitle.textContent = translations[currentLang].newNote;
+                updateCharCount();
+                filenameInput.focus();
+            }
+        }
+
+        function renderSidebar() {
+            sidebarNoteList.innerHTML = '';
+            const t = translations[currentLang];
+            
+            if(notes.length === 0) {
+                sidebarNoteList.innerHTML = `<div style="color: var(--bs-gray); font-size: 0.85rem; padding: 10px;">${t.emptyNotesSidebar}</div>`;
+                return;
+            }
+
+            const sortedNotes = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
+
+            sortedNotes.forEach(note => {
+                const btn = document.createElement('button');
+                btn.className = `note-list-item ${currentEditingId === note.id ? 'active' : ''}`;
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span class="note-title-text">${escapeHTML(note.filename || 'Tanpa Nama')}</span>
+                `;
+                btn.onclick = () => openExistingNote(note.id);
+                sidebarNoteList.appendChild(btn);
+            });
+        }
+
+        function renderDashboard(filterText = '') {
+            notesGrid.innerHTML = '';
+            const t = translations[currentLang];
+            
+            if (!filterText.trim()) {
+                const addCard = document.createElement('div');
+                addCard.className = 'add-card';
+                addCard.onclick = createNewNote;
+                addCard.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <div class="add-card-text">${t.newNoteCard}</div>
+                `;
+                notesGrid.appendChild(addCard);
+            }
+
+            const filteredNotes = notes.filter(note => {
+                const titleMatch = (note.filename || '').toLowerCase().includes(filterText.toLowerCase());
+                const contentMatch = (note.content || '').toLowerCase().includes(filterText.toLowerCase());
+                return titleMatch || contentMatch;
+            }).sort((a, b) => b.updatedAt - a.updatedAt);
+
+            if(filteredNotes.length === 0 && filterText.trim() !== '') {
+                notesGrid.innerHTML = `<div style="grid-column: 1 / -1; color: var(--bs-gray); padding: 20px;">No notes found matching your search.</div>`;
+                return;
+            }
+
+            filteredNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.className = 'note-card';
+                
+                const dateObj = new Date(note.updatedAt);
+                const dateString = `${dateObj.getDate()}/${dateObj.getMonth()+1}/${dateObj.getFullYear()}`;
+
+                card.innerHTML = `
+                    <div class="note-card-title">${escapeHTML(note.filename || 'Tanpa Nama')}</div>
+                    <div class="note-card-preview">${escapeHTML(note.content.replace(/<[^>]*>?/gm, '') || 'Kosong...')}</div>
+                    <div class="note-card-footer">
+                        <span class="note-date">${dateString}</span>
+                        <div class="card-actions">
+                            <button class="btn-icon" onclick="openExistingNote(${note.id})" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="btn-icon" style="color: var(--bs-red);" onclick="deleteNote(event, ${note.id})" title="Hapus">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                notesGrid.appendChild(card);
+            });
+        }
+
+        function createNewNote() {
+            showEditor(true);
+        }
+
+        function openExistingNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+
+            currentEditingId = id;
+            filenameInput.value = note.filename;
+            editorContent.value = note.content;
+            pageTitle.textContent = 'Edit: ' + note.filename;
+            
+            updateCharCount();
+            showEditor(false);
+            renderSidebar();
+        }
+
+        function deleteNote(event, id) {
+            event.stopPropagation();
+            const t = translations[currentLang];
+            showConfirmModal(
+                t.confirmTitle, 
+                t.confirmDeleteMsg, 
+                () => {
+                    // Simpan data catatan yang akan dihapus ke variabel sementara untuk fitur Undo
+                    const targetNote = notes.find(n => n.id === id);
+                    if (targetNote) {
+                        lastDeletedNote = { ...targetNote };
+                    }
+
+                    // Hapus data dari array notes
+                    notes = notes.filter(n => n.id !== id);
+                    
+                    // Simpan ke localStorage
+                    saveNotesToLocal();
+                    
+                    // Render ulang dashboard secara langsung
+                    renderDashboard(searchInput.value);
+
+                    // Jika catatan yang sedang aktif/diedit adalah catatan yang dihapus, kembalikan ke dashboard
+                    if (currentEditingId === id) {
+                        currentEditingId = null;
+                        showDashboard();
+                    }
+
+                    // Tampilkan toast dengan tombol Undo
+                    showToast(t.deleteSuccessMsg, "success", () => {
+                        if (lastDeletedNote) {
+                            notes.push(lastDeletedNote);
+                            saveNotesToLocal();
+                            renderDashboard(searchInput.value);
+                            showToast(t.undoSuccessMsg, "success");
+                            lastDeletedNote = null;
+                        }
+                    });
+                }
+            );
+        }
+
+        function autoSaveNote() {
+            const filename = filenameInput.value.trim() || 'catatan_tanpa_nama';
+            const content = editorContent.value;
+
+            if(!filenameInput.value.trim() && !content.trim() && currentEditingId === null) return;
+
+            if (currentEditingId !== null) {
+                const noteIndex = notes.findIndex(n => n.id === currentEditingId);
+                if (noteIndex !== -1) {
+                    notes[noteIndex].filename = filename;
+                    notes[noteIndex].content = content;
+                    notes[noteIndex].updatedAt = Date.now();
+                }
+            } else {
+                const newNote = {
+                    id: Date.now(),
+                    filename: filename,
+                    content: content,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                notes.push(newNote);
+                currentEditingId = newNote.id;
+            }
+
+            saveNotesToLocal();
+            const t = translations[currentLang];
+            
+            saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${t.savedLocal}`;
+            setTimeout(() => {
+                saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> ${t.ready}`;
+            }, 1500);
+        }
+
+        function saveNoteOnly() {
+            autoSaveNote();
+            showToast(currentLang === 'jp' ? "メモが保存されました！" : currentLang === 'en' ? "Note saved successfully!" : "Catatan berhasil disimpan!", "success");
+        }
+
+        editorContent.addEventListener('input', () => {
+            updateCharCount();
+            autoSaveNote();
+        });
+
+        filenameInput.addEventListener('input', () => {
+            autoSaveNote();
+        });
+
+        function updateCharCount() {
+            const t = translations[currentLang];
+            charCount.textContent = `${editorContent.value.length}${t.chars}`;
+        }
+
+        function filterNotes() {
+            const query = searchInput.value;
+            renderDashboard(query);
+        }
+
+        function executeDownload(format) {
+            closeDownloadModal();
+            let customName = filenameInput.value.trim();
+            let safeVarName = customName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, "");
+            if (!safeVarName) safeVarName = "catatan";
+            const content = editorContent.value;
+
+            let fileContent = "";
+            let mimeType = "";
+            let extension = "";
+
+            if (format === 'js') {
+                extension = "js";
+                mimeType = "application/javascript";
+                fileContent = `/**
+ * Notepad Data Export
+ * Filename: ${customName}.js
+ * Generated: ${new Date().toLocaleString()}
+ */
+const ${safeVarName}_data =${JSON.stringify(content, null, 2)};
+
+console.log("Data ${safeVarName} successfully loaded!");`;
+            } else if (format === 'json') {
+                extension = "json";
+                mimeType = "application/json";
+                const jsonData = {
+                    filename: customName,
+                    content: content,
+                    updatedAt: Date.now()
+                };
+                fileContent = JSON.stringify(jsonData, null, 2);
+            } else if (format === 'txt') {
+                extension = "txt";
+                mimeType = "text/plain";
+                fileContent = content;
+            }
+
+            const fileName = `${safeVarName}.${extension}`;
+            const blob = new Blob([fileContent], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast(currentLang === 'jp' ? `ファイル ${fileName} がダウンロードされました！` : currentLang === 'en' ? `File ${fileName} downloaded successfully!` : `File ${fileName} berhasil diunduh!`, "success");
+        }
+
+        function importAnyFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function(e) {
+                const text = e.target.result;
+                let extractedContent = "";
+                let cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, ' ');
+
+                try {
+                    if (file.name.endsWith('.json')) {
+                        const parsed = JSON.parse(text);
+                        extractedContent = parsed.content || text;
+                        if (parsed.filename) cleanName = parsed.filename;
+                    } else if (file.name.endsWith('.js')) {
+                        const match = text.match(/=\s*("([^"\\]|\\.)*"|'([^'\\]|\\.)*'|`([^`\\]|\\.)*`)/s);
+                        if (match) {
+                            extractedContent = eval(match[1]);
+                        } else {
+                            throw new Error("Struktur file .js tidak valid.");
+                        }
+                    } else {
+                        extractedContent = text;
+                    }
+
+                    let existingIndex = notes.findIndex(n => n.filename.toLowerCase() === cleanName.toLowerCase());
+                    if (existingIndex !== -1) {
+                        notes[existingIndex].content = extractedContent;
+                        notes[existingIndex].updatedAt = Date.now();
+                    } else {
+                        notes.push({
+                            id: Date.now(),
+                            filename: cleanName,
+                            content: extractedContent,
+                            createdAt: Date.now(),
+                            updatedAt: Date.now()
+                        });
+                    }
+                    
+                    saveNotesToLocal();
+                    renderDashboard(searchInput.value);
+                    
+                    const targetNote = notes.find(n => n.filename.toLowerCase() === cleanName.toLowerCase());
+                    if(targetNote) openExistingNote(targetNote.id);
+
+                    showToast(currentLang === 'jp' ? `ファイル ${file.name} がインポートされました！` : currentLang === 'en' ? `File ${file.name} imported successfully!` : `File ${file.name} berhasil diimpor!`, "success");
+
+                } catch (err) {
+                    showToast("Gagal memproses file: " + err.message, "error");
+                }
+            };
+            event.target.value = '';
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
