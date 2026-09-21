@@ -1,0 +1,1849 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ManTrading v2</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0f141a;color:#e8edf3;font:14px Arial,sans-serif;overflow-y:auto;overflow-x:hidden}html{overflow-y:auto}
+.app{max-width:1550px;margin:auto;padding:16px}
+h1{margin:0;font-size:22px}.muted{color:#8e99a7;font-size:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.panel{background:#181e26;border:1px solid #2a3440;border-radius:11px;padding:13px}
+.settings{display:grid;grid-template-columns:repeat(8,1fr);gap:9px}
+label{display:block;color:#9da8b7;font-size:11px;margin-bottom:4px}
+input,select{width:100%;padding:9px;border-radius:7px;border:1px solid #303a47;background:#0d1116;color:#fff}
+button{padding:9px 12px;border-radius:7px;border:1px solid #3b4655;background:#293442;color:#fff;cursor:pointer}
+button:hover{filter:brightness(1.15)}
+button.primary{background:#315d48}button.danger{background:#663b3b}button.gold{background:#66532e}
+.stats{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0}
+.stat{background:#141920;border:1px solid #28313d;border-radius:8px;padding:9px;color:#9da8b7}
+.stat b{display:block;color:#fff;font-size:16px;margin-top:3px}
+.chart{height:620px;position:relative;background:#090d12;overflow:hidden;flex:none}
+canvas{width:100%;height:100%;display:block}
+.legend{position:absolute;left:10px;top:10px;background:#11161dcc;padding:8px;border-radius:6px;font-size:11px;line-height:1.7;display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:calc(100% - 155px)}
+.chartPauseControls{display:inline-flex;gap:4px;margin-left:7px;vertical-align:middle}
+.chartPauseControls button{padding:4px 8px;border:1px solid #53667a;border-radius:5px;background:#293442;color:#fff;font-size:10px;font-weight:900;cursor:pointer}
+.chartPauseControls button:hover{filter:brightness(1.15)}
+.chartPauseControls button:disabled{opacity:.35;cursor:not-allowed;filter:none}
+.chartPauseControls button.fastActive{background:#8a5a00;border-color:#d99a22;color:#fff}
+.chartPauseControls button.slowActive{background:#1f4f72;border-color:#4a90c4;color:#fff}
+.chartPauseControls button.aiActive{background:#315d48;border-color:#55d69a;color:#fff}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px}
+.c20{background:#f2c14e}.c50{background:#5ca7ff}.c100{background:#b88cff}.c200{background:#ff6b6b}
+.zoneCard{position:relative;right:auto;top:auto;width:100%;background:#151b23;border:1px solid #4c5968;border-radius:9px;padding:11px;display:none;margin-top:10px}
+.zoneCard.show{display:block}
+.zoneTitle{font-weight:bold;font-size:15px;margin-bottom:5px}
+.zoneBuy{color:#65d49a}.zoneSell{color:#ff8585}.zoneNeutral{color:#e5c36b}
+.tradePanel{display:none;margin-top:12px;position:relative;z-index:4}.tradePanel.show{display:block}
+.tradeGrid{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:9px;align-items:end}
+.rrButtons{display:flex;gap:6px}.rrButtons button{flex:1}
+.rrButtons button.active{outline:2px solid #fff;background:#4d5b6b}
+.moneyBox{background:#11161c;border:1px solid #303a47;border-radius:7px;padding:9px}
+.moneyBox b{display:block;font-size:16px;margin-top:3px}
+.negative{color:#ff8585}.positive{color:#65d49a}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.log{height:220px;overflow:auto;font:12px monospace}.row{padding:4px 0;border-bottom:1px solid #252d37}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px;border-bottom:1px solid #28313d;text-align:left}
+.status{margin-top:9px;color:#aeb8c5}
+@media(max-width:1100px){.settings{grid-template-columns:repeat(4,1fr)}.stats{grid-template-columns:repeat(4,1fr)}.tradeGrid{grid-template-columns:1fr 1fr}.chart{height:540px}}
+@media(max-width:650px){.settings{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.bottom{grid-template-columns:1fr}.tradeGrid{grid-template-columns:1fr}.zoneCard{width:250px}}
+
+.order-type-wrap{margin-top:14px;padding:12px;border:1px solid var(--border,#ddd);border-radius:12px}
+.order-type-wrap>span{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.order-type-btns{display:flex;gap:8px;flex-wrap:wrap}
+.order-type-btns button{padding:9px 12px;border:1px solid var(--border,#ddd);border-radius:9px;background:var(--panel,#fff);cursor:pointer;font-weight:700}
+.order-type-btns button.active{background:#384e41;color:#fff;border-color:#384e41}
+.limit-price-wrap{margin-top:10px}
+.limit-price-wrap label{display:block;font-size:12px;font-weight:700}
+.limit-price-wrap input{width:100%;margin-top:5px;padding:9px;border:1px solid var(--border,#ddd);border-radius:8px;box-sizing:border-box}
+
+.order-type-wrap{margin-top:14px;padding:12px;border:1px solid var(--border,#ddd);border-radius:12px}
+.order-type-title{font-size:12px;font-weight:800;letter-spacing:.08em;margin-bottom:8px;color:#e8edf3}
+.order-type-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.order-type-buttons button{color:#fff!important;min-height:42px;border:1px solid #3b4655;border-radius:9px;background:#293442;color:#e8edf3;cursor:pointer;font-weight:800}
+.order-type-buttons button:hover{filter:brightness(1.15)}
+.order-type-buttons button.active{outline:2px solid #d7e6dc;outline-offset:1px}
+#buyNowBtn{background:#315d48;color:#fff}
+#sellNowBtn{background:#663b3b;color:#fff}
+#buyLimitBtn{background:#244d66;color:#fff}
+#sellLimitBtn{background:#66462e;color:#fff}
+.limit-price-box{margin-top:10px}
+.limit-price-box label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+.limit-price-box input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #3b4655;border-radius:8px;background:#0d1116;color:#fff}
+.order-info{margin-top:8px;font-size:12px}
+@media(max-width:650px){.order-type-buttons{grid-template-columns:1fr}}
+
+/* Custom scrollbar */
+html{scrollbar-width:thin;scrollbar-color:#526273 #0b1016}
+body{scrollbar-width:thin;scrollbar-color:#526273 #0b1016}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#0b1016}
+::-webkit-scrollbar-thumb{background:#3f4d5d;border-radius:999px;border:2px solid #0b1016}
+::-webkit-scrollbar-thumb:hover{background:#647488}
+::-webkit-scrollbar-corner{background:#0b1016}
+
+.confirm-order-btn{
+  width:100%;
+  margin-top:10px;
+  min-height:44px;
+  border:0;
+  border-radius:9px;
+  background:#3f7a5b;
+  color:#fff!important;
+  font-weight:900;
+  letter-spacing:.02em;
+  cursor:pointer;
+}
+.confirm-order-btn:hover{filter:brightness(1.12)}
+.confirm-order-btn.limit-confirm{background:#496f8a}
+.confirm-order-btn.sell-confirm{background:#754646}
+.confirm-order-btn.sell-limit-confirm{background:#805a38}
+
+html,body,*{scrollbar-width:thin;scrollbar-color:#53667a #10151b}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#10151b}
+::-webkit-scrollbar-thumb{background:#53667a;border:3px solid #10151b;border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:#70869c}
+
+
+/* Custom in-app order notice modal */
+#orderNoticeOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000b;z-index:10000}
+#orderNoticeOverlay.show{display:flex}
+.orderNoticeBox{width:min(430px,calc(100vw - 32px));background:#171c23;border:2px solid #53667a;border-radius:14px;padding:24px;text-align:center;box-shadow:0 12px 50px #000}
+.orderNoticeTitle{font-size:25px;font-weight:1000;color:#e8edf3;letter-spacing:.04em}
+.orderNoticeText{margin:12px 0 20px;color:#cbd4df;line-height:1.55}
+.orderNoticeBtn{background:#33465a;border:1px solid #64788e;color:#fff;font-weight:900;padding:10px 28px;border-radius:8px;cursor:pointer}
+.orderNoticeBtn:hover{filter:brightness(1.15)}
+.mcNote{margin-top:16px;padding-top:14px;border-top:1px solid #3b4655;text-align:left;color:#cbd4df;line-height:1.55;font-size:13px}
+
+/* MT5-style one-click chart trading panel */
+
+.pending-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#000b;z-index:10001}.pending-overlay.show{display:flex}.pending-box{width:min(400px,calc(100vw - 32px));background:#171c23;border:1px solid #53667a;border-radius:14px;padding:20px;box-shadow:0 12px 50px #000}.pending-title{font-size:22px;font-weight:1000;margin-bottom:10px}.pending-price{font-size:12px;color:#9da8b7;margin-bottom:14px}.pending-price b{color:#fff;font-size:16px}.pending-lot label{display:block;font-size:11px;color:#9da8b7;margin-bottom:4px}.pending-lot input{width:100%;padding:10px;border-radius:7px;border:1px solid #303a47;background:#0d1116;color:#fff}.pending-choice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.pending-choice button{min-height:46px;border:0;border-radius:8px;color:#fff;font-weight:900;cursor:pointer}.buy-limit-choice{background:#244d66}.sell-limit-choice{background:#66462e}.pending-help{font-size:11px;color:#8e99a7;margin:12px 0;line-height:1.45}.pending-cancel{width:100%;padding:9px;border:1px solid #3b4655;border-radius:7px;background:#293442;color:#fff;cursor:pointer}
+
+#mcOverlay{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:#000b;z-index:9999;
+}
+#mcOverlay.show{display:flex}
+.mcBox{
+  width:min(430px,calc(100vw - 32px));background:#171c23;border:2px solid #a5443f;
+  border-radius:14px;padding:24px;text-align:center;box-shadow:0 12px 50px #000;
+}
+.mcTitle{font-size:30px;font-weight:1000;color:#ff6666;letter-spacing:.08em}
+.mcText{margin:10px 0 18px;color:#e8edf3;line-height:1.5}
+.mcBtn{background:#663b3b;border:1px solid #a85a55;color:#fff;font-weight:900;padding:10px 22px;border-radius:8px;cursor:pointer}
+
+.chartTradePanel{position:absolute;right:12px;top:12px;width:120px;background:#11161dee;border:1px solid #3b4655;border-radius:9px;padding:9px;text-align:center;z-index:6;box-shadow:0 4px 14px #0008}
+.ctpPrice{font-weight:900;font-size:15px;color:#fff;margin-bottom:7px;letter-spacing:.02em}
+.ctpBtns{display:flex;gap:5px}
+.ctpBtns button{flex:1;padding:9px 2px;border:none;border-radius:6px;font-weight:900;font-size:11px;color:#fff!important;cursor:pointer;letter-spacing:.03em}
+.ctpSell{background:#a5443f}
+.ctpBuy{background:#2f7a52}
+.ctpBtns button:hover{filter:brightness(1.18)}
+.ctpBtns button:disabled{opacity:.35;cursor:not-allowed;filter:none}
+.ctpLot{margin-top:6px}
+.ctpLot input{width:100%;box-sizing:border-box;padding:5px;font-size:11px;border-radius:5px;border:1px solid #303a47;background:#0d1116;color:#fff;text-align:center}
+
+.ctpPending{width:100%;margin-top:7px;padding:7px 4px;border:1px solid #536f8b;border-radius:6px;background:#334b62;color:#fff;font-weight:900;font-size:10px;cursor:pointer}.ctpPending:hover{filter:brightness(1.15)}
+
+.ctpAllClose{width:100%;margin-top:7px;padding:7px 4px;border:1px solid #8b514e;border-radius:6px;background:#5b3432;color:#fff;font-weight:900;font-size:10px;cursor:pointer}
+.ctpAllClose:hover{filter:brightness(1.15)}
+.ctpAllClose:disabled{opacity:.35;cursor:not-allowed}
+
+.ctpHint{margin-top:5px;font-size:9.5px;color:#7c8794;line-height:1.3}
+
+/* MT5-style history table */
+.historyTable{font-family:Consolas,"Courier New",monospace;font-size:11px}
+.historyTable tbody tr:nth-child(even){background:#141a22}
+.historyTable tfoot td{border-top:2px solid #3b4655;border-bottom:none;padding-top:8px;font-weight:800}
+#tradeTotalPl.positive{color:#65d49a}
+#tradeTotalPl.negative{color:#ff8585}
+.history-close-btn{padding:5px 9px;font-size:10px;font-weight:900;background:#754646!important;border-color:#9a5b5b!important}.history-close-btn:hover{filter:brightness(1.15)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div>
+    <h1>ManTrading Apps V2</h1>
+    
+  </div>
+  <div>
+    <button id="startBtn" class="primary">▶ Start Backtest</button>
+    <button id="pauseBtn">⏸ Pause</button>
+    <button id="stepBtn">⏭ Step</button>
+    <button id="newBtn">New Chart</button>
+  </div>
+</header>
+
+
+<div class="panel">
+  <h3 style="margin-top:0">Backtest Settings</h3>
+  <div class="settings">
+    <div><label>Starting Balance</label><input id="startingBalance" type="number" value="1000" min="1" step="100"></div>
+    <div><label>Jumlah Candlestick</label><input id="candleCount" type="number" value="5000" min="220" max="5000"></div>
+    <div><label>Random Seed</label><input id="seed" type="number" value="731942"></div>
+    <!--<div><label>Market Randomness</label><label class="checkRow"><input id="randomMarket" type="checkbox" checked> Random setiap New Game</label></div>-->
+    <div><label>Risk / Trade (%)</label><input id="riskPct" type="number" value="1" min="0.01" max="20" step="0.1"></div>
+    <div><label>SL Distance (%)</label><input id="slPct" type="number" value="1" min="0.01" max="20" step="0.05"></div>
+    <div><label>Lot Multiplier</label><input id="lotMultiplier" type="number" value="1000" min="1" step="1"></div>
+    <div><label>Default Lot</label><input id="defaultLot" type="number" value="0.01" min="0.01" step="0.01"></div>
+    <div><label>Running Speed (ms)</label><input id="speed" type="number" value="320" min="30" max="3000"></div>
+    
+  </div>
+  <div class="status" id="settingsStatus">Atur parameter dulu, lalu klik Start Backtest.</div>
+</div>
+
+<div class="stats">
+  <div class="stat">Balance<b id="balance">$0.00</b></div>
+  <div class="stat">Equity<b id="equity">$0.00</b></div>
+  <div class="stat">Trend<b id="trend">—</b></div>
+  <div class="stat">Trades<b id="tradeCount">0</b></div>
+  <div class="stat">Win Rate<b id="winRate">0%</b></div>
+  <div class="stat">P/L<b id="pl">$0.00</b></div>
+  <div class="stat">Candle<b id="candlePos">0/0</b></div>
+  <div class="stat">State<b id="stateText">READY</b></div>
+</div>
+
+<div class="panel chart">
+  <canvas id="chart"></canvas>
+  <div class="legend">
+    <span class="dot c20"></span>EMA20 &nbsp;
+    <span class="dot c50"></span>EMA50 &nbsp;
+    <span class="dot c100"></span>EMA100 &nbsp;
+    <span class="dot c200"></span>EMA200 &nbsp; • &nbsp; Zona hijau = Demand &nbsp; • &nbsp; Zona merah = Supply
+    <span class="chartPauseControls">
+      <button type="button" id="chartPauseBtn">⏸ Pause</button>
+      <button type="button" id="chartResumeBtn">▶ Resume</button>
+      <button type="button" id="chartFastBtn">⚡ 150x</button>
+      <button type="button" id="chartSlowBtn">🐢 960x</button>
+      <button type="button" id="chartAiBtn">🤖 AI ON</button>
+    </span>
+  </div>
+  <div class="chartTradePanel" id="chartTradePanel">
+    <div class="ctpPrice" id="ctpPrice">—</div>
+    <div class="ctpBtns">
+      <button type="button" id="ctpSellBtn" class="ctpSell">SELL</button>
+      <button type="button" id="ctpBuyBtn" class="ctpBuy">BUY</button>
+    </div>
+    <div class="ctpLot"><input id="ctpLotInput" type="number" step="0.01" min="0.01" value="0.01" title="Lot"></div>
+    <div class="ctpHint" id="ctpHint">One-click market order</div>
+    <button type="button" id="pendingOrderBtn" class="ctpPending">PENDING ORDER</button>
+    <button type="button" id="allCloseBtn" class="ctpAllClose">ALL CLOSE</button>
+  </div>
+  <div id="layerInfo" class="ctpHint" style="text-align:left;margin-top:7px">No active layers</div>
+</div>
+
+<div class="bottom">
+  <div class="panel"><h3>Trade Log</h3><div id="log" class="log"></div></div>
+  <div class="panel"><h3>History <span class="muted" style="font-weight:normal">(Account)</span></h3>
+    <div style="max-height:220px;overflow:auto">
+      <table class="historyTable">
+        <thead><tr><th>#</th><th>Open</th><th>Type</th><th>Vol</th><th>Price</th><th>S/L</th><th>T/P</th><th>Close</th><th>Reason</th><th>Profit</th><th>Action</th></tr></thead>
+        <tbody id="tradeRows"></tbody>
+        <tfoot><tr><td colspan="10" style="text-align:right">Total</td><td id="tradeTotalPl">$0.00</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Compatibility elements retained for the legacy entry/zone handlers.
+     The current AUTO ENTRY / AUTO SKIP flow does not display this panel. -->
+<div id="legacyCompat" style="display:none!important">
+  <div id="tradePanel"></div>
+  <div id="zoneCard"><span id="zoneName"></span><span id="zoneDirection"></span><span id="zoneDetails"></span><button id="zoneEntryBtn" type="button"></button><button id="zoneSkipBtn" type="button"></button></div>
+  <input id="entryLot" type="number" value="0.01">
+  <input id="limitPriceInput" type="number" value="">
+  <div id="orderTypeBtns"></div><div id="limitPriceWrap"></div>
+  <span id="selectedOrderInfo"></span><span id="slMoney"></span><span id="tpMoney"></span><span id="entryInfo"></span>
+  <button id="skipEntry" type="button"></button>
+</div>
+
+<div id="orderNoticeOverlay">
+  <div class="orderNoticeBox">
+    <div class="orderNoticeTitle" id="orderNoticeTitle">ORDER DITOLAK</div>
+    <div class="orderNoticeText" id="orderNoticeText"></div>
+    <button class="orderNoticeBtn" id="orderNoticeBtn">OK</button>
+  </div>
+</div>
+
+
+<div id="pendingOrderOverlay" class="pending-overlay">
+  <div class="pending-box">
+    <div class="pending-title">PENDING ORDER</div>
+    <div class="pending-price">Market <b id="pendingMarketPrice">—</b></div>
+    <div class="pending-lot">
+      <label>LOT</label><input id="pendingLotInput" type="number" min="0.01" step="0.01" value="0.01">
+    </div>
+    <div class="pending-choice">
+      <button type="button" id="modalBuyLimitBtn" class="buy-limit-choice">BUY LIMIT</button>
+      <button type="button" id="modalSellLimitBtn" class="sell-limit-choice">SELL LIMIT</button>
+    </div>
+    <div class="pending-help">Setelah dibuat, Entry / SL / TP bisa ditarik langsung di chart.</div>
+    <button type="button" id="pendingCancelBtn" class="pending-cancel">CANCEL</button>
+  </div>
+</div>
+
+<div id="mcOverlay">
+  <div class="mcBox">
+    <div class="mcTitle">MARGIN CALL</div>
+    <div class="mcText">
+      Equity / free margin sudah tidak mencukupi.<br>
+      Seluruh posisi dihentikan karena margin call.
+      <div class="mcNote">
+        <b>CATATAN PENTING</b><br>
+        Trading bukan judi atau permainan. Backtest ini adalah alat simulasi untuk mempelajari
+        analisis pasar, price action, risk management, dan disiplin eksekusi. Hasil backtest
+        tidak menjamin hasil trading di kondisi pasar nyata.
+      </div>
+    </div>
+    <button class="mcBtn" id="mcCloseBtn">OK — NEW CHART</button>
+  </div>
+</div>
+
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const canvas = $("chart");
+const ctx = canvas.getContext("2d");
+
+let game = null;
+let timer = null;
+let pendingZone = null;
+let selectedRR = 3;
+let selectedOrderType = 'BUY_NOW';
+let chartOffset = 0;
+let chartFollow = true;
+let chartDragging = false;
+let chartDragStartX = 0;
+let chartDragStartOffset = 0;
+let chartGeom = null;      // last drawChart() coordinate mapping, used for hit-testing draggable lines
+let lineDrag = null;       // {target:'open'|'pending'|'position', line:'sl'|'tp'|'entry'} while dragging a level on the chart
+let chartVisible = 120;    // number of candles visible in the viewport; changed by mouse-wheel zoom
+
+function rng(seed){
+  let x = (seed >>> 0);
+  return () => {
+    x = (x * 1664525 + 1013904223) >>> 0;
+    return x / 4294967296;
+  };
+}
+
+function gauss(r){
+  const u = Math.max(r(), 1e-9), v = Math.max(r(), 1e-9);
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function generateCandles(count, seed){
+  const r=rng(seed);
+  const a=[];
+  const zoneMemory=[];
+  let price=100, drift=0, vol=.7, regime=0, target=0;
+
+  for(let i=0;i<count;i++){
+    if(regime<=0){
+      regime=10+Math.floor(r()*70);
+      target=(r()-.5)*1.25;
+    }
+    regime--;
+
+    drift += (target-drift)*(.025+r()*.055);
+    const vt=.25+r()*1.9;
+    vol += (vt-vol)*(.05+r()*.08);
+
+    const gap=r()<.06 ? gauss(r)*vol*.7 : 0;
+    const shock=r()<.035 ? gauss(r)*vol*(1.5+r()*3) : 0;
+    const o=Math.max(.1,price+gap);
+
+    // Base market movement: trend + random volatility.
+    let c=Math.max(.1,o+drift+gauss(r)*vol+shock);
+
+    // Demand/supply acts as a probabilistic reaction area, not a guaranteed
+    // reversal. When price approaches an existing zone, it can bounce OR break.
+    let reaction=null;
+    for(let z of zoneMemory){
+      const width=Math.max(z.high-z.low,.05);
+      const proximity=Math.max(width*1.5,vol*1.25);
+      const distance=z.side==='BUY'
+        ? Math.abs(o-z.high)
+        : Math.abs(o-z.low);
+      if(distance>proximity) continue;
+
+      // Only react when approaching the zone from the expected side.
+      const approaching=z.side==='BUY' ? o>z.high : o<z.low;
+      if(!approaching) continue;
+
+      const touchProb=.62 + Math.min(.12,z.strength*.03); // bounce is likely, never certain
+      const bounce=r()<touchProb;
+      const push=Math.max(vol*.7,width*(.8+r()*1.4));
+
+      if(z.side==='BUY'){
+        reaction=bounce ? push : -push*(.7+r()*1.3);
+      }else{
+        reaction=bounce ? -push : push*(.7+r()*1.3);
+      }
+      z.touches++;
+      z.strength=Math.max(.25,z.strength-.08);
+      break;
+    }
+
+    if(reaction!==null){
+      // Blend the reaction into the candle rather than teleporting price.
+      c=Math.max(.1,c+reaction);
+    }
+
+    const wick=vol*(.2+r()*1.8);
+    const h=Math.max(o,c)+wick;
+    const l=Math.max(.1,Math.min(o,c)-wick);
+    a.push({o,h,l,c});
+    price=c;
+
+    // Detect zones only from candles that already exist: no future leakage.
+    if(i>=3){
+      const z=detectZone(a,i);
+      if(z){
+        zoneMemory.push({
+          ...z,
+          createdAt:i,
+          strength:1,
+          touches:0
+        });
+        // Keep the simulator lightweight while retaining recent historical zones.
+        if(zoneMemory.length>80) zoneMemory.shift();
+      }
+    }
+
+    // Old zones gradually lose influence; they remain visible on the chart.
+    for(const z of zoneMemory){
+      if(i-z.createdAt>180) z.strength*=.995;
+    }
+  }
+  return a;
+}
+function randomSeed(){
+  if(window.crypto && crypto.getRandomValues){
+    const a=new Uint32Array(1);
+    crypto.getRandomValues(a);
+    return a[0]||Math.floor(Math.random()*4294967295);
+  }
+  return Math.floor(Math.random()*4294967295);
+}
+
+function EMA(data, period){
+  const out = [];
+  const k = 2 / (period + 1);
+  let e = data[0].c;
+  for(let i=0;i<data.length;i++){
+    e = i === 0 ? data[i].c : data[i].c*k + e*(1-k);
+    out.push(e);
+  }
+  return out;
+}
+
+function getTrend(a,i){
+  if(i < 200) return "LIBUR";
+  const e20=a.ema20[i], e50=a.ema50[i], e100=a.ema100[i], e200=a.ema200[i];
+
+  if(e200 > e100 && e100 > e50 && e50 > e20) return "DOWNTREND";
+  if(e200 < e100 && e100 < e50 && e50 < e20) return "UPTREND";
+  return "LIBUR";
+}
+
+function detectZone(a,i){
+  if(i < 3) return null;
+
+  const x=a[i-3], base=a[i-2], y=a[i-1];
+
+  const body=q=>Math.abs(q.c-q.o);
+  const range=q=>Math.max(q.h-q.l,.000001);
+  const small=q=>body(q) <= range(q)*.42;
+  const rally=q=>q.c>q.o && body(q)>=range(q)*.42;
+  const drop=q=>q.c<q.o && body(q)>=range(q)*.42;
+
+  if(drop(x)&&small(base)&&drop(y))
+    return {type:"DROP BASE DROP",side:"SELL",low:base.l,high:base.h};
+
+  if(rally(x)&&small(base)&&rally(y))
+    return {type:"RALLY BASE RALLY",side:"BUY",low:base.l,high:base.h};
+
+  if(drop(x)&&small(base)&&rally(y))
+    return {type:"DROP BASE RALLY",side:"BUY",low:base.l,high:base.h};
+
+  if(rally(x)&&small(base)&&drop(y))
+    return {type:"RALLY BASE DROP",side:"SELL",low:base.l,high:base.h};
+
+  return null;
+}
+
+function money(v){
+  return "$" + Number(v).toFixed(2);
+}
+
+// Floating P/L is calculated independently for EVERY manual position.
+// BUY  = (current - entry) * lot * multiplier
+// SELL = (entry - current) * lot * multiplier
+function getFloatingPL(price){
+  if(!game) return 0;
+  const positions=game.positions||[];
+  return positions.reduce((total,p)=>{
+    const move=p.side==="BUY" ? price-p.entry : p.entry-price;
+    return total + move*p.lot*game.cfg.multiplier;
+  },0);
+}
+
+function getEquity(price){
+  if(!game) return 0;
+  // Standard account equity: realized balance + NET floating P/L.
+  // Equal-size BUY and SELL hedges can therefore have flat equity; that is
+  // mathematically expected and is why free-margin is tracked separately.
+  return game.balance + getFloatingPL(price);
+}
+
+function getUsedMargin(){
+  if(!game) return 0;
+  const leverage=game.cfg.leverage||100;
+  return (game.positions||[]).reduce((total,p)=>{
+    return total + (p.entry*p.lot*game.cfg.multiplier)/leverage;
+  },0);
+}
+
+function getFreeMargin(price){
+  return getEquity(price)-getUsedMargin();
+}
+
+function stop(){
+  if(timer) clearTimeout(timer);
+  timer=null;
+  updateChartPauseButtons();
+}
+
+function addLog(text, cls=""){
+  if(!game) return;
+  game.logs.unshift({text,cls});
+  game.logs=game.logs.slice(0,160);
+  renderLog();
+}
+
+function renderLog(){
+  $("log").innerHTML=(game?.logs||[]).map(x=>`<div class="row ${x.cls}">${x.text}</div>`).join("");
+}
+
+function getSettings(){
+  return {
+    balance:Math.max(1,+$("startingBalance").value||1000),
+    count:Math.max(220,Math.min(5000,+$("candleCount").value||5000)),
+    seed:+$("seed").value||1,
+    randomMarket:$("randomMarket")?.checked ?? true,
+    riskPct:Math.max(.01,+$("riskPct").value||1),
+    slPct:Math.max(.01,+$("slPct").value||1),
+    multiplier:Math.max(1,+$("lotMultiplier").value||1000),
+    defaultLot:Math.max(.01,+$("defaultLot").value||.01),
+    speed:Math.max(30,+$("speed").value||320),
+    layerDistancePct:1,
+    leverage:100
+  };
+}
+
+function createGame(){
+  stop();
+  if($("mcOverlay")) $("mcOverlay").classList.remove("show");
+  $("mcOverlay")?.classList.remove("show");
+  pendingZone=null;
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+
+  const cfg=getSettings();
+  if(cfg.randomMarket){
+    cfg.seed=randomSeed();
+    $("seed").value=cfg.seed;
+  }
+  let a=generateCandles(cfg.count,cfg.seed);
+
+  a.ema20=EMA(a,20);
+  a.ema50=EMA(a,50);
+  a.ema100=EMA(a,100);
+  a.ema200=EMA(a,200);
+
+  game={
+    cfg,
+    balance:cfg.balance,
+    startBalance:cfg.balance,
+    index:0,
+    candles:a,
+    trades:[],
+    positions:[],
+    nextPositionId:1,
+    wins:0,
+    losses:0,
+    open:null,
+    layers:[],
+    positions:[],
+    marginCalled:false,
+    logs:[],
+    tradeMarkers:[],
+    zones:[],
+    pendingOrders:[],
+    nextPendingId:1
+  };
+
+  $("entryLot").value=cfg.defaultLot;
+  $("stateText").textContent="READY";
+  $("settingsStatus").textContent=`Loaded: balance ${money(cfg.balance)} • ${cfg.count} candles • seed ${cfg.seed}`;
+  addLog(`NEW GAME — Balance ${money(cfg.balance)} | Candles ${cfg.count} | Seed ${cfg.seed}`);
+  render();
+}
+
+function saveGame(){
+  if(!game) return;
+  localStorage.setItem("manTradingBacktestV3",JSON.stringify(game));
+  addLog("GAME SAVED");
+}
+
+function loadGame(){
+  stop();
+  const raw=localStorage.getItem("manTradingBacktestV3");
+  if(!raw){$("settingsStatus").textContent="Belum ada save game.";return;}
+
+  game=JSON.parse(raw);
+  game.tradeMarkers=game.tradeMarkers||[];
+  game.positions=game.positions||[];
+  game.nextPositionId=game.nextPositionId||1;
+  game.zones=game.zones||[];
+  game.layers=game.layers||[];
+  game.positions=game.positions||[];
+  game.marginCalled=!!game.marginCalled;
+  game.pendingOrders=game.pendingOrders||(game.pendingOrder?[game.pendingOrder]:[]);
+  game.nextPendingId=game.nextPendingId||(game.pendingOrders.reduce((m,po)=>Math.max(m,po.id||0),0)+1);
+  delete game.pendingOrder;
+  pendingZone=null;
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+  $("startingBalance").value=game.cfg.balance;
+  $("candleCount").value=game.cfg.count;
+  $("seed").value=game.cfg.seed;
+  $("riskPct").value=game.cfg.riskPct;
+  $("slPct").value=game.cfg.slPct;
+  $("lotMultiplier").value=game.cfg.multiplier;
+  $("defaultLot").value=game.cfg.defaultLot;
+  $("speed").value=game.cfg.speed;
+
+  game.layers=game.layers||[];
+
+  render();
+  addLog("GAME LOADED");
+}
+
+function updateChartFastButton(){ const b=$("chartFastBtn"); if(!b) return; b.classList.toggle("fastActive",!!fast150x); b.textContent=fast150x ? "⚡ 150x ON" : "⚡ 150x"; }
+function updateChartSlowButton(){ const b=$("chartSlowBtn"); if(!b) return; b.classList.toggle("slowActive",!!slow960x); b.textContent=slow960x ? "🐢 960x ON" : "🐢 960x"; }
+let aiMode=true;
+let slow960x=false;
+function toggleFast150x(){ fast150x=!fast150x;
+if(fast150x && slow960x){ slow960x=false; updateChartSlowButton(); }
+updateChartFastButton();
+updateAiButton(); if(timer){ stop(); scheduleNext(); } }
+function toggleSlow960x(){ slow960x=!slow960x;
+if(slow960x && fast150x){ fast150x=false; updateChartFastButton(); }
+updateChartSlowButton();
+if(timer){ stop(); scheduleNext(); } }
+function updateChartPauseButtons(){
+  const running=!!timer;
+  const canResume=!!game && !game.marginCalled && !running;
+  const pb=$("chartPauseBtn"), rb=$("chartResumeBtn");
+  if(pb) pb.disabled=!running;
+  if(rb) rb.disabled=!canResume;
+}
+
+let fast150x=false;
+function resumeBacktest(){
+  if(!game || game.marginCalled) return;
+  if(timer) return;
+  start();
+}
+
+function start(){
+  if(!game) createGame();
+  chartFollow = true;
+  stop();
+  $("stateText").textContent="RUNNING";
+  $("startBtn").textContent="▶ Running";
+  updateChartPauseButtons();
+  advance();
+}
+
+function pause(){
+  stop();
+  if(game) $("stateText").textContent=pendingZone?"WAITING ENTRY":"PAUSED";
+  $("startBtn").textContent="▶ Resume";
+}
+
+function updateAiButton(){
+  const b=$("chartAiBtn");
+  if(!b)return;
+  b.textContent=aiMode?"🤖 AI ON":"🤖 AI OFF";
+  b.classList.toggle("aiActive",aiMode);
+}
+function toggleAiMode(){
+  aiMode=!aiMode;
+  updateAiButton();
+  if(game) addLog(aiMode?"AI MODE ON — ENTRY OTOMATIS AKTIF":"AI MODE OFF — ENTRY OTOMATIS NONAKTIF",aiMode?"buy":"holiday");
+}
+
+function scheduleNext(){
+  stop();
+  if(!game || pendingZone || game.index>=game.candles.length-1) return;
+  
+  const delay = fast150x 
+    ? Math.max(1, Math.round(game.cfg.speed/150)) 
+    : slow960x 
+      ? 960 // Mengubah kecepatan menjadi fix 960ms (lebih lambat)
+      : game.cfg.speed;
+      
+  timer=setTimeout(advance,delay);
+  updateChartPauseButtons();
+}
+
+function advance(){
+  if(!game) return;
+
+  if(game.index>=game.candles.length-1){
+    stop();
+    $("stateText").textContent="FINISHED";
+    $("startBtn").textContent="▶ Start";
+    addLog("BACKTEST SELESAI");
+    return;
+  }
+
+  game.index++;
+  if(chartFollow) chartOffset = 0;
+  processCandle();
+  render();
+
+  if(!pendingZone) scheduleNext();
+}
+
+function processCandle(){
+  const i=game.index, a=game.candles;
+  const trend=getTrend(a,i);
+  const z=detectZone(a,i);
+
+  // Always record every detected demand/supply zone.
+  // Trend is NOT required for the zone to be displayed on the chart.
+  if(z){
+    game.zones=game.zones||[];
+    if(!game.zones.some(q=>q.index===i)){
+      game.zones.push({
+        ...z,
+        index:i,
+        price:a[i].c,
+        trend:trend==="LIBUR"?"—":trend,
+        confirmedAt:i
+      });
+    }
+  }
+
+  // Legacy SL/TP position management (not used by one-click manual positions).
+  if(game.open && !game.open.manualClose){
+    const p=game.open;
+    const x=a[i];
+    let exit=null;
+
+    if(p.side==="BUY"){
+      if(x.l<=p.sl) exit=[p.sl,"SL"];
+      else if(x.h>=p.tp) exit=[p.tp,"TP"];
+    }else{
+      if(x.h>=p.sl) exit=[p.sl,"SL"];
+      else if(x.l<=p.tp) exit=[p.tp,"TP"];
+    }
+
+    if(exit){
+      closeAutoPosition(exit[0],exit[1]);
+      return;
+    }
+  }
+
+  // Pending LIMIT order handling — supports multiple simultaneous pending
+  // orders (same-direction only, enforced when the order is placed). Each
+  // filled order becomes its own entry in game.positions, keeping its
+  // planned SL/TP.
+  if((game.pendingOrders||[]).length){
+    const x=a[i];
+    const filled=game.pendingOrders.filter(po=>po.side==="BUY" ? x.l<=po.entry : x.h>=po.entry);
+
+    if(filled.length){
+      filled.forEach(po=>{
+        const entry=po.entry, sl=po.sl, tp=po.tp;
+        const riskCash=Math.abs(entry-sl)*po.lot*game.cfg.multiplier;
+        const rewardCash=Math.abs(tp-entry)*po.lot*game.cfg.multiplier;
+
+        const position={
+          id:(game.nextPositionId||1),
+          side:po.side,lot:po.lot,entry,
+          sl,tp,riskCash,rewardCash,
+          openedAt:i,
+          orderType:po.orderType,
+          zone:po.zone,
+          manualClose:true
+        };
+        game.nextPositionId=position.id+1;
+        game.positions=(game.positions||[]).concat([position]);
+
+        addLog(
+          `${po.orderType.replace("_"," ")} FILLED #${position.id} ${po.side} ${po.lot.toFixed(2)} lot @ ${entry.toFixed(2)} | `+
+          `SL ${sl.toFixed(2)} (-${money(riskCash)}) | `+
+          `TP ${tp.toFixed(2)} (+${money(rewardCash)})`,
+          po.side==="BUY"?"buy":"sell"
+        );
+      });
+
+      game.pendingOrders=game.pendingOrders.filter(po=>!filled.includes(po));
+      $("stateText").textContent="POSITION OPEN";
+    }
+  }
+
+  // Auto-close chart positions that carry an SL and/or TP — either from a
+  // filled pending order, or a manual SL created by clicking the entry line.
+  if((game.positions||[]).length){
+    const x=a[i];
+    const toClose=[];
+    for(const p of game.positions){
+      if(p.sl==null && p.tp==null) continue;
+      let exit=null;
+      if(p.side==="BUY"){
+        if(p.sl!=null && x.l<=p.sl) exit=[p.sl,"SL"];
+        else if(p.tp!=null && x.h>=p.tp) exit=[p.tp,"TP"];
+      }else{
+        if(p.sl!=null && x.h>=p.sl) exit=[p.sl,"SL"];
+        else if(p.tp!=null && x.l<=p.tp) exit=[p.tp,"TP"];
+      }
+      if(exit) toClose.push({id:p.id,price:exit[0],reason:exit[1]});
+    }
+    toClose.forEach(c=>closePosition(c.id,c.price,c.reason));
+  }
+
+  // Automatic zone decision:
+  // aligned with trend = ENTRY automatically
+  // not aligned / LIBUR = SKIP automatically.
+  // No confirmation/pause step.
+  if(i<205 || !z || game.open || (game.pendingOrders||[]).length || (game.positions||[]).length) return;
+
+  const aligned=(trend==="UPTREND"&&z.side==="BUY") ||
+                (trend==="DOWNTREND"&&z.side==="SELL");
+
+  if(!aligned || trend==="LIBUR"){
+    addLog(`LIBUR / SKIP OTOMATIS — ${z.type} @ ${a[i].c.toFixed(2)}`,"holiday");
+    return;
+  }
+
+  pendingZone={
+    ...z,
+    index:i,
+    price:a[i].c,
+    trend,
+    confirmedAt:i
+  };
+
+  // Automatic market entry is controlled by AI MODE.
+  if(aiMode){
+    $("entryLot").value=game.cfg.defaultLot;
+    selectedRR=3;
+    enter(z.side, z.side==="BUY" ? "BUY_NOW" : "SELL_NOW");
+    addLog(`ENTRY OTOMATIS — ${z.type} ${z.side} @ ${a[i].c.toFixed(2)} | RR 1:3`, z.side==="BUY"?"buy":"sell");
+  }else{
+    addLog(`AI OFF / SKIP ENTRY — ${z.type} ${z.side} @ ${a[i].c.toFixed(2)}`,"holiday");
+    pendingZone=null;
+  }
+}
+
+function drawZoneCard(){
+  if(!pendingZone)return;
+  const z=pendingZone;
+  $("zoneCard").classList.add("show");
+  $("zoneName").textContent=z.type;
+  $("zoneDirection").className=z.side==="BUY"?"zoneBuy":"zoneSell";
+  $("zoneDirection").textContent=`${z.side} • ${z.trend}`;
+  $("zoneDetails").innerHTML=`Zone: ${z.low.toFixed(2)} — ${z.high.toFixed(2)}<br>Current: ${z.price.toFixed(2)}<br>Candle: ${z.index}`;
+}
+
+
+function setupOrderTypeUI(){
+  document.querySelectorAll('#orderTypeBtns button').forEach(btn=>{
+    btn.onclick=()=>{
+      selectedOrderType=btn.dataset.order;
+      document.querySelectorAll('#orderTypeBtns button').forEach(b=>b.classList.toggle('active',b===btn));
+      const wrap=document.getElementById('limitPriceWrap');
+      if(wrap) wrap.style.display=selectedOrderType==='limit'?'block':'none';
+      if(selectedOrderType==='limit' && game && pendingZone){
+        const inp=document.getElementById('limitPriceInput');
+        if(inp && !inp.value) inp.value=(pendingZone.entry||pendingZone.price||game.candles[game.index].close).toFixed(5);
+      }
+      updateEntryPreview();
+    };
+  });
+  const first=document.querySelector('#orderTypeBtns button[data-order="market"]');
+  if(first) first.classList.add('active');
+}
+
+function updateEntryPreview(){
+  // Keep the existing preview logic intact; limit orders use the entered limit price.
+  if(!game || !pendingZone) return;
+  const inp=document.getElementById('limitPriceInput');
+  if(selectedOrderType==='limit' && inp && inp.value){
+    pendingZone.previewEntry=Number(inp.value);
+  }else{
+    pendingZone.previewEntry=null;
+  }
+}
+
+function showEntryPanel(){
+  if(!pendingZone)return;
+  $("tradePanel").classList.add("show");
+  $("entryLot").value=game.cfg.defaultLot;
+  updateRiskPreview();
+  $("stateText").textContent="ENTRY DECISION";
+}
+
+function updateRiskPreview(){
+  if(!pendingZone || !game)return;
+
+  const lot=game.cfg.defaultLot;
+  const price=pendingZone.price;
+  const distance=price*(game.cfg.slPct/100);
+  const riskCash=distance*lot*game.cfg.multiplier;
+  const rewardCash=riskCash*selectedRR;
+
+  $("slMoney").textContent="-"+money(riskCash);
+  $("tpMoney").textContent="+"+money(rewardCash);
+
+  $("entryInfo").innerHTML=
+    `Entry ${price.toFixed(2)} • SL distance ${game.cfg.slPct}% • `+
+    `Risk ${money(riskCash)} • RR 1:${selectedRR} • `+
+    `Potential TP ${money(rewardCash)}`;
+}
+
+function enter(side, orderTypeOverride){
+  if(!pendingZone || !game)return;
+
+  const lot=Math.max(.01,+$("entryLot").value||game.cfg.defaultLot);
+  const orderType=orderTypeOverride || selectedOrderType;
+  let entry;
+
+  if(orderType==="BUY_LIMIT" || orderType==="SELL_LIMIT"){
+    entry=Number($("limitPriceInput").value);
+    if(!Number.isFinite(entry) || entry<=0){
+      $("selectedOrderInfo").textContent="Masukkan Limit Price yang valid.";
+      $("limitPriceInput").focus();
+      return;
+    }
+
+    // Buy Limit harus berada di bawah harga market, Sell Limit di atas.
+    const market=game.candles[game.index].c;
+    if(orderType==="BUY_LIMIT" && entry>=market){
+      $("selectedOrderInfo").textContent="BUY LIMIT harus di bawah harga market.";
+      return;
+    }
+    if(orderType==="SELL_LIMIT" && entry<=market){
+      $("selectedOrderInfo").textContent="SELL LIMIT harus di atas harga market.";
+      return;
+    }
+
+    // Simpan pending order; posisi baru dibuka saat candle menyentuh harga limit.
+    // SL/TP dihitung sekali di sini (bukan saat fill) supaya bisa ditarik/di-drag di chart.
+    const poDistance=entry*(game.cfg.slPct/100);
+    const poSl=side==="BUY"?entry-poDistance:entry+poDistance;
+    const poTp=side==="BUY"?entry+poDistance*selectedRR:entry-poDistance*selectedRR;
+
+    const newPendingOrder={
+      id:(game.nextPendingId||1),
+      side,
+      lot,
+      entry,
+      sl:poSl,
+      tp:poTp,
+      rr:selectedRR,
+      zone:pendingZone.type,
+      placedAt:game.index,
+      orderType
+    };
+    game.nextPendingId=newPendingOrder.id+1;
+    game.pendingOrders=(game.pendingOrders||[]).concat([newPendingOrder]);
+
+    addLog(
+      `${orderType.replace("_"," ")} ${lot.toFixed(2)} lot @ ${entry.toFixed(2)} | RR 1:${selectedRR}`,
+      side==="BUY"?"buy":"sell"
+    );
+
+    pendingZone=null;
+    $("tradePanel").classList.remove("show");
+    $("zoneCard").classList.remove("show");
+    $("stateText").textContent="LIMIT ORDER ACTIVE";
+    render();
+    scheduleNext();
+    return;
+  }
+
+  // Market order.
+  entry=game.candles[game.index].c;
+  const distance=entry*(game.cfg.slPct/100);
+  const sl=side==="BUY"?entry-distance:entry+distance;
+  const tp=side==="BUY"?entry+distance*selectedRR:entry-distance*selectedRR;
+
+  const riskCash=distance*lot*game.cfg.multiplier;
+  const rewardCash=riskCash*selectedRR;
+
+  game.open={
+    side,lot,entry,sl,tp,
+    riskCash,rewardCash,
+    rr:selectedRR,
+    zone:pendingZone.type,
+    openedAt:game.index,
+    orderType
+  };
+
+  addLog(
+    `${orderType.replace("_"," ")} ${side} ${lot.toFixed(2)} lot @ ${entry.toFixed(2)} | `+
+    `SL ${sl.toFixed(2)} (-${money(riskCash)}) | `+
+    `TP ${tp.toFixed(2)} (+${money(rewardCash)}) | RR 1:${selectedRR}`,
+    side==="BUY"?"buy":"sell"
+  );
+
+  pendingZone=null;
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+  $("stateText").textContent="POSITION OPEN";
+
+  render();
+  scheduleNext();
+}
+
+function skipZone(){
+  if(!pendingZone)return;
+  addLog(`LIBUR / SKIP — ${pendingZone.type}`,"holiday");
+  pendingZone=null;
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+  $("stateText").textContent="RUNNING";
+  render();
+  scheduleNext();
+}
+
+function closeAutoPosition(price,reason){
+  if(!game || !game.open) return;
+  const p=game.open;
+  const move=p.side==="BUY" ? price-p.entry : p.entry-price;
+  const pl=move*p.lot*game.cfg.multiplier;
+  game.balance+=pl;
+  game.trades.push({id:"AUTO-"+p.openedAt,zone:p.zone,side:p.side,lot:p.lot,entry:p.entry,exit:price,pl,reason,rr:p.rr,sl:p.sl,tp:p.tp,entryIndex:p.openedAt,exitIndex:game.index});
+  game.tradeMarkers.unshift({id:"AUTO-"+p.openedAt,side:p.side,entry:p.entry,sl:p.sl,tp:p.tp,exit:price,entryIndex:p.openedAt,exitIndex:game.index,result:reason,pl});
+  game.tradeMarkers=game.tradeMarkers.slice(0,50);
+  if(pl>=0) game.wins++; else game.losses++;
+  addLog(`AUTO CLOSE ${p.side} @ ${price.toFixed(2)} → ${pl>=0?"+":""}${money(pl)} (${reason})`,pl>=0?"buy":"sell");
+  game.open=null;
+}
+
+function closePosition(positionId,price,reason="MANUAL"){
+  const positions=game.positions||[];
+  const idx=positions.findIndex(p=>p.id===positionId);
+  if(idx<0) return;
+
+  const p=positions[idx];
+  const move=p.side==="BUY"?price-p.entry:p.entry-price;
+  const pl=move*p.lot*game.cfg.multiplier;
+
+  game.balance+=pl;
+
+  game.trades.push({
+    id:p.id,
+    zone:p.zone,
+    side:p.side,
+    lot:p.lot,
+    entry:p.entry,
+    exit:price,
+    pl,
+    reason,
+    rr:null,
+    sl:null,
+    tp:null,
+    entryIndex:p.openedAt,
+    exitIndex:game.index
+  });
+
+  game.tradeMarkers.unshift({
+    id:p.id,
+    side:p.side,
+    entry:p.entry,
+    sl:null,
+    tp:null,
+    exit:price,
+    entryIndex:p.openedAt,
+    exitIndex:game.index,
+    result:reason,
+    pl
+  });
+  game.tradeMarkers=game.tradeMarkers.slice(0,50);
+
+  if(pl>=0)game.wins++;
+  else game.losses++;
+
+  addLog(
+    `CLOSE #${p.id} ${p.side} @ ${price.toFixed(2)} → ${pl>=0?"+":""}${money(pl)} (${reason})`,
+    pl>=0?"buy":"sell"
+  );
+
+  positions.splice(idx,1);
+  game.positions=positions;
+  render();
+}
+
+
+
+function triggerMarginCall(){
+  if(!game || game.marginCalled) return;
+
+  game.marginCalled=true;
+  game.balance=0;
+  stop();
+
+  game.open=null;
+  game.layers=[];
+  game.positions=[];
+  game.pendingOrders=[];
+  pendingZone=null;
+
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+  $("stateText").textContent="MARGIN CALL";
+  $("startBtn").textContent="▶ Start Backtest";
+
+  addLog("MARGIN CALL — EQUITY $0.00","sell");
+  $("mcOverlay").classList.add("show");
+}
+
+function render(){
+  if(!game)return;
+  $("balance").textContent=money(game.balance);
+  const current=game.candles[game.index].c;
+  const positions=game.positions||[];
+  const floatingPL=getFloatingPL(current);
+  const equity=getEquity(current);
+  const usedMargin=getUsedMargin();
+  const freeMargin=getFreeMargin(current);
+
+  // Equity is NET floating P/L. A hedge can legitimately flatten it.
+  // Margin Call is therefore enforced through free margin, so opening
+  // opposite positions cannot create an unlimited risk-free loophole.
+  $("equity").textContent=money(Math.max(0,equity));
+  const eqBox=$("equity").closest('.stat,.moneyBox');
+  if(eqBox){
+    eqBox.title=`Floating ${money(floatingPL)} • Used Margin ${money(usedMargin)} • Free Margin ${money(freeMargin)}`;
+  }
+  if((equity<=0 || freeMargin<=0)&&!game.marginCalled){
+    game.balance=Math.max(0,equity);
+    triggerMarginCall();
+    return;
+  }
+  const tr=game.index>=200?getTrend(game.candles,game.index):"LIBUR"; $("trend").textContent=tr; $("trend").className=tr==="UPTREND"?"positive":tr==="DOWNTREND"?"negative":"zoneNeutral";
+  $("tradeCount").textContent=game.trades.length; $("winRate").textContent=(game.trades.length?game.wins/game.trades.length*100:0).toFixed(1)+"%"; $("pl").textContent=money(game.balance-game.startBalance); $("candlePos").textContent=`${game.index}/${game.candles.length-1}`; renderLog();
+  const closed=game.trades.slice().reverse().map((t,i)=>`<tr><td>${game.trades.length-i}</td><td>#${t.entryIndex}</td><td class="${t.side==="BUY"?"buy":"sell"}">${t.side}</td><td>${t.lot.toFixed(2)}</td><td>${t.entry.toFixed(2)}</td><td>${t.sl==null?"—":t.sl.toFixed(2)}</td><td>${t.tp==null?"—":t.tp.toFixed(2)}</td><td>${t.exit.toFixed(2)} <span class="muted">#${t.exitIndex}</span></td><td>${t.reason}</td><td class="${t.pl>=0?"positive":"negative"}">${t.pl>=0?"+":""}${money(t.pl)}</td><td>—</td></tr>`).join("");
+  const pending=(game.pendingOrders||[]).map(po=>`<tr><td>PENDING</td><td>#${po.placedAt}</td><td class="${po.side==="BUY"?"buy":"sell"}">${po.side} LIMIT</td><td>${po.lot.toFixed(2)}</td><td>${po.entry.toFixed(2)}</td><td>${po.sl.toFixed(2)}</td><td>${po.tp.toFixed(2)}</td><td>—</td><td>PENDING</td><td>—</td><td><button type="button" class="danger history-close-btn" data-pending-id="${po.id}">CANCEL</button></td></tr>`).join("");
+  const open=positions.map(p=>{const move=p.side==="BUY"?current-p.entry:p.entry-current,f=move*p.lot*game.cfg.multiplier;const slTxt=p.sl==null?"—":p.sl.toFixed(2);const tpTxt=p.tp==null?"—":p.tp.toFixed(2);return `<tr><td>OPEN L${p.layerNumber}</td><td>#${p.openedAt}</td><td class="${p.side==="BUY"?"buy":"sell"}">${p.side}</td><td>${p.lot.toFixed(2)}</td><td>${p.entry.toFixed(2)}</td><td>${slTxt}</td><td>${tpTxt}</td><td>${current.toFixed(2)} <span class="muted">#${game.index}</span></td><td>OPEN • MANUAL</td><td class="${f>=0?"positive":"negative"}">${f>=0?"+":""}${money(f)}</td><td><button type="button" class="danger history-close-btn" data-position-id="${p.id}">CLOSE</button></td></tr>`}).join("");
+  $("tradeRows").innerHTML=pending+open+closed;
+  document.querySelectorAll(".history-close-btn").forEach(b=>{
+    if(b.dataset.pendingId) b.onclick=()=>cancelPendingOrder(b.dataset.pendingId);
+    else b.onclick=()=>closeChartPosition(b.dataset.positionId);
+  });
+  const totalPl=game.trades.reduce((a,t)=>a+t.pl,0); $("tradeTotalPl").textContent=(totalPl>=0?"+":"")+money(totalPl); $("tradeTotalPl").className=totalPl>=0?"positive":"negative"; updateChartTradePanel(); drawChart();
+}
+
+
+function openPendingModal(){
+  // MT5-style pending placement: no modal.
+  // One click creates a draggable Entry / SL / TP plan. Entry starts below
+  // market, therefore BUY LIMIT; dragging Entry above market changes it to SELL LIMIT.
+  placeChartPendingOrder();
+}
+function closePendingModal(){ $("pendingOrderOverlay").classList.remove("show"); }
+function placeChartPendingOrder(){
+  if(!game || game.marginCalled || game.balance<=0) return;
+  const lot=Math.max(.01,+$("ctpLotInput").value||game.cfg.defaultLot);
+  const market=game.candles[game.index].c;
+  const entry=market*(1-game.cfg.slPct/100);
+  const d=entry*(game.cfg.slPct/100);
+  const side="BUY";
+  const orderType="BUY_LIMIT";
+
+  // Multiple pending orders are allowed only when they all point the same
+  // direction. An opposite-direction attempt is rejected with a notice.
+  const existing=game.pendingOrders||[];
+  const hasOpposite=existing.some(po=>po.side!==side);
+  if(hasOpposite){
+    showOrderNotice("PENDING ORDER DITOLAK","Sudah ada Pending Order dengan arah berlawanan.<br><br>Batalkan pending order tersebut dulu di History sebelum membuat pending order baru yang tidak searah.");
+    addLog("PENDING ORDER DITOLAK — arah berlawanan dengan pending order aktif","sell");
+    return;
+  }
+
+  const newOrder={id:(game.nextPendingId||1),side,lot,entry,sl:entry-d,tp:entry+d*selectedRR,rr:selectedRR,zone:"MANUAL",placedAt:game.index,orderType};
+  game.nextPendingId=newOrder.id+1;
+  game.pendingOrders=existing.concat([newOrder]);
+  addLog(`PENDING SETUP ${orderType.replace("_"," ")} #${newOrder.id} ${lot.toFixed(2)} lot @ ${entry.toFixed(2)} | Drag Entry / SL / TP`,"buy");
+
+  // Freeze the market while the trader is setting the pending order.
+  // Nothing is executed here: the current candle stays fixed until the
+  // trader explicitly presses START / RESUME after finishing the setup.
+  stop();
+  chartFollow=true;
+  $("stateText").textContent="PENDING SETUP • MARKET PAUSED";
+  $("startBtn").textContent="▶ Start / Resume";
+  render();
+}
+
+function cancelPendingOrder(pendingId){
+  if(!game) return;
+  const id=Number(pendingId);
+  const list=game.pendingOrders||[];
+  const idx=list.findIndex(po=>po.id===id);
+  if(idx<0) return;
+  const po=list[idx];
+  list.splice(idx,1);
+  game.pendingOrders=list;
+  addLog(`PENDING ORDER #${po.id} DIBATALKAN (${po.orderType.replace("_"," ")} @ ${po.entry.toFixed(2)})`,"holiday");
+  render();
+}
+
+function updateChartTradePanel(){
+  if(!game){
+    $("ctpPrice").textContent="—";
+    return;
+  }
+  const price=game.candles[game.index].c;
+  $("ctpPrice").textContent=price.toFixed(2);
+
+  const positions=game.positions||[];
+  const buyCount=positions.filter(p=>p.side==="BUY").length;
+  const sellCount=positions.filter(p=>p.side==="SELL").length;
+  const canOpen=game.balance>0 && !game.marginCalled;
+
+  // Keep both buttons clickable so an opposite-side attempt can show the
+  // explicit alert. The actual directional lock is enforced in chartMarketOrder().
+  $("ctpBuyBtn").disabled=!canOpen;
+  $("ctpSellBtn").disabled=!canOpen;
+  $("allCloseBtn").disabled=positions.length===0 || !!game.marginCalled;
+
+
+  $("ctpHint").textContent=
+    `BUY ${buyCount} • SELL ${sellCount} • OPEN ${positions.length}`;
+  $("layerInfo").textContent=positions.length
+    ? positions.map(p=>`#${p.id} ${p.side} ${p.lot.toFixed(2)} @ ${p.entry.toFixed(2)}`).join(" • ")
+    : "No active positions";
+}
+
+function showOrderNotice(title,message){
+  $("orderNoticeTitle").textContent=title;
+  $("orderNoticeText").innerHTML=message;
+  $("orderNoticeOverlay").classList.add("show");
+}
+
+function chartMarketOrder(side){
+  if(!game || game.marginCalled) return;
+  if(game.balance<=0) return;
+
+  const positions=game.positions||[];
+
+  // One-direction rule: layers remain unlimited, but BUY and SELL cannot
+  // be open at the same time. The opposite-side attempt is explicitly
+  // rejected with an alert so the trader knows why the order was blocked.
+  const hasBuy=positions.some(p=>p.side==="BUY");
+  const hasSell=positions.some(p=>p.side==="SELL");
+
+  if(side==="SELL" && hasBuy){
+    showOrderNotice("ORDER DITOLAK","Anda sedang BUY posisi.<br><br>Posisi SELL tidak dapat dibuka sampai seluruh posisi BUY ditutup.");
+    addLog("SELL DITOLAK — masih ada posisi BUY terbuka","sell");
+    return;
+  }
+  if(side==="BUY" && hasSell){
+    showOrderNotice("ORDER DITOLAK","Anda sedang SELL posisi.<br><br>Posisi BUY tidak dapat dibuka sampai seluruh posisi SELL ditutup.");
+    addLog("BUY DITOLAK — masih ada posisi SELL terbuka","sell");
+    return;
+  }
+
+  const lot=Math.max(.01,+$("ctpLotInput").value||game.cfg.defaultLot);
+  const entry=game.candles[game.index].c;
+  const requiredMargin=(entry*lot*game.cfg.multiplier)/(game.cfg.leverage||100);
+  const currentEquity=getEquity(entry);
+  const currentUsedMargin=getUsedMargin();
+  if(currentEquity-currentUsedMargin < requiredMargin){
+    addLog(`ORDER DITOLAK — free margin tidak cukup (${money(Math.max(0,currentEquity-currentUsedMargin))} tersedia)`,'sell');
+    return;
+  }
+
+  // Unlimited same-direction layers.
+  const position={
+    id:(game.nextPositionId||1),
+    side,lot,entry,
+    openedAt:game.index,
+    orderType:side==="BUY"?"BUY_NOW":"SELL_NOW",
+    zone:pendingZone?pendingZone.type:"MANUAL",
+    manualClose:true
+  };
+  game.nextPositionId=position.id+1;
+  positions.push(position);
+  game.positions=positions;
+
+  addLog(
+    `${position.orderType.replace("_"," ")} (chart) #${position.id} ${lot.toFixed(2)} lot @ ${entry.toFixed(2)}`,
+    side==="BUY"?"buy":"sell"
+  );
+
+  pendingZone=null;
+  $("tradePanel").classList.remove("show");
+  $("zoneCard").classList.remove("show");
+  $("stateText").textContent=`RUNNING • ${positions.length} OPEN POSITIONS`;
+
+  render();
+  scheduleNext();
+}
+
+function closeChartPosition(positionId){
+  if(!game || game.marginCalled) return;
+  const id=Number(positionId);
+  const p=(game.positions||[]).find(x=>x.id===id);
+  if(!p) return;
+  const price=game.candles[game.index].c;
+  closePosition(id,price,"MANUAL");
+}
+
+function allClosePositions(){
+  if(!game || !(game.positions||[]).length) return;
+
+  const price=game.candles[game.index].c;
+  const positions=game.positions.slice();
+  positions.forEach(p=>closePosition(p.id,price,"MANUAL ALL CLOSE"));
+
+  addLog(`ALL CLOSE — ${positions.length} position(s) @ ${price.toFixed(2)}`,"holiday");
+  render();
+}
+$("ctpBuyBtn").onclick=()=>chartMarketOrder("BUY");
+$("pendingOrderBtn").onclick=openPendingModal;
+$("pendingCancelBtn").onclick=closePendingModal;
+$("modalBuyLimitBtn").onclick=()=>placeChartPendingOrder("BUY_LIMIT");
+$("modalSellLimitBtn").onclick=()=>placeChartPendingOrder("SELL_LIMIT");
+$("allCloseBtn").onclick=allClosePositions;
+$("ctpSellBtn").onclick=()=>chartMarketOrder("SELL");
+
+function resize(){
+  const r=canvas.getBoundingClientRect();
+  const d=devicePixelRatio||1;
+  canvas.width=r.width*d;
+  canvas.height=r.height*d;
+  ctx.setTransform(d,0,0,d,0,0);
+  drawChart();
+}
+
+function drawChart(){
+  if(!game)return;
+
+  const W=canvas.clientWidth,H=canvas.clientHeight;
+  ctx.clearRect(0,0,W,H);
+
+  const a=game.candles;
+  const total=a.length;
+  const visible=Math.max(20,Math.min(400,Math.round(chartVisible)));
+  const focusSlot=Math.round(visible*0.583); // running candle sits around the middle-right, not in the corner
+  let end=Math.max(0,Math.min(total-1,game.index+chartOffset));
+  let start;
+
+  if(chartFollow && chartOffset===0){
+    // Keep the live/backtest candle in the middle of the viewport.
+    start=Math.max(0,game.index-focusSlot);
+    end=game.index;
+  }else{
+    start=Math.max(0,end-visible+1);
+    if(end-start+1<visible) end=Math.min(total-1,start+visible-1);
+  }
+  if(start<0) start=0;
+  const view=a.slice(start,Math.min(total-1,end)+1);
+
+  let lo=Infinity,hi=-Infinity;
+  view.forEach(x=>{lo=Math.min(lo,x.l);hi=Math.max(hi,x.h)});
+  [20,50,100,200].forEach(p=>{
+    for(let j=start;j<=Math.min(a.length-1,end);j++){
+      lo=Math.min(lo,a["ema"+p][j]);
+      hi=Math.max(hi,a["ema"+p][j]);
+    }
+  });
+
+  const L=55,R=12,T=20,B=28;
+  const cw=(W-L-R)/visible;
+  const sy=v=>T+(hi-v)/(hi-lo||1)*(H-T-B);
+
+  ctx.strokeStyle="#202832";
+  ctx.lineWidth=1;
+
+  for(let k=0;k<7;k++){
+    const y=T+k*(H-T-B)/6;
+    ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(W-R,y);ctx.stroke();
+    ctx.fillStyle="#697483";
+    ctx.fillText((hi-(hi-lo)*k/6).toFixed(2),5,y+4);
+  }
+
+  view.forEach((x,j)=>{
+    const xx=L+j*cw+cw*.18;
+    const w=Math.max(2,cw*.64);
+    const up=x.c>=x.o;
+    ctx.strokeStyle=up?"#55d69a":"#ff6f76";
+    ctx.fillStyle=ctx.strokeStyle;
+    ctx.beginPath();ctx.moveTo(xx+w/2,sy(x.h));ctx.lineTo(xx+w/2,sy(x.l));ctx.stroke();
+    ctx.fillRect(xx,Math.min(sy(x.o),sy(x.c)),w,Math.max(1,Math.abs(sy(x.c)-sy(x.o))));
+  });
+
+  const colors={20:"#f2c14e",50:"#5ca7ff",100:"#b88cff",200:"#ff6b6b"};
+
+  [20,50,100,200].forEach(p=>{
+    ctx.strokeStyle=colors[p];
+    ctx.lineWidth=1.4;
+    ctx.beginPath();
+    view.forEach((_,j)=>{
+      const idx=start+j;
+      const x=L+j*cw+cw/2;
+      const y=sy(a["ema"+p][idx]);
+      j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.stroke();
+  });
+
+  // Current candle marker
+  if(game.index>=start && game.index<=end){
+    const x=L+(game.index-start)*cw+cw/2;
+    ctx.strokeStyle="#ffffff33";
+    ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,H-B);ctx.stroke();
+  }
+
+  // Draw ALL detected zones permanently.
+  // The currently actionable pendingZone is rendered from the same stored zone,
+  // so confirming/skipping/entering does not make historical zones disappear.
+  const allZones=(game.zones||[]);
+  allZones.forEach(z=>{
+    const zi=z.index;
+    if(zi<start || zi>end) return;
+
+    const x1=L+(zi-2-start)*cw;
+    const x2=L+(zi+2-start)*cw;
+    const y1=sy(z.high);
+    const y2=sy(z.low);
+
+    ctx.fillStyle=z.side==="BUY"?"#35c98722":"#ff626222";
+    ctx.fillRect(x1,Math.min(y1,y2),Math.max(12,x2-x1),Math.abs(y2-y1));
+
+    ctx.strokeStyle=z.side==="BUY"?"#35c987":"#ff6262";
+    ctx.setLineDash([6,4]);
+    ctx.strokeRect(x1,Math.min(y1,y2),Math.max(12,x2-x1),Math.abs(y2-y1));
+    ctx.setLineDash([]);
+
+    ctx.fillStyle=ctx.strokeStyle;
+    ctx.font="bold 12px Arial";
+    ctx.fillText(z.type,x1,Math.min(y1,y2)-7);
+  });
+
+  // Closed trade markers: keep Entry / SL / TP visible for review, for every
+  // closed trade that overlaps the currently visible candle window.
+  (game.tradeMarkers||[]).filter(m=>m.exitIndex>=start && m.entryIndex<=end).forEach(m=>{
+    const idx1=m.entryIndex, idx2=m.exitIndex;
+    const v1=Math.max(start,Math.min(end,idx1));
+    const v2=Math.max(start,Math.min(end,idx2));
+    const xa=L+(v1-start)*cw+cw/2;
+    const xb=L+(v2-start)*cw+cw/2;
+
+    ctx.lineWidth=1.15;
+    ctx.setLineDash([5,4]);
+
+    ctx.strokeStyle="#ffffffaa";
+    ctx.beginPath();ctx.moveTo(xa,sy(m.entry));ctx.lineTo(xb,sy(m.entry));ctx.stroke();
+
+    if(m.sl!=null){
+      ctx.strokeStyle="#ff6666aa";
+      ctx.beginPath();ctx.moveTo(xa,sy(m.sl));ctx.lineTo(xb,sy(m.sl));ctx.stroke();
+    }
+
+    if(m.tp!=null){
+      ctx.strokeStyle="#55d69aaa";
+      ctx.beginPath();ctx.moveTo(xa,sy(m.tp));ctx.lineTo(xb,sy(m.tp));ctx.stroke();
+    }
+
+    ctx.setLineDash([]);
+
+    ctx.font="bold 11px Arial";
+    ctx.fillStyle="#ffffffcc";ctx.fillText("ENTRY "+m.entry.toFixed(2),xa+4,sy(m.entry)-5);
+    if(m.sl!=null){
+      ctx.fillStyle="#ff9999cc";ctx.fillText("SL "+m.sl.toFixed(2),xa+4,sy(m.sl)-5);
+    }
+    if(m.tp!=null){
+      ctx.fillStyle="#8fe3bccc";ctx.fillText("TP "+m.tp.toFixed(2),xa+4,sy(m.tp)-5);
+    }
+
+    if(idx2>=start && idx2<=end){
+      const ex=L+(idx2-start)*cw+cw/2;
+      const ey=sy(m.exit);
+      ctx.strokeStyle=m.pl>=0?"#35c987":"#ff6262";
+      ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);ctx.stroke();
+
+      ctx.fillStyle=ctx.strokeStyle;
+      ctx.font="bold 12px Arial";
+      ctx.fillText(
+        `${m.pl>=0?"WIN":"LOSE"} ${m.pl>=0?"+":""}${money(m.pl)}`,
+        Math.min(W-R-110,ex+7),
+        Math.max(T+12,ey-8)
+      );
+    }
+  });
+
+  // Pending LIMIT markers — show projected Entry / SL / TP for every pending
+  // order, same as an open position, so each plan stays visible while it
+  // waits to be filled.
+  (game.pendingOrders||[]).forEach(po=>{
+    const yEntry=sy(po.entry),ySL=sy(po.sl),yTP=sy(po.tp);
+    const x1=L,x2=W-R;
+    const poColor=po.side==="BUY"?"#4da6ff":"#ff9b4a";
+
+    ctx.setLineDash([8,5]);
+    ctx.lineWidth=1.5;
+
+    ctx.strokeStyle=poColor;
+    ctx.beginPath();ctx.moveTo(x1,yEntry);ctx.lineTo(x2,yEntry);ctx.stroke();
+
+    ctx.strokeStyle="#ff6666";
+    ctx.beginPath();ctx.moveTo(x1,ySL);ctx.lineTo(x2,ySL);ctx.stroke();
+
+    ctx.strokeStyle="#55d69a";
+    ctx.beginPath();ctx.moveTo(x1,yTP);ctx.lineTo(x2,yTP);ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    ctx.font="bold 12px Arial";
+    if(yEntry>=T-5 && yEntry<=H-B+5){
+      ctx.fillStyle=poColor;
+      ctx.fillText(`#${po.id} ${po.orderType.replace("_"," ")} ${po.entry.toFixed(2)}`,x1+6,Math.max(T+12,yEntry-7));
+    }
+    if(ySL>=T-5 && ySL<=H-B+5){
+      ctx.fillStyle="#ff7777";
+      ctx.fillText("SL "+po.sl.toFixed(2),x1+6,Math.max(T+12,ySL-7));
+    }
+    if(yTP>=T-5 && yTP<=H-B+5){
+      ctx.fillStyle="#65d49a";
+      ctx.fillText("TP "+po.tp.toFixed(2),x1+6,Math.max(T+12,yTP-7));
+    }
+
+    const x2h=W-R;
+    ctx.fillStyle=poColor;
+    ctx.beginPath();ctx.arc(x2h-8,yEntry,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#ff6666";ctx.beginPath();ctx.arc(x2h-8,ySL,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#55d69a";ctx.beginPath();ctx.arc(x2h-8,yTP,4,0,Math.PI*2);ctx.fill();
+  });
+
+  // Chart market/limit-fill positions show an ENTRY line; a position gets an
+  // SL line only once one exists (clicked on chart, or carried from a filled
+  // pending order) — never a TP unless it came from a filled pending order.
+  (game.positions||[]).forEach(p=>{
+    const y=sy(p.entry),x1=L,x2=W-R; ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.strokeStyle=p.side==="BUY"?"#55d69a":"#ff6f76";ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=ctx.strokeStyle;ctx.fillText(`L${p.layerNumber} ${p.side} ${p.entry.toFixed(2)}`,x1+5,Math.max(T+12,y-5));
+
+    if(p.sl!=null){
+      const ySl=sy(p.sl);
+      ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.strokeStyle="#ff6666";
+      ctx.beginPath();ctx.moveTo(x1,ySl);ctx.lineTo(x2,ySl);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle="#ff8585";ctx.fillText(`#${p.id} SL ${p.sl.toFixed(2)}`,x1+5,Math.max(T+12,ySl-5));
+      ctx.fillStyle="#ff6666";ctx.beginPath();ctx.arc(x2-8,ySl,4,0,Math.PI*2);ctx.fill();
+    }
+    if(p.tp!=null){
+      const yTp=sy(p.tp);
+      ctx.setLineDash([5,4]);ctx.lineWidth=1.2;ctx.strokeStyle="#55d69a";
+      ctx.beginPath();ctx.moveTo(x1,yTp);ctx.lineTo(x2,yTp);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle="#8fe3bc";ctx.fillText(`#${p.id} TP ${p.tp.toFixed(2)}`,x1+5,Math.max(T+12,yTp-5));
+      ctx.fillStyle="#55d69a";ctx.beginPath();ctx.arc(x2-8,yTp,4,0,Math.PI*2);ctx.fill();
+    }
+  });
+
+  // Store the current coordinate mapping so pointer handlers (outside this
+  // function) can hit-test and drag the SL/Entry/TP lines, MT5-style.
+  chartGeom={
+    L,R,T,B,H,W,lo,hi,start,end,cw,
+    sy,
+    py:y=>hi-(y-T)/(H-T-B||1)*(hi-lo||1)
+  };
+}
+
+
+$("startBtn").onclick=()=>{ if(game?.marginCalled) return; start(); };
+$("pauseBtn").onclick=pause;
+$("chartPauseBtn").onclick=pause;
+$("chartResumeBtn").onclick=resumeBacktest;
+$("chartFastBtn").onclick=toggleFast150x;
+$("chartSlowBtn").onclick=toggleSlow960x;
+$("chartAiBtn").onclick=toggleAiMode;
+updateChartFastButton();
+updateChartSlowButton();
+updateAiButton();
+$("stepBtn").onclick=()=>{
+  if(!game) createGame();
+  stop();
+  if(!pendingZone) advance();
+};
+$("newBtn").onclick=createGame;
+
+document.querySelectorAll("[data-rr]").forEach(btn=>{
+  btn.onclick=()=>{
+    selectedRR=+btn.dataset.rr;
+    document.querySelectorAll("[data-rr]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    updateRiskPreview();
+    if(pendingZone) drawChart();
+  };
+});
+
+$("entryLot").oninput=updateRiskPreview;
+
+
+$("skipEntry").onclick=skipZone;
+
+// Entry is explicitly opened by the ENTRY button shown on the zone card.
+$("zoneEntryBtn").onclick=showEntryPanel;
+$("zoneSkipBtn").onclick=skipZone;
+
+// MT5-style line dragging: find whether a pointer is close enough (in canvas
+// pixels) to the SL / TP / Entry line of the open position or pending order.
+function hitTestLine(canvasY){
+  if(!chartGeom || !game) return null;
+  const tol=10;
+
+  for(const po of (game.pendingOrders||[])){
+    if(Math.abs(canvasY-chartGeom.sy(po.sl))<=tol) return {target:"pending",id:po.id,line:"sl"};
+    if(Math.abs(canvasY-chartGeom.sy(po.tp))<=tol) return {target:"pending",id:po.id,line:"tp"};
+    if(Math.abs(canvasY-chartGeom.sy(po.entry))<=tol) return {target:"pending",id:po.id,line:"entry"};
+  }
+
+  for(const p of (game.positions||[])){
+    if(p.sl!=null && Math.abs(canvasY-chartGeom.sy(p.sl))<=tol) return {target:"position",id:p.id,line:"sl"};
+    if(p.tp!=null && Math.abs(canvasY-chartGeom.sy(p.tp))<=tol) return {target:"position",id:p.id,line:"tp"};
+    if(p.sl==null && Math.abs(canvasY-chartGeom.sy(p.entry))<=tol) return {target:"position",id:p.id,line:"entryCreateSl"};
+  }
+  return null;
+}
+
+function applyLineDrag(hit,price){
+  price=Math.max(0.01,price);
+  if(hit.target==="open"){
+    const p=game.open;
+    if(hit.line==="sl") p.sl=price;
+    else if(hit.line==="tp") p.tp=price;
+    // Keep SL/TP on the correct side of entry for the trade direction.
+    if(p.side==="BUY"){
+      if(hit.line==="sl") p.sl=Math.min(p.sl,p.entry-0.0001);
+      if(hit.line==="tp") p.tp=Math.max(p.tp,p.entry+0.0001);
+    }else{
+      if(hit.line==="sl") p.sl=Math.max(p.sl,p.entry+0.0001);
+      if(hit.line==="tp") p.tp=Math.min(p.tp,p.entry-0.0001);
+    }
+    p.riskCash=Math.abs(p.entry-p.sl)*p.lot*game.cfg.multiplier;
+    p.rewardCash=Math.abs(p.tp-p.entry)*p.lot*game.cfg.multiplier;
+    p.rr=p.riskCash>0?+(p.rewardCash/p.riskCash).toFixed(2):p.rr;
+  }else if(hit.target==="pending"){
+    const po=(game.pendingOrders||[]).find(x=>x.id===hit.id);
+    if(!po) return;
+    if(hit.line==="entry"){
+      // MT5-style: Entry determines the pending type dynamically.
+      // Below market = BUY LIMIT, above market = SELL LIMIT.
+      const market=game.candles[game.index].c;
+      const oldRisk=Math.max(Math.abs(po.entry-po.sl), po.entry*(game.cfg.slPct/100));
+      const rr=Math.max(0.01,po.rr||selectedRR);
+      po.entry=price;
+      po.side=price<market?"BUY":"SELL";
+      po.orderType=po.side==="BUY"?"BUY_LIMIT":"SELL_LIMIT";
+      po.sl=po.side==="BUY"?price-oldRisk:price+oldRisk;
+      po.tp=po.side==="BUY"?price+oldRisk*rr:price-oldRisk*rr;
+    }else if(hit.line==="sl"){
+      po.sl=price;
+      if(po.side==="BUY") po.sl=Math.min(po.sl,po.entry-0.0001);
+      else po.sl=Math.max(po.sl,po.entry+0.0001);
+    }else if(hit.line==="tp"){
+      po.tp=price;
+      if(po.side==="BUY") po.tp=Math.max(po.tp,po.entry+0.0001);
+      else po.tp=Math.min(po.tp,po.entry-0.0001);
+    }
+  }else if(hit.target==="position"){
+    const p=(game.positions||[]).find(x=>x.id===hit.id);
+    if(!p) return;
+    const currentPrice = game.candles[game.index].c; // Ambil harga running saat ini
+    
+    if(hit.line==="sl"){
+      let sl=price;
+      // Batasi SL menggunakan currentPrice (bisa SL+)
+      if(p.side==="BUY") sl=Math.min(sl, currentPrice - 0.0001);
+      else sl=Math.max(sl, currentPrice + 0.0001);
+      
+      // Cegah SL melewati garis TP (jika TP sudah dipasang)
+      if(p.side==="BUY" && p.tp!=null) sl=Math.min(sl, p.tp - 0.0001);
+      if(p.side==="SELL" && p.tp!=null) sl=Math.max(sl, p.tp + 0.0001);
+      
+      p.sl=sl;
+    }else if(hit.line==="tp"){
+      let tp=price;
+      // TP juga dibatasi oleh currentPrice
+      if(p.side==="BUY") tp=Math.max(tp, currentPrice + 0.0001);
+      else tp=Math.min(tp, currentPrice - 0.0001);
+      p.tp=tp;
+    }
+  }
+}
+
+function finalizeLineDrag(hit){
+  if(!game) return;
+  const label={sl:"SL",tp:"TP",entry:"Entry"}[hit.line];
+  let src=null;
+  if(hit.target==="open") src=game.open;
+  else if(hit.target==="pending") src=(game.pendingOrders||[]).find(x=>x.id===hit.id);
+  else if(hit.target==="position") src=(game.positions||[]).find(x=>x.id===hit.id);
+  if(src) addLog(`${label} disesuaikan manual (drag chart) → #${hit.id!=null?hit.id+" ":""}${src[hit.line].toFixed(2)}`);
+  render();
+}
+
+// Drag chart horizontally to inspect previous/next candles, OR drag a
+// SL/TP/Entry line vertically to adjust it, MT5-style.
+canvas.addEventListener("pointerdown", e=>{
+  const rect=canvas.getBoundingClientRect();
+  const canvasY=e.clientY-rect.top;
+  let hit=hitTestLine(canvasY);
+
+  // Clicking the entry line of an open chart position (that has no SL yet)
+  // creates only an SL at the click point — never a TP — then immediately
+  // lets the trader keep dragging that new SL to fine-tune it.
+  if(hit && hit.target==="position" && hit.line==="entryCreateSl"){
+    const p=(game.positions||[]).find(x=>x.id===hit.id);
+    if(p && chartGeom){
+      const currentPrice = game.candles[game.index].c; // Ambil harga running
+      let sl=Math.max(0.01,chartGeom.py(canvasY));
+      
+      // Izinkan membuat SL+ jika sedang running profit
+      if(p.side==="BUY") sl=Math.min(sl, currentPrice - 0.0001);
+      else sl=Math.max(sl, currentPrice + 0.0001);
+      
+      // Cegah SL ditarik melewati TP jika TP sudah ada
+      if(p.side==="BUY" && p.tp!=null) sl=Math.min(sl, p.tp - 0.0001);
+      if(p.side==="SELL" && p.tp!=null) sl=Math.max(sl, p.tp + 0.0001);
+      
+      p.sl=sl;
+      addLog(`SL dibuat manual (klik entry) #${p.id} → ${sl.toFixed(2)}`,p.side==="BUY"?"buy":"sell");
+      hit={target:"position",id:p.id,line:"sl"};
+      render();
+    }else{
+      hit=null;
+    }
+  }
+
+  if(hit){
+    // Otomatis pause market saat garis level disentuh/di-drag
+    if(timer){
+      pause();
+    } else if(game && !pendingZone){
+      stop();
+      $("stateText").textContent = "PAUSED — ADJUSTING LEVEL";
+      $("startBtn").textContent = "▶ Resume";
+    }
+
+    lineDrag=hit;
+    canvas.setPointerCapture?.(e.pointerId);
+    canvas.style.cursor="ns-resize";
+    return;
+  }
+
+  // Dragging the chart is an inspection mode: freeze the market so the
+  // player can inspect already-formed historical candles and zones.
+  if(timer){
+    pause();
+  }else if(game && !pendingZone){
+    stop();
+    $("stateText").textContent="PAUSED — HISTORY";
+    $("startBtn").textContent="▶ Resume";
+  }
+  chartFollow=false;
+  chartDragging=true;
+  chartDragStartX=e.clientX;
+  chartDragStartOffset=chartOffset;
+  canvas.setPointerCapture?.(e.pointerId);
+  canvas.style.cursor="grabbing";
+});
+canvas.addEventListener("pointermove", e=>{
+  if(lineDrag){
+    if(!game || !chartGeom) return;
+    const rect=canvas.getBoundingClientRect();
+    const canvasY=e.clientY-rect.top;
+    applyLineDrag(lineDrag,chartGeom.py(canvasY));
+    drawChart();
+    return;
+  }
+
+  if(!chartDragging || !game) return;
+  const dx=e.clientX-chartDragStartX;
+  const pixelsPerCandle=Math.max(2,canvas.clientWidth/chartVisible);
+  const delta=Math.round(-dx/pixelsPerCandle);
+  const maxBack=Math.max(0,game.index);
+  chartOffset=Math.max(-maxBack,Math.min(0,chartDragStartOffset+delta));
+  drawChart();
+});
+canvas.addEventListener("pointerup", e=>{
+  if(lineDrag){
+    const hit=lineDrag;
+    lineDrag=null;
+    canvas.style.cursor="grab";
+    canvas.releasePointerCapture?.(e.pointerId);
+    finalizeLineDrag(hit);
+    return;
+  }
+  chartDragging=false;
+  canvas.style.cursor="grab";
+  canvas.releasePointerCapture?.(e.pointerId);
+});
+canvas.addEventListener("pointercancel", ()=>{
+  lineDrag=null;
+  chartDragging=false;
+  canvas.style.cursor="grab";
+});
+canvas.addEventListener("pointermove", e=>{
+  // Show a resize cursor when hovering a draggable line without a button held.
+  if(lineDrag||chartDragging||!game||!chartGeom) return;
+  const rect=canvas.getBoundingClientRect();
+  const canvasY=e.clientY-rect.top;
+  canvas.style.cursor=hitTestLine(canvasY)?"ns-resize":"grab";
+});
+canvas.style.cursor="grab";
+
+// TradingView-style zoom: mouse wheel changes how many candles are visible.
+canvas.addEventListener("wheel", e=>{
+  if(!game) return;
+  e.preventDefault();
+  const factor = e.deltaY>0 ? 1.12 : 1/1.12;
+  chartVisible = Math.max(20, Math.min(400, Math.round(chartVisible*factor)));
+  drawChart();
+}, {passive:false});
+
+window.addEventListener("resize",resize);
+
+// Initial screen: NO automatic game. User must set parameters and Start.
+$("stateText").textContent="SETTINGS";
+$("settingsStatus").textContent="Atur Starting Balance + jumlah candle + parameter lain, lalu klik Start Backtest.";
+updateChartPauseButtons();
+resize();
+
+
+</script>
+
+<script>
+$("orderNoticeBtn").onclick=()=>$("orderNoticeOverlay").classList.remove("show");
+$("orderNoticeOverlay").addEventListener("click",e=>{if(e.target.id==="orderNoticeOverlay")e.currentTarget.classList.remove("show")});
+$("mcCloseBtn").onclick=()=>{ $("mcOverlay").classList.remove("show"); createGame(); };
+</script>
+</body>
+</html>
