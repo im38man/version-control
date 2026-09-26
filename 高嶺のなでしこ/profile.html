@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROFILE - TAKANE NO NADESHIKO</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b87b92'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" type="image/svg+xml">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Sembunyikan scrollbar bawaan browser secara total */
+        ::-webkit-scrollbar {
+            display: none !important;
+        }
+        * {
+            -ms-overflow-style: none !important;  /* IE and Edge */
+            scrollbar-width: none !important;  /* Firefox */
+        }
+
+        /* CSS Variables */
+        :root {
+            --bg-color: #0d0d0d;
+            --box-bg: #151515;
+            --box-bg-hover: #1f1f1f;
+            --text-main: #f5f5f5;
+            --text-sub: #aaaaaa;
+            --accent-pink: #b87b92; 
+            --accent-pink-dark: #8c5b6f;
+            --accent-pink-transparent: rgba(184, 123, 146, 0.15);
+            --border-color: #2a2a2a;
+            --btn-bg: rgba(255, 255, 255, 0.1);
+            --btn-bg-hover: rgba(255, 255, 255, 0.2);
+            --font-en: 'Cinzel', serif;
+            --font-jp: 'Noto Sans JP', sans-serif;
+        }
+
+        /* Reset & Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            background-color: var(--bg-color); color: var(--text-main);
+            font-family: var(--font-jp); line-height: 1.6;
+            -webkit-font-smoothing: antialiased; overflow-x: hidden;
+        }
+        a { color: inherit; text-decoration: none; transition: opacity 0.3s ease; }
+        a:hover { opacity: 0.8; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+        /* Header / Navbar */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background-color: rgba(13, 13, 13, 0.95); backdrop-filter: blur(5px);
+            z-index: 1000; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; height: 75px;
+        }
+        .header-logo { display: flex; align-items: center; gap: 10px; z-index: 1001; }
+        .header-logo img { height: 38px; }
+        .header-logo-text { display: flex; flex-direction: column; }
+        .header-logo-text .en { font-family: var(--font-en); font-size: 1rem; letter-spacing: 2px; line-height: 1.1; }
+        .header-logo-text .jp { font-size: 0.55rem; color: var(--text-sub); letter-spacing: 3px; }
+
+        nav ul { display: flex; gap: 20px; }
+        nav a { font-family: var(--font-en); font-size: 0.8rem; letter-spacing: 1px; position: relative; }
+        nav a.active { color: var(--accent-pink); }
+        nav a.active::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 1px; background-color: var(--accent-pink); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .social-icons { display: flex; gap: 15px; font-size: 1.1rem; padding-right: 15px; border-right: 1px solid var(--border-color); }
+        .btn-fanclub {
+            background-color: var(--accent-pink); border: 1px solid var(--accent-pink); color: #fff;
+            padding: 8px 15px; text-align: center; font-family: var(--font-en);
+            font-size: 0.75rem; letter-spacing: 1px; border-radius: 3px;
+            transition: all 0.3s; display: flex; flex-direction: column; line-height: 1.2; z-index: 1001;
+            text-decoration: none;
+        }
+        .btn-fanclub .sub { font-family: var(--font-jp); font-size: 0.55rem; color: #fff; }
+        .btn-fanclub:hover { background-color: var(--accent-pink-dark); }
+        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; z-index: 1001; padding: 5px; }
+        .mobile-socials { display: none; }
+
+        /* Main Container */
+        .container { max-width: 1000px; margin: 120px auto 50px; padding: 0 20px; }
+
+        /* Profile Layout */
+        .profile-card {
+            background-color: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .profile-header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .profile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent-pink);
+            flex-shrink: 0;
+            background: #000;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .avatar-upload-overlay:hover {
+            background: var(--accent-pink);
+        }
+
+        .profile-user-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .profile-username {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        .settings-icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .settings-icon-btn:hover {
+            background: var(--accent-pink-transparent);
+            border-color: var(--accent-pink);
+            color: var(--accent-pink);
+        }
+
+        .edit-name-row {
+            display: none;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .edit-name-row.active {
+            display: flex;
+        }
+        .name-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            color: var(--text-main);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            outline: none;
+            flex-grow: 1;
+        }
+        .name-input:focus { border-color: var(--accent-pink); }
+
+        .btn-custom {
+            background: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn-custom:hover { background: var(--accent-pink-dark); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent-pink);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .profile-content-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-title {
+            font-family: var(--font-en);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            color: var(--accent-pink);
+            border-left: 3px solid var(--accent-pink);
+            padding-left: 10px;
+        }
+
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .folder-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.2s;
+        }
+        .folder-card:hover {
+            border-color: var(--accent-pink);
+        }
+        .folder-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .folder-card-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .folder-card-count {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            background: var(--border-color);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .folder-videos-preview {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .profile-actions-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        /* Modal Settings Styling */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: var(--box-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; width: 90%; max-width: 440px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .modal-header h3 { font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; color: var(--accent-pink); }
+        .modal-close { cursor: pointer; font-size: 1.1rem; color: var(--text-sub); }
+        .modal-close:hover { color: var(--text-main); }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+        .form-input, .form-select {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            color: var(--text-main);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--accent-pink); }
+        .form-select option { background: var(--box-bg); color: var(--text-main); }
+
+        /* Toast Notification Kustom */
+        #customToast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--box-bg);
+            border: 1px solid var(--accent-pink);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        #customToast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #customToast i {
+            color: var(--accent-pink);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 20px;
+            }
+            .profile-header-left {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .profile-username {
+                justify-content: center;
+            }
+            .container { margin-top: 100px; padding: 0 15px; }
+            .profile-card { padding: 20px; }
+            .hamburger { display: block; }
+            nav { 
+                position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px); 
+                background: rgba(13,13,13,0.98); backdrop-filter: blur(15px); 
+                flex-direction: column; justify-content: flex-start; align-items: center; 
+                padding-top: 40px; z-index: 999; overflow-y: auto;
+                opacity: 0; visibility: hidden; transform: translateY(-20px);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            }
+            nav.active { opacity: 1; visibility: visible; transform: translateY(0); }
+            nav ul { flex-direction: column; gap: 25px; text-align: center; width: 100%; }
+            nav a { font-size: 1.1rem; }
+            .header-right .social-icons { display: none; }
+            .mobile-socials { display: flex; justify-content: center; width: 100%; gap: 20px; margin-top: 40px; font-size: 1.4rem; color: white; }
+            .btn-fanclub .sub { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Kustom Toast Notifikasi -->
+    <div id="customToast">
+        <i class="fa-solid fa-heart"></i>
+        <span id="toastMessage">Pesan notifikasi</span>
+    </div>
+
+    <!-- MODAL SETTING -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="trSettingsTitle">PENGATURAN AKUN</h3>
+                <i class="fa-solid fa-xmark modal-close" id="closeSettingsModal"></i>
+            </div>
+            
+            <form id="settingsForm" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="form-group">
+                    <label id="trLabelEmail">Ganti Email Baru</label>
+                    <input type="email" id="settingEmailInput" class="form-input" placeholder="emailbaru@domain.com">
+                </div>
+
+                <div class="form-group">
+                    <label id="trLabelCurrPass">Password Saat Ini</label>
+                    <input type="password" id="settingCurrentPass" class="form-input" placeholder="••••••••">
+                </div>
+
+                <div class="form-group">
+                    <label id="trLabelNewPass">Password Baru</label>
+                    <input type="password" id="settingNewPass" class="form-input" placeholder="••••••••">
+                </div>
+
+                <div class="form-group">
+                    <label id="trLabelLang">Bahasa (Language)</label>
+                    <select id="settingLanguageSelect" class="form-select">
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="en">English</option>
+                        <option value="jp">日本語</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-custom" id="trBtnSave" style="width: 100%; margin-top: 10px; padding: 10px;">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <a href="index.html" class="header-logo">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b87b92'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" alt="Logo Mark">
+            <div class="header-logo-text">
+                <span class="en">TAKANE NO<br>NADESHIKO</span>
+                <span class="jp">高嶺のなでしこ</span>
+            </div>
+        </a>
+        <nav id="mobileNav">
+            <ul>
+                <li><a href="index.html" id="navHome">HOME</a></li>
+                <li><a href="#" id="navNews">NEWS</a></li>
+                <li><a href="#" id="navMusic">MUSIC</a></li>
+                <li><a href="all-video.html" id="navVideo">VIDEO</a></li>
+                <li><a href="#" id="navMember">MEMBER</a></li>
+                <li><a href="#" id="navSchedule">SCHEDULE</a></li>
+                <li><a href="#" id="navGoods">GOODS</a></li>
+                <li><a href="fanclub.html" id="navFanclub">FANCLUB</a></li>
+                <li><a href="profile.html" class="active" id="navProfile">PROFILE</a></li>
+            </ul>
+            <div class="mobile-socials">
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+        </nav>
+        <div class="header-right">
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+            <a href="fanclub.html" class="btn-fanclub" id="authButton">
+                FANCLUB<span class="sub" id="authSubText">会員登録 / ログイン</span>
+            </a>
+            <div class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="profile-card">
+            <!-- Header Profil -->
+            <div class="profile-header-section">
+                <div class="profile-header-left">
+                    <div class="avatar-container">
+                        <img id="userAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="Avatar">
+                        <label class="avatar-upload-overlay" for="avatarFileInput" id="trUploadPhoto">
+                            <i class="fa-solid fa-camera"></i> Ubah Foto
+                        </label>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div class="profile-user-info">
+                        <div class="profile-username">
+                            <span id="displayUsername">Takaneno Fan</span>
+                            <button class="btn-outline" id="toggleEditNameBtn" style="font-size: 0.75rem; padding: 3px 8px;"><i class="fa-solid fa-pen"></i> Edit</button>
+                        </div>
+                        <div class="profile-email" id="displayEmail">fan@takanenonadeshiko.jp</div>
+                        
+                        <div class="edit-name-row" id="editNameRow">
+                            <input type="text" id="usernameInput" class="name-input" placeholder="Masukkan nama baru...">
+                            <button class="btn-custom" id="saveNameBtn">Simpan</button>
+                            <button class="btn-outline" id="cancelNameBtn">Batal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="settings-icon-btn" id="openSettingsBtn" title="Pengaturan Akun">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+
+            <!-- Bagian Playlist & Folders -->
+            <div class="profile-content-section">
+                <div class="section-title" id="trFolderSectionTitle">MY FAVORITE FOLDERS (<span id="totalFoldersCount">0</span>)</div>
+                <div class="folders-grid" id="userFoldersGrid"></div>
+            </div>
+
+            <!-- Aksi Bawah -->
+            <div class="profile-actions-bottom">
+                <a href="all-video.html">
+                    <button class="btn-outline" id="trBtnBack"><i class="fa-solid fa-arrow-left"></i> Kembali ke Video</button>
+                </a>
+                <button class="btn-custom" id="logoutBtn" style="background-color: #a94442;"><i class="fa-solid fa-right-from-bracket"></i> <span id="trBtnLogout">Keluar</span></button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // KAMUS BAHASA (TRANSLATIONS)
+            const translations = {
+                id: {
+                    settingsTitle: "PENGATURAN AKUN",
+                    labelEmail: "Ganti Email Baru",
+                    labelCurrPass: "Password Saat Ini",
+                    labelNewPass: "Password Baru",
+                    labelLang: "Bahasa (Language)",
+                    btnSave: "Simpan Perubahan",
+                    uploadPhoto: "Ubah Foto",
+                    folderTitle: "FOLDER FAVORIT SAYA",
+                    btnBack: "Kembali ke Video",
+                    btnLogout: "Keluar",
+                    edit: "Edit",
+                    save: "Simpan",
+                    cancel: "Batal",
+                    emptyFolder: "Belum ada folder favorit yang dibuat.",
+                    folderContent: "Isi",
+                    deleteConfirm: "Yakin ingin menghapus folder",
+                    toastSaved: "Pengaturan berhasil diperbarui!",
+                    toastNameSaved: "Nama profil berhasil diperbarui!",
+                    toastPhotoSaved: "Foto profil berhasil diperbarui!",
+                    toastLoggedOut: "Berhasil keluar. Mengalihkan..."
+                },
+                en: {
+                    settingsTitle: "ACCOUNT SETTINGS",
+                    labelEmail: "Change New Email",
+                    labelCurrPass: "Current Password",
+                    labelNewPass: "New Password",
+                    labelLang: "Language",
+                    btnSave: "Save Changes",
+                    uploadPhoto: "Change Photo",
+                    folderTitle: "MY FAVORITE FOLDERS",
+                    btnBack: "Back to Videos",
+                    btnLogout: "Log Out",
+                    edit: "Edit",
+                    save: "Save",
+                    cancel: "Cancel",
+                    emptyFolder: "No favorite folders created yet.",
+                    folderContent: "Contains",
+                    deleteConfirm: "Are you sure you want to delete folder",
+                    toastSaved: "Settings updated successfully!",
+                    toastNameSaved: "Profile name updated successfully!",
+                    toastPhotoSaved: "Profile photo updated successfully!",
+                    toastLoggedOut: "Logged out successfully. Redirecting..."
+                },
+                jp: {
+                    settingsTitle: "アカウント設定",
+                    labelEmail: "新しいメールアドレス",
+                    labelCurrPass: "現在のパスワード",
+                    labelNewPass: "新しいパスワード",
+                    labelLang: "言語 (Language)",
+                    btnSave: "変更を保存",
+                    uploadPhoto: "写真を変更",
+                    folderTitle: "お気に入りフォルダ",
+                    btnBack: "動画一覧へ戻る",
+                    btnLogout: "ログアウト",
+                    edit: "編集",
+                    save: "保存",
+                    cancel: "キャンセル",
+                    emptyFolder: "作成されたお気に入りフォルダはありません。",
+                    folderContent: "含まれる動画",
+                    deleteConfirm: "フォルダを削除してもよろしいですか",
+                    toastSaved: "設定が正常に更新されました！",
+                    toastNameSaved: "プロフィール名が更新されました！",
+                    toastPhotoSaved: "プロフィール写真が更新されました！",
+                    toastLoggedOut: "ログアウトしました。リダイレクト中..."
+                }
+            };
+
+            function applyLanguage(lang) {
+                const t = translations[lang] || translations.id;
+                document.getElementById('trSettingsTitle').textContent = t.settingsTitle;
+                document.getElementById('trLabelEmail').textContent = t.labelEmail;
+                document.getElementById('trLabelCurrPass').textContent = t.labelCurrPass;
+                document.getElementById('trLabelNewPass').textContent = t.labelNewPass;
+                document.getElementById('trLabelLang').textContent = t.labelLang;
+                document.getElementById('trBtnSave').textContent = t.btnSave;
+                document.getElementById('trUploadPhoto').innerHTML = `<i class="fa-solid fa-camera"></i> ${t.uploadPhoto}`;
+                document.getElementById('trBtnBack').innerHTML = `<i class="fa-solid fa-arrow-left"></i> ${t.btnBack}`;
+                document.getElementById('trBtnLogout').textContent = t.btnLogout;
+                document.getElementById('toggleEditNameBtn').innerHTML = `<i class="fa-solid fa-pen"></i> ${t.edit}`;
+                document.getElementById('saveNameBtn').textContent = t.save;
+                document.getElementById('cancelNameBtn').textContent = t.cancel;
+                
+                const countVal = document.getElementById('totalFoldersCount').textContent;
+                document.getElementById('trFolderSectionTitle').innerHTML = `${t.folderTitle} (<span id="totalFoldersCount">${countVal}</span>)`;
+                
+                renderUserFolders();
+            }
+
+            // Elemen DOM Profil
+            const displayUsername = document.getElementById('displayUsername');
+            const displayEmail = document.getElementById('displayEmail');
+            const toggleEditNameBtn = document.getElementById('toggleEditNameBtn');
+            const editNameRow = document.getElementById('editNameRow');
+            const usernameInput = document.getElementById('usernameInput');
+            const saveNameBtn = document.getElementById('saveNameBtn');
+            const cancelNameBtn = document.getElementById('cancelNameBtn');
+            
+            const userAvatarImg = document.getElementById('userAvatarImg');
+            const avatarFileInput = document.getElementById('avatarFileInput');
+            
+            const userFoldersGrid = document.getElementById('userFoldersGrid');
+            const totalFoldersCount = document.getElementById('totalFoldersCount');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Elemen Modal Setting
+            const openSettingsBtn = document.getElementById('openSettingsBtn');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeSettingsModal = document.getElementById('closeSettingsModal');
+            const settingsForm = document.getElementById('settingsForm');
+            const settingEmailInput = document.getElementById('settingEmailInput');
+            const settingNewPass = document.getElementById('settingNewPass');
+            const settingLanguageSelect = document.getElementById('settingLanguageSelect');
+
+            const customToast = document.getElementById('customToast');
+            const toastMessage = document.getElementById('toastMessage');
+            let toastTimer;
+
+            function showToast(message) {
+                toastMessage.textContent = message;
+                customToast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    customToast.classList.remove('show');
+                }, 3000);
+            }
+
+            const savedName = localStorage.getItem('userName') || 'Takaneno Fan';
+            const savedEmail = localStorage.getItem('userEmail') || 'fan@takanenonadeshiko.jp';
+            const savedAvatar = localStorage.getItem('userAvatar');
+            const savedLang = localStorage.getItem('userLang') || 'id';
+
+            displayUsername.textContent = savedName;
+            displayEmail.textContent = savedEmail;
+            settingEmailInput.value = savedEmail;
+            settingLanguageSelect.value = savedLang;
+            if (savedAvatar) userAvatarImg.src = savedAvatar;
+
+            applyLanguage(savedLang);
+
+            openSettingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
+            closeSettingsModal.addEventListener('click', () => settingsModal.classList.remove('active'));
+            settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
+
+            settingsForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newEmail = settingEmailInput.value.trim();
+                const newPass = settingNewPass.value.trim();
+                const selectedLang = settingLanguageSelect.value;
+
+                if (newEmail) {
+                    localStorage.setItem('userEmail', newEmail);
+                    displayEmail.textContent = newEmail;
+                }
+                if (newPass) {
+                    localStorage.setItem('userPassword', newPass);
+                    settingNewPass.value = '';
+                }
+                localStorage.setItem('userLang', selectedLang);
+
+                applyLanguage(selectedLang);
+                settingsModal.classList.remove('active');
+                showToast(translations[selectedLang].toastSaved);
+            });
+
+            toggleEditNameBtn.addEventListener('click', () => {
+                usernameInput.value = displayUsername.textContent;
+                editNameRow.classList.add('active');
+                toggleEditNameBtn.style.display = 'none';
+            });
+
+            cancelNameBtn.addEventListener('click', () => {
+                editNameRow.classList.remove('active');
+                toggleEditNameBtn.style.display = 'inline-block';
+            });
+
+            saveNameBtn.addEventListener('click', () => {
+                const newName = usernameInput.value.trim();
+                const currentLang = localStorage.getItem('userLang') || 'id';
+                if (newName) {
+                    displayUsername.textContent = newName;
+                    localStorage.setItem('userName', newName);
+                    showToast(translations[currentLang].toastNameSaved);
+                }
+                editNameRow.classList.remove('active');
+                toggleEditNameBtn.style.display = 'inline-block';
+            });
+
+            avatarFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const currentLang = localStorage.getItem('userLang') || 'id';
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(uploadEvent) {
+                        const base64Image = uploadEvent.target.result;
+                        userAvatarImg.src = base64Image;
+                        localStorage.setItem('userAvatar', base64Image);
+                        showToast(translations[currentLang].toastPhotoSaved);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function renderUserFolders() {
+                const savedFolders = JSON.parse(localStorage.getItem('userFavoriteFolders')) || {};
+                const folderNames = Object.keys(savedFolders);
+                const currentLang = localStorage.getItem('userLang') || 'id';
+                const t = translations[currentLang] || translations.id;
+                
+                totalFoldersCount.textContent = folderNames.length;
+                userFoldersGrid.innerHTML = '';
+
+                if (folderNames.length === 0) {
+                    userFoldersGrid.innerHTML = `<p style="color: var(--text-sub); font-size: 0.85rem; grid-column: 1 / -1;">${t.emptyFolder}</p>`;
+                    return;
+                }
+
+                folderNames.forEach(folderName => {
+                    const videos = savedFolders[folderName];
+                    let videoTitles = videos.length > 0 ? videos.map(v => v.title).join(', ') : '';
+
+                    userFoldersGrid.insertAdjacentHTML('beforeend', `
+                        <div class="folder-card">
+                            <div class="folder-card-header">
+                                <div class="folder-card-title"><i class="fa-regular fa-folder" style="color: var(--accent-pink);"></i> ${folderName}</div>
+                                <span class="folder-card-count">${videos.length} video</span>
+                            </div>
+                            <div class="folder-videos-preview" title="${videoTitles}">${t.folderContent}: ${videoTitles}</div>
+                            <div style="display: flex; gap: 8px; margin-top: 5px;">
+                                <a href="all-video.html" class="btn-custom" style="font-size: 0.75rem; padding: 4px 10px; text-align: center; flex-grow: 1;">Kelola</a>
+                                <button class="btn-outline" onclick="deleteFolder('${folderName}')" style="font-size: 0.75rem; padding: 4px 8px; color: #ff6b6b; border-color: #ff6b6b;"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+
+            window.deleteFolder = function(folderName) {
+                const currentLang = localStorage.getItem('userLang') || 'id';
+                const t = translations[currentLang] || translations.id;
+                if (confirm(`${t.deleteConfirm} "${folderName}"?`)) {
+                    let savedFolders = JSON.parse(localStorage.getItem('userFavoriteFolders')) || {};
+                    delete savedFolders[folderName];
+                    localStorage.setItem('userFavoriteFolders', JSON.stringify(savedFolders));
+                    renderUserFolders();
+                    showToast(`Folder "${folderName}" dihapus.`);
+                }
+            };
+
+            logoutBtn.addEventListener('click', () => {
+                const currentLang = localStorage.getItem('userLang') || 'id';
+                const t = translations[currentLang] || translations.id;
+                localStorage.removeItem('isLoggedIn');
+                showToast(t.toastLoggedOut);
+                setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+            });
+
+            const hamburger = document.getElementById('hamburger');
+            const mobileNav = document.getElementById('mobileNav');
+            hamburger.addEventListener('click', () => {
+                mobileNav.classList.toggle('active');
+                const icon = hamburger.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-xmark');
+            });
+        });
+    </script>
+</body>
+</html>

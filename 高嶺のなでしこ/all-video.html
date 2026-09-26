@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="all.min.css">
     
     <style>
         /* Sembunyikan scrollbar bawaan browser secara total */
@@ -50,7 +49,7 @@
         img { max-width: 100%; display: block; }
         button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
-        /* Header (Disamakan persis dengan video-player.html) */
+        /* Header */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             background-color: rgba(13, 13, 13, 0.95); backdrop-filter: blur(5px);
@@ -76,6 +75,7 @@
             padding: 8px 15px; text-align: center; font-family: var(--font-en);
             font-size: 0.75rem; letter-spacing: 1px; border-radius: 3px;
             transition: all 0.3s; display: flex; flex-direction: column; line-height: 1.2; z-index: 1001;
+            text-decoration: none;
         }
         .btn-fanclub .sub { font-family: var(--font-jp); font-size: 0.55rem; color: var(--accent-pink); }
         .btn-fanclub:hover { border-color: var(--accent-pink); }
@@ -85,7 +85,7 @@
         /* Main Container */
         .container { max-width: 1400px; margin: 115px auto 60px; padding: 0 30px; }
 
-        /* Top Action Bar (Title & Filter Aligned) */
+        /* Top Action Bar */
         .top-action-bar {
             display: flex; justify-content: space-between; align-items: flex-end;
             margin-bottom: 40px; flex-wrap: wrap; gap: 20px;
@@ -145,9 +145,7 @@
         .card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
         .card-title { font-size: 0.85rem; font-weight: 500; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
-        /* Badge Tag (MV / LIVE) */
         .card-tag { border: 1px solid var(--accent-pink); color: var(--accent-pink); font-size: 0.6rem; padding: 1px 4px; border-radius: 2px; font-family: var(--font-en); flex-shrink: 0; }
-
         .card-meta { font-size: 0.75rem; color: var(--text-sub); }
 
         /* Real Pagination Style */
@@ -164,12 +162,8 @@
         @media (max-width: 1200px) {
             .video-grid { grid-template-columns: repeat(3, 1fr); }
         }
-        @media (max-width: 900px) {
-            .gallery-layout { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .video-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 600px) {
+
+        @media (max-width: 1024px) {
             .hamburger { display: block; }
             nav {
                 position: fixed; top: 75px; left: 0; width: 100%; height: calc(100vh - 75px);
@@ -185,26 +179,32 @@
             .header-right .social-icons { display: none; }
             .mobile-socials { display: flex; justify-content: center; width: 100%; gap: 20px; margin-top: 40px; font-size: 1.4rem; color: white; }
             .btn-fanclub .sub { display: none; }
-            
+        }
+
+        @media (max-width: 900px) {
+            .gallery-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
             .video-grid { grid-template-columns: 1fr; gap: 20px; }
             .container { padding: 0 15px; margin-top: 90px; }
             .top-action-bar { align-items: flex-start; gap: 15px; }
             
             .filter-bar {
-                display: flex;
-                width: 100%;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                gap: 8px;
-                padding-bottom: 8px;
-                -webkit-overflow-scrolling: touch;
+                display: flex; width: 100%; overflow-x: auto; flex-wrap: nowrap;
+                gap: 8px; padding-bottom: 8px; -webkit-overflow-scrolling: touch;
+                cursor: grab;
+                user-select: none;
+                scroll-behavior: smooth;
             }
-            .filter-bar::-webkit-scrollbar {
-                height: 4px;
+            .filter-bar:active {
+                cursor: grabbing;
             }
-            .filter-bar::-webkit-scrollbar-thumb {
-                background: var(--border-color);
-                border-radius: 2px;
+            .filter-bar::-webkit-scrollbar { height: 0px; display: none; }
+            .filter-tab {
+                flex-shrink: 0;
             }
         }
     </style>
@@ -222,15 +222,15 @@
         </a>
         <nav id="mobileNav">
             <ul>
-                <li><a href="#">HOME</a></li>
-                <li><a href="#">NEWS</a></li>
-                <li><a href="#">MUSIC</a></li>
-                <li><a href="#" class="active">VIDEO</a></li>
-                <li><a href="#">MEMBER</a></li>
-                <li><a href="#">SCHEDULE</a></li>
-                <li><a href="#">GOODS</a></li>
-                <li><a href="#">FANCLUB</a></li>
-                <li><a href="#">PROFILE</a></li>
+                <li><a href="index.html" id="navHome">HOME</a></li>
+                <li><a href="#" id="navNews">NEWS</a></li>
+                <li><a href="#" id="navMusic">MUSIC</a></li>
+                <li><a href="all-video.html" class="active" id="navVideo">VIDEO</a></li>
+                <li><a href="#" id="navMember">MEMBER</a></li>
+                <li><a href="#" id="navSchedule">SCHEDULE</a></li>
+                <li><a href="#" id="navGoods">GOODS</a></li>
+                <li><a href="fanclub.html" id="navFanclub">FANCLUB</a></li>
+                <li><a href="profile.html" id="navProfile">PROFILE</a></li>
             </ul>
             <div class="mobile-socials">
                 <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
@@ -246,58 +246,79 @@
                 <a href="#"><i class="fa-brands fa-youtube"></i></a>
                 <a href="#"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            <button class="btn-fanclub">FANCLUB<span class="sub">会員登録 / ログイン</span></button>
+            <!-- Tombol Fanclub/Profile Dinamis berdasarkan localStorage -->
+            <a href="fanclub.html" class="btn-fanclub" id="authButton">
+                FANCLUB<span class="sub" id="authSubText">会員登録 / ログイン</span>
+            </a>
             <div class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></div>
         </div>
     </header>
 
     <main class="container">
-        <!-- Top Action Bar (Title & Filter Aligned) -->
+        <!-- Top Action Bar -->
         <div class="top-action-bar">
             <div class="gallery-header">
                 <h1><span style="color: var(--accent-pink);">VIDEO</span> <span style="color: #ffffff;">GALLERY</span></h1>
-                <p>ビデオギャラリー</p>
+                <p id="trGallerySubtitle">ビデオギャラリー</p>
             </div>
 
-            <!-- Filter Bar (Slider di Mobile) -->
+            <!-- Filter Bar -->
             <div class="filter-bar" id="filterBar">
-                <button class="filter-tab active" data-filter="all">ALL</button>
-                <button class="filter-tab" data-filter="music">MUSIC VIDEO</button>
-                <button class="filter-tab" data-filter="dance">DANCE VIDEO</button>
-                <button class="filter-tab" data-filter="special">SPECIAL</button>
-                <button class="filter-tab" data-filter="making">MAKING</button>
-                <button class="filter-tab" data-filter="vlog">VLOG</button>
+                <button class="filter-tab active" data-filter="all" id="filterTabAll">ALL</button>
+                <button class="filter-tab" data-filter="music" id="filterTabMusic">MUSIC VIDEO</button>
+                <button class="filter-tab" data-filter="dance" id="filterTabDance">DANCE VIDEO</button>
+                <button class="filter-tab" data-filter="special" id="filterTabSpecial">SPECIAL</button>
+                <button class="filter-tab" data-filter="making" id="filterTabMaking">MAKING</button>
+                <button class="filter-tab" data-filter="vlog" id="filterTabVlog">VLOG</button>
             </div>
         </div>
 
         <div class="gallery-layout">
-            <!-- Sidebar (Category & Sort & Promo) -->
+            <!-- Sidebar -->
             <aside class="sidebar">
                 <div class="sidebar-section">
-                    <h3>CATEGORY</h3>
+                    <h3 id="trCategoryHeader">CATEGORY</h3>
                     <div class="sidebar-menu" id="sidebarCategory">
-                        <div class="sidebar-item active" data-filter="all">すべての動画 <span class="sub-label">ALL</span></div>
-                        <div class="sidebar-item" data-filter="music">ミュージックビデオ <span class="sub-label">MUSIC VIDEO</span></div>
-                        <div class="sidebar-item" data-filter="dance">ダンスビデオ <span class="sub-label">DANCE VIDEO</span></div>
-                        <div class="sidebar-item" data-filter="special">スペシャル <span class="sub-label">SPECIAL</span></div>
-                        <div class="sidebar-item" data-filter="making">メイキング <span class="sub-label">MAKING</span></div>
-                        <div class="sidebar-item" data-filter="vlog">VLOG <span class="sub-label">VLOG</span></div>
+                        <div class="sidebar-item active" data-filter="all">
+                            <span id="sidebarAllMain">Semua Video</span> 
+                            <span class="sub-label">ALL</span>
+                        </div>
+                        <div class="sidebar-item" data-filter="music">
+                            <span id="sidebarMusicMain">Musik Video</span> 
+                            <span class="sub-label">MUSIC VIDEO</span>
+                        </div>
+                        <div class="sidebar-item" data-filter="dance">
+                            <span id="sidebarDanceMain">Video Tari</span> 
+                            <span class="sub-label">DANCE VIDEO</span>
+                        </div>
+                        <div class="sidebar-item" data-filter="special">
+                            <span id="sidebarSpecialMain">Spesial</span> 
+                            <span class="sub-label">SPECIAL</span>
+                        </div>
+                        <div class="sidebar-item" data-filter="making">
+                            <span id="sidebarMakingMain">Pembuatan</span> 
+                            <span class="sub-label">MAKING</span>
+                        </div>
+                        <div class="sidebar-item" data-filter="vlog">
+                            <span id="sidebarVlogMain">Vlog</span> 
+                            <span class="sub-label">VLOG</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="sidebar-section">
-                    <h3>SORT</h3>
+                    <h3 id="trSortHeader">SORT</h3>
                     <div class="sort-list" id="sortList">
-                        <div class="sort-item active" data-sort="newest">● 新しい順</div>
-                        <div class="sort-item" data-sort="oldest">○ 古い順</div>
-                        <div class="sort-item" data-sort="popular">○ 人気順 (再生回数)</div>
+                        <div class="sort-item active" data-sort="newest" id="sortNewest">● Terbaru</div>
+                        <div class="sort-item" data-sort="oldest" id="sortOldest">○ Terlama</div>
+                        <div class="sort-item" data-sort="popular" id="sortPopular">○ Terpopuler (Penayangan)</div>
                     </div>
                 </div>
 
                 <div class="yt-promo-box">
                     <i class="fa-brands fa-youtube"></i>
                     <div class="yt-promo-title">TAKANE NO NADESHIKO<br>OFFICIAL YOUTUBE</div>
-                    <div class="yt-promo-sub">チャンネル登録はこちら</div>
+                    <div class="yt-promo-sub" id="trYtSub">Klik di sini untuk berlangganan</div>
                 </div>
             </aside>
 
@@ -307,7 +328,7 @@
                     <!-- Dynamic Video Cards via JS -->
                 </div>
 
-                <!-- Real Functional Pagination -->
+                <!-- Pagination -->
                 <div class="pagination" id="paginationContainer">
                     <!-- Generated via JS -->
                 </div>
@@ -315,561 +336,168 @@
         </div>
     </main>
 
+    <!-- PANGGIL DATA VIDEO EKSTERNAL -->
+    <script src="datavideo.js"></script>
+
     <!-- JavaScript for Filters, Sort, Pagination & Mobile Menu -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Data disamakan persis dengan isi playlist di video-player.html
-            const allVideos = [
-                { 
-                    title: "【MV】僕らの青／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2026.08.24", 
-                    views: 76942, 
-                    duration: "03:09", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/dtBq4Yo57rk.jpg" 
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authButton = document.getElementById('authButton');
+            const authSubText = document.getElementById('authSubText');
+
+            const currentLang = localStorage.getItem('userLang') || 'id';
+
+            // Kamus Terjemahan Halaman Video
+            const videoTranslations = {
+                id: {
+                    navHome: "BERANDA",
+                    navNews: "BERITA",
+                    navMusic: "MUSIK",
+                    navVideo: "VIDEO",
+                    navMember: "ANGGOTA",
+                    navSchedule: "JADWAL",
+                    navGoods: "MERCHANDISE",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFIL",
+                    authText: "FANCLUB",
+                    authSub: "Daftar / Masuk",
+                    subtitle: "Galeri Video",
+                    tabAll: "ALL",
+                    tabMusic: "MUSIC VIDEO",
+                    tabDance: "DANCE VIDEO",
+                    tabSpecial: "SPECIAL",
+                    tabMaking: "MAKING",
+                    tabVlog: "VLOG",
+                    catHeader: "KATEGORI",
+                    catAll: "Semua Video",
+                    catMusic: "Musik Video",
+                    catDance: "Video Tari",
+                    catSpecial: "Spesial",
+                    catMaking: "Pembuatan",
+                    catVlog: "Vlog",
+                    sortHeader: "URUTKAN",
+                    sortNewest: "● Terbaru",
+                    sortOldest: "○ Terlama",
+                    sortPopular: "○ Terpopuler",
+                    ytSub: "Klik di sini untuk berlangganan",
+                    notFound: "Video tidak ditemukan.",
+                    viewsText: "x ditonton"
                 },
-                { 
-                    title: "【LIVE】病名恋ワズライ／高嶺のなでしこ Live Tour - Bouquet of 9 Flowers - FINAL", 
-                    category: "special", 
-                    date: "2026.08.23", 
-                    views: 22347 , 
-                    duration: "04:53", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/q2dqKruOPsw.jpg" 
+                en: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authText: "FANCLUB",
+                    authSub: "Register / Login",
+                    subtitle: "Video Gallery",
+                    tabAll: "ALL",
+                    tabMusic: "MUSIC VIDEO",
+                    tabDance: "DANCE VIDEO",
+                    tabSpecial: "SPECIAL",
+                    tabMaking: "MAKING",
+                    tabVlog: "VLOG",
+                    catHeader: "CATEGORY",
+                    catAll: "All Videos",
+                    catMusic: "Music Video",
+                    catDance: "Dance Video",
+                    catSpecial: "Special",
+                    catMaking: "Making",
+                    catVlog: "Vlog",
+                    sortHeader: "SORT",
+                    sortNewest: "● Newest",
+                    sortOldest: "○ Oldest",
+                    sortPopular: "○ Most Popular",
+                    ytSub: "Click here to subscribe",
+                    notFound: "No videos found.",
+                    viewsText: "views"
                 },
-                { 
-                    title: "【Dance Performance Video】ハートブーケ／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2026.06.07", 
-                    views: 181000, 
-                    duration: "04:16", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/Vlpqp4QA61Y.jpg" 
-                },
-                { 
-                    title: "【MV】生きてりゃいい／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2026.05.13", 
-                    views: 325000, 
-                    duration: "03:34", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/957yJCyB-tk.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】私は、わたしの事が好き。／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2026.04.14", 
-                    views: 353000, 
-                    duration: "04:10", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/IoCC9aOnX-E.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】世界は恋に落ちている／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2026.03.15", 
-                    views: 339020, 
-                    duration: "05:12", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/RayWMQMSkeI.jpg" 
-                },
-                { 
-                    title: "【LIVE】推しの魔法／高嶺のなでしこ 3rd ANNIVERSARY CONCERT「A Wonderful Encounter」", 
-                    category: "special", 
-                    date: "2026.02.04", 
-                    views: 85724 , 
-                    duration: "06:05", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/Cbv2fbWhMGg.jpg" 
-                },
-                { 
-                    title: "【LIVE】可愛くてごめん／高嶺のなでしこ 3rd ANNIVERSARY CONCERT「A Wonderful Encounter」", 
-                    category: "special", 
-                    date: "2026.01.27", 
-                    views: 454843 , 
-                    duration: "03:40", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/VI1n97ZC3mw.jpg" 
-                },
-                { 
-                    title: "【LIVE】革命の女王 ~ 決戦スピリット／高嶺のなでしこ 3rd ANNIVERSARY CONCERT「A Wonderful Encounter」", 
-                    category: "special", 
-                    date: "2026.01.17", 
-                    views: 188998 , 
-                    duration: "08:36", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/__rgL3hLhkI.jpg" 
-                },
-                { 
-                    title: "【LIVE】初恋のこたえ。／高嶺のなでしこ 3rd ANNIVERSARY CONCERT「A Wonderful Encounter」", 
-                    category: "special", 
-                    date: "2026.01.08", 
-                    views: 149148  , 
-                    duration: "03:55", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/gXPTUUR0dDc.jpg" 
-                },
-                { 
-                    title: "【LIVE】花は誓いを忘れない／高嶺のなでしこ 3rd ANNIVERSARY CONCERT「A Wonderful Encounter」", 
-                    category: "special", 
-                    date: "2025.12.25", 
-                    views: 105625  , 
-                    duration: "03:34", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/cg5bcITxD20.jpg" 
-                },
-                { 
-                    title: "【MV】花は誓いを忘れない／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.12.05", 
-                    views: 444886  , 
-                    duration: "04:07", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/f1ss7kWQnY8.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】病名恋ワズライ／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.11.20", 
-                    views: 636906  , 
-                    duration: "04:17", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/rYlY5-Wv_xA.jpg" 
-                },
-                { 
-                    title: "【LIVE】アイドル衣装／『高嶺のなでしこ 東名阪ツアー 2025 - Spring Ride -』", 
-                    category: "special", 
-                    date: "2025.09.03", 
-                    views: 57711  , 
-                    duration: "04:03", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/srRzKsh_lMY.jpg" 
-                },
-                { 
-                    title: "【MV】この世界は噓でできている／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.08.20", 
-                    views: 452532   , 
-                    duration: "04:57", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/pfrBPp_btAQ.jpg" 
-                },
-                { 
-                    title: "高嶺のなでしこ「3rdファンミーティング〜私たちの宣言式〜 」1部", 
-                    category: "special", 
-                    date: "2025.08.07", 
-                    views: 1234567, 
-                    duration: "128:36", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/mSjZM5ob_jg.jpg" 
-                },
-                { 
-                    title: "【LIVE】可愛くてごめん／『高嶺のなでしこ ワンマンライブ 2025 〜Cute for life〜』supported by KOJI", 
-                    category: "special", 
-                    date: "2025.07.12", 
-                    views: 3731788, 
-                    duration: "03:40", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/_ICAYT8antM.jpg" 
-                },
-                { 
-                    title: "【MV】ライフクエスト／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.07.02", 
-                    views: 557519, 
-                    duration: "03:19", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/5ezn2DJbK7s.jpg" 
-                },
-                { 
-                    title: "【LIVE】美しく生きろ／『高嶺のなでしこ ワンマンライブ 2025 〜Cute for life〜』supported by KOJI", 
-                    category: "special", 
-                    date: "2025.06.28", 
-                    views: 433048, 
-                    duration: "04:19", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/2n04nAnKI3Y.jpg" 
-                },
-                { 
-                    title: "【MV】初恋のこたえ。／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.06.18", 
-                    views: 1324011, 
-                    duration: "03:59", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/MdzIkBvRMC0.jpg" 
-                },
-                { 
-                    title: "【LIVE】初恋のひと。／『高嶺のなでしこ ワンマンライブ 2025 〜Cute for life〜』supported by KOJI", 
-                    category: "special", 
-                    date: "2025.06.14", 
-                    views: 742810 , 
-                    duration: "03:37", 
-                    tag: "LIVE",
-                    thumb: "高嶺のなでしこ/img/o5DsmYP5WA8.jpg" 
-                },
-                { 
-                    title: "【MV】アイドル衣装／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.05.28", 
-                    views: 441079, 
-                    duration: "04:14", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/a7CAn_FIfSk.jpg" 
-                },
-                { 
-                    title: "【MV】メランコリックハニー／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.04.30", 
-                    views: 1198044, 
-                    duration: "03:25", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/645TOVz8on8.jpg" 
-                },
-                { 
-                    title: "【MV】Cute for life／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.04.07", 
-                    views: 851000, 
-                    duration: "03:10", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/9tN1esSj2Tg.jpg" 
-                },
-                { 
-                    title: "【MV】東京サニーパーティー／涼海すう×葉月紗蘭×東山恵里沙【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.03.28", 
-                    views: 288252, 
-                    duration: "04:03", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/FqiedUpRQco.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】小悪魔だってかまわない!／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2025.02.08", 
-                    views: 809042, 
-                    duration: "03:28", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/OZycs0TBwKY.jpg" 
-                },
-                { 
-                    title: "初恋の絵本（cover）／葉月紗蘭", 
-                    category: "special", 
-                    date: "2024.12.21", 
-                    views: 288037, 
-                    duration: "03:32", 
-                    tag: "COVER",
-                    thumb: "高嶺のなでしこ/img/eA307eJBSrY.jpg" 
-                },
-                { 
-                    title: "【MV】アイのウイルス／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.12.11", 
-                    views: 326325, 
-                    duration: "04:14", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/Bsq2ZKelIqQ.jpg" 
-                },
-                { 
-                    title: "【MV】I'M YOUR IDOL／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.11.27", 
-                    views: 1137185, 
-                    duration: "04:58", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/iz6KQup9Uys.jpg" 
-                },
-                { 
-                    title: "【MV】アドレナリンゲーム／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.11.06", 
-                    views: 485496, 
-                    duration: "03:05", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/n_8LTS92LXE.jpg" 
-                },
-                { 
-                    title: "【MV】死ぬまでダーリン／松本ももな【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.10.19", 
-                    views: 545976, 
-                    duration: "03:27", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/SB-r8BmlMhI.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】LOVE ANTHEM／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.09.07", 
-                    views: 648607, 
-                    duration: "04:08", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/OItN_8OUBko.jpg" 
-                },
-                { 
-                    title: "【MV】モテチェン！／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.07.14", 
-                    views: 1214041, 
-                    duration: "03:14", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/ivfMBjNqLZE.jpg" 
-                },
-                { 
-                    title: "【MV】私より好きでいて／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.06.29", 
-                    views: 791194, 
-                    duration: "03:39", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/vo0f9AoWFLg.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】メイド☆至上主義／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.05.11", 
-                    views: 1148631, 
-                    duration: "02:35", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/6QuCebi6vuU.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】推しの魔法／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.03.22", 
-                    views: 1852847, 
-                    duration: "03:17", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/pDC1ZgUDLZQ.jpg" 
-                },
-                { 
-                    title: "【MV】恋を知った世界／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.02.21", 
-                    views: 1754623, 
-                    duration: "04:22", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/iSvx1zS-zSs.jpg" 
-                },
-                { 
-                    title: "【MV】私は怪物／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.02.06", 
-                    views: 382184, 
-                    duration: "03:32", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/LG3Kho_3ZOA.jpg" 
-                },
-                { 
-                    title: "【MV】可愛いって言われたい／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.02.03", 
-                    views: 1315484, 
-                    duration: "03:35", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/SLMwsq7IoWU.jpg" 
-                },
-                { 
-                    title: "【MV】美しく生きろ／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2024.01.19", 
-                    views: 2009754, 
-                    duration: "04:22", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/IPZi16uFCqs.jpg" 
-                },
-                { 
-                    title: "No.1（cover）／橋本桃呼", 
-                    category: "music", 
-                    date: "2024.01.04", 
-                    views: 354062, 
-                    duration: "04:49", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/jDQKzMDsu5A.jpg" 
-                },
-                { 
-                    title: "ラヴィ【踊ってみた】／城月菜央", 
-                    category: "music", 
-                    date: "2023.12.25", 
-                    views: 201980, 
-                    duration: "03:00", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/G3WOKUxk3TU.jpg" 
-                },
-                { 
-                    title: "【MV】いつか私がママになったら／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.12.16", 
-                    views: 656334, 
-                    duration: "04:00", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/B6ibZx9KcH4.jpg" 
-                },
-                { 
-                    title: "今好きになる。（cover）／葉月紗蘭", 
-                    category: "music", 
-                    date: "2023.10.13", 
-                    views: 728271, 
-                    duration: "04:33", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/sM9Lowgbjww.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】17歳／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.09.03", 
-                    views: 1422486, 
-                    duration: "04:06", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/puTujCvaRjA.jpg" 
-                },
-                { 
-                    title: "【MV】すきっちゅーの！／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.09.01", 
-                    views: 2820534, 
-                    duration: "02:46", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/mBmSMIVrw1o.jpg" 
-                },
-                { 
-                    title: "17歳（cover）／葉月紗蘭×東山恵里沙", 
-                    category: "music", 
-                    date: "2023.08.28", 
-                    views: 357795, 
-                    duration: "04:25", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/w4aDnfJ_tKU.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】月曜日の憂鬱／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.07.21", 
-                    views: 1880645 , 
-                    duration: "04:26", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/lXhue1Chv6c.jpg" 
-                },
-                { 
-                    title: "【MV】初恋のひと。／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.07.01", 
-                    views: 4881231 , 
-                    duration: "03:49", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/KgcjPd8n2Es.jpg" 
-                },
-                { 
-                    title: "【MV】決戦スピリット／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.06.22", 
-                    views: 1370617 , 
-                    duration: "04:33", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/B2S-jwfs6Ic.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】ヒロインは平均以下。／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.06.21", 
-                    views: 2719467 , 
-                    duration: "03:47", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/8wwTjwjqQR0.jpg" 
-                },
-                { 
-                    title: "決戦スピリット（cover）／日向端ひな×籾山ひめり", 
-                    category: "music", 
-                    date: "2023.06.15", 
-                    views: 342687 , 
-                    duration: "04:47", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/aeLMEitzNgo.jpg" 
-                },
-                { 
-                    title: "【MV】革命の女王／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.04.21", 
-                    views: 1329734 , 
-                    duration: "04:04", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/WcJbDYD9u94.jpg" 
-                },
-                { 
-                    title: "【MV】僕は君になれない／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.04.21", 
-                    views: 1291853 , 
-                    duration: "04:26", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/-Mm3QGGxg1k.jpg" 
-                },
-                { 
-                    title: "【MV】男の子の目的は何？／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2023.03.20", 
-                    views: 3063656 , 
-                    duration: "02:50", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/-hTyIuPim5o.jpg" 
-                },
-                { 
-                    title: "【MV】女の子は強い／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2022.12.25", 
-                    views: 3265233 , 
-                    duration: "04:28", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/edid66UmfiQ.jpg" 
-                },
-                { 
-                    title: "【MV】可愛くてごめん（cover）／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2022.11.18", 
-                    views: 28718350  , 
-                    duration: "03:37", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/MPywGQPLJPo.jpg" 
-                },
-                { 
-                    title: "【Dance Performance Video】乙女どもよ。／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2022.10.24", 
-                    views: 3070929  , 
-                    duration: "04:10", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/JAA4CaJdXc8.jpg" 
-                },
-                { 
-                    title: "【MV】ユメムスビ／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2022.10.01", 
-                    views: 1634013  , 
-                    duration: "03:47", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/qgYnKvdcMJQ.jpg" 
-                },
-                { 
-                    title: "【MV】アンチファン／高嶺のなでしこ【HoneyWorks】", 
-                    category: "music", 
-                    date: "2022.08.27", 
-                    views: 1570583  , 
-                    duration: "04:03", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/dzOGNlmCi7Y.jpg" 
-                },
-                { 
-                    title: "【overture】We are TAKANE NO NADESHIKO／高嶺のなでしこ", 
-                    category: "music", 
-                    date: "2022.08.05", 
-                    views: 188367  , 
-                    duration: "01:05", 
-                    tag: "MV",
-                    thumb: "高嶺のなでしこ/img/YcGoOQcXjO8.jpg" 
+                jp: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authText: "FANCLUB",
+                    authSub: "会員登録 / ログイン",
+                    subtitle: "ビデオギャラリー",
+                    tabAll: "ALL",
+                    tabMusic: "MUSIC VIDEO",
+                    tabDance: "DANCE VIDEO",
+                    tabSpecial: "SPECIAL",
+                    tabMaking: "MAKING",
+                    tabVlog: "VLOG",
+                    catHeader: "CATEGORY",
+                    catAll: "すべての動画",
+                    catMusic: "ミュージックビデオ",
+                    catDance: "ダンスビデオ",
+                    catSpecial: "スペシャル",
+                    catMaking: "メイキング",
+                    catVlog: "VLOG",
+                    sortHeader: "SORT",
+                    sortNewest: "● 新しい順",
+                    sortOldest: "○ 古い順",
+                    sortPopular: "○ 人気順",
+                    ytSub: "チャンネル登録はこちら",
+                    notFound: "ビデオが見つかりませんでした。",
+                    viewsText: "回視聴"
                 }
-            ];
+            };
+
+            function applyTranslations(lang) {
+                const t = videoTranslations[lang] || videoTranslations.id;
+                document.getElementById('navHome').textContent = t.navHome;
+                document.getElementById('navNews').textContent = t.navNews;
+                document.getElementById('navMusic').textContent = t.navMusic;
+                document.getElementById('navVideo').textContent = t.navVideo;
+                document.getElementById('navMember').textContent = t.navMember;
+                document.getElementById('navSchedule').textContent = t.navSchedule;
+                document.getElementById('navGoods').textContent = t.navGoods;
+                document.getElementById('navFanclub').textContent = t.navFanclub;
+                document.getElementById('navProfile').textContent = t.navProfile;
+
+                if (isLoggedIn === 'true') {
+                    authButton.href = 'profile.html';
+                    authSubText.textContent = lang === 'jp' ? 'マイページ' : (lang === 'en' ? 'My Page' : 'Halaman Saya');
+                } else {
+                    authButton.href = 'login.html';
+                    authSubText.textContent = t.authSub;
+                }
+
+                document.getElementById('trGallerySubtitle').textContent = t.subtitle;
+                document.getElementById('filterTabAll').textContent = t.tabAll;
+                document.getElementById('filterTabMusic').textContent = t.tabMusic;
+                document.getElementById('filterTabDance').textContent = t.tabDance;
+                document.getElementById('filterTabSpecial').textContent = t.tabSpecial;
+                document.getElementById('filterTabMaking').textContent = t.tabMaking;
+                document.getElementById('filterTabVlog').textContent = t.tabVlog;
+
+                document.getElementById('trCategoryHeader').textContent = t.catHeader;
+                document.getElementById('sidebarAllMain').textContent = t.catAll;
+                document.getElementById('sidebarMusicMain').textContent = t.catMusic;
+                document.getElementById('sidebarDanceMain').textContent = t.catDance;
+                document.getElementById('sidebarSpecialMain').textContent = t.catSpecial;
+                document.getElementById('sidebarMakingMain').textContent = t.catMaking;
+                document.getElementById('sidebarVlogMain').textContent = t.catVlog;
+
+                document.getElementById('trSortHeader').textContent = t.sortHeader;
+                document.getElementById('sortNewest').textContent = t.sortNewest;
+                document.getElementById('sortOldest').textContent = t.sortOldest;
+                document.getElementById('sortPopular').textContent = t.sortPopular;
+                document.getElementById('trYtSub').textContent = t.ytSub;
+            }
+
+            applyTranslations(currentLang);
 
             let currentCategory = 'all';
             let currentSort = 'newest';
@@ -883,6 +511,7 @@
             const sortItems = document.querySelectorAll('.sort-item');
 
             function renderGallery() {
+                const t = videoTranslations[currentLang] || videoTranslations.id;
                 let filtered = allVideos.filter(item => {
                     if (currentCategory === 'all') return true;
                     return item.category === currentCategory;
@@ -902,13 +531,12 @@
 
                 videoGrid.innerHTML = '';
                 if (paginatedItems.length === 0) {
-                    videoGrid.innerHTML = `<p style="color: var(--text-sub); grid-column: span 4; text-align: center; padding: 40px;">ビデオが見つかりませんでした。</p>`;
+                    videoGrid.innerHTML = `<p style="color: var(--text-sub); grid-column: span 4; text-align: center; padding: 40px;">${t.notFound}</p>`;
                     paginationContainer.innerHTML = '';
                     return;
                 }
 
                 paginatedItems.forEach(video => {
-                    // Membuat link otomatis berdasarkan judul (encodeURIComponent)
                     const targetLink = `video-player.html?title=${encodeURIComponent(video.title)}`;
 
                     const html = `
@@ -921,7 +549,7 @@
                                 <span class="card-tag">${video.tag}</span>
                                 <div class="card-title">${video.title}</div>
                             </div>
-                            <div class="card-meta">${video.date} | ${video.views.toLocaleString()} 回視聴</div>
+                            <div class="card-meta">${video.date} | ${video.views.toLocaleString()} ${t.viewsText}</div>
                         </a>
                     `;
                     videoGrid.insertAdjacentHTML('beforeend', html);
@@ -1008,6 +636,37 @@
                 mobileNav.classList.toggle('active');
                 hamburger.querySelector('i').classList.toggle('fa-bars');
                 hamburger.querySelector('i').classList.toggle('fa-xmark');
+            });
+
+            // Fitur Drag & Geser Filter Bar
+            const filterBar = document.getElementById('filterBar');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            filterBar.addEventListener('mousedown', (e) => {
+                isDown = true;
+                filterBar.style.cursor = 'grabbing';
+                startX = e.pageX - filterBar.offsetLeft;
+                scrollLeft = filterBar.scrollLeft;
+            });
+
+            filterBar.addEventListener('mouseleave', () => {
+                isDown = false;
+                filterBar.style.cursor = 'grab';
+            });
+
+            filterBar.addEventListener('mouseup', () => {
+                isDown = false;
+                filterBar.style.cursor = 'grab';
+            });
+
+            filterBar.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - filterBar.offsetLeft;
+                const walk = (x - startX) * 2;
+                filterBar.scrollLeft = scrollLeft - walk;
             });
 
             renderGallery();

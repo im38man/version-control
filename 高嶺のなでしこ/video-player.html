@@ -79,6 +79,7 @@
             padding: 8px 15px; text-align: center; font-family: var(--font-en);
             font-size: 0.75rem; letter-spacing: 1px; border-radius: 3px;
             transition: all 0.3s; display: flex; flex-direction: column; line-height: 1.2; z-index: 1001;
+            text-decoration: none;
         }
         .btn-fanclub .sub { font-family: var(--font-jp); font-size: 0.55rem; color: var(--accent-pink); }
         .btn-fanclub:hover { border-color: var(--accent-pink); }
@@ -106,7 +107,7 @@
             cursor: pointer; 
         }
 
-        /* Tombol Lock Player di Pojok Kiri Atas (UNLOCK/DEFAULT: Tidak perlu hover, selalu muncul) */
+        /* Tombol Lock Player di Pojok Kiri Atas */
         .player-lock-btn {
             position: absolute;
             top: 15px;
@@ -134,14 +135,12 @@
             color: var(--accent-pink);
         }
         
-        /* Saat terkunci (Locked), tombol lock tetap muncul */
         .player-lock-btn.locked {
             background: var(--accent-pink);
             color: #000;
             border-color: var(--accent-pink);
         }
 
-        /* Saat mode hide-controls (kursor diam / fullscreen tanpa gerakan), tombol unlock ikut sembunyi */
         .video-container.hide-controls .player-lock-btn {
             opacity: 0;
             pointer-events: none;
@@ -178,7 +177,6 @@
             line-height: 1.4;
         }
 
-        /* Pas Fullscreen */
         .video-container:fullscreen,
         .video-container:-webkit-full-screen,
         .video-container:-moz-full-screen {
@@ -209,7 +207,6 @@
             pointer-events: none;
         }
 
-        /* Styling badge angka 1 pada repeat mirip quality-badge (HD) */
         .repeat-wrapper {
             position: relative;
             display: inline-flex;
@@ -436,8 +433,7 @@
             justify-content: space-between; 
             align-items: center; 
         }
-        .playlist-header h3 { font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; }
-        .playlist-count { font-size: 0.8rem; color: var(--accent-pink); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .playlist-header-left { display: flex; align-items: center; gap: 8px; }
 
         .pl-item { display: flex; gap: 12px; padding: 10px 15px; cursor: pointer; transition: background 0.2s; align-items: flex-start; }
         .pl-item:hover { background-color: var(--box-bg-hover); }
@@ -457,6 +453,71 @@
         .playlist-footer { padding: 15px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; }
         .btn-full-outline { width: 100%; padding: 12px; text-align: center; border: 1px solid var(--border-color); background: transparent; font-size: 0.85rem; transition: background 0.3s; border-radius: 4px; cursor: pointer; color: var(--text-main); }
         .btn-full-outline:hover { background: var(--box-bg-hover); border-color: var(--accent-pink); }
+
+        /* Modal & Custom Popup Notifikasi */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: var(--box-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; width: 90%; max-width: 420px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .modal-header h3 { font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; color: var(--accent-pink); }
+        .modal-close { cursor: pointer; font-size: 1.1rem; color: var(--text-sub); }
+        .modal-close:hover { color: var(--text-main); }
+
+        .folder-check-list { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
+        .folder-check-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer; padding: 6px; border-radius: 4px; }
+        .folder-check-item:hover { background: rgba(255,255,255,0.05); }
+
+        .new-folder-row { display: flex; gap: 8px; margin-top: 10px; }
+        .new-folder-input {
+            flex-grow: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color);
+            padding: 8px 12px; color: var(--text-main); font-size: 0.85rem; border-radius: 4px; outline: none;
+        }
+        .new-folder-input:focus { border-color: var(--accent-pink); }
+        .btn-add-folder {
+            background: var(--accent-pink); color: white; border: none; padding: 0 15px;
+            font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500;
+        }
+
+        /* Toast Notification Kustom sesuai tema */
+        #customToast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--box-bg);
+            border: 1px solid var(--accent-pink);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        #customToast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #customToast i {
+            color: var(--accent-pink);
+            font-size: 1.1rem;
+        }
 
         /* Drawer Overlay Backdrop */
         .drawer-backdrop {
@@ -515,6 +576,38 @@
     <!-- Backdrop untuk Drawer -->
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
+    <!-- Kustom Toast Notifikasi -->
+    <div id="customToast">
+        <i class="fa-solid fa-heart"></i>
+        <span id="toastMessage">Pesan notifikasi</span>
+    </div>
+
+    <!-- MODAL PILIH / BUAT FOLDER FAVORIT -->
+    <div class="modal-overlay" id="favoriteModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="trFavModalTitle">SIMPAN KE PLAYLIST FAVORIT</h3>
+                <i class="fa-solid fa-xmark modal-close" id="closeFavModal"></i>
+            </div>
+            <div class="folder-check-list" id="folderCheckList"></div>
+            <div class="new-folder-row">
+                <input type="text" id="newFolderName" class="new-folder-input" placeholder="Buat folder baru...">
+                <button type="button" class="btn-add-folder" id="btnCreateFolder">Buat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PILIH FOLDER UNTUK DITAMPILKAN DI SIDEBAR -->
+    <div class="modal-overlay" id="switchPlaylistModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="trSwitchModalTitle">PILIH PLAYLIST / FOLDER</h3>
+                <i class="fa-solid fa-xmark modal-close" id="closeSwitchModal"></i>
+            </div>
+            <div id="switchPlaylistContent" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header>
         <a href="#" class="header-logo">
@@ -526,15 +619,15 @@
         </a>
         <nav id="mobileNav">
             <ul>
-                <li><a href="#">HOME</a></li>
-                <li><a href="#">NEWS</a></li>
-                <li><a href="#">MUSIC</a></li>
-                <li><a href="#" class="active">VIDEO</a></li>
-                <li><a href="#">MEMBER</a></li>
-                <li><a href="#">SCHEDULE</a></li>
-                <li><a href="#">GOODS</a></li>
-                <li><a href="#">FANCLUB</a></li>
-                <li><a href="#">PROFILE</a></li>
+                <li><a href="index.html" id="navHome">HOME</a></li>
+                <li><a href="#" id="navNews">NEWS</a></li>
+                <li><a href="#" id="navMusic">MUSIC</a></li>
+                <li><a href="all-video.html" class="active" id="navVideo">VIDEO</a></li>
+                <li><a href="#" id="navMember">MEMBER</a></li>
+                <li><a href="#" id="navSchedule">SCHEDULE</a></li>
+                <li><a href="#" id="navGoods">GOODS</a></li>
+                <li><a href="fanclub.html" id="navFanclub">FANCLUB</a></li>
+                <li><a href="profile.html" id="navProfile">PROFILE</a></li>
             </ul>
             <div class="mobile-socials">
                 <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
@@ -550,7 +643,9 @@
                 <a href="#"><i class="fa-brands fa-youtube"></i></a>
                 <a href="#"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            <button class="btn-fanclub">FANCLUB<span class="sub">会員登録 / ログイン</span></button>
+            <a href="fanclub.html" class="btn-fanclub" id="authButton">
+                FANCLUB<span class="sub" id="authSubText">会員登録 / ログイン</span>
+            </a>
             <div class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></div>
         </div>
     </header>
@@ -558,15 +653,15 @@
     <main class="container">
         <!-- Breadcrumbs -->
         <nav class="breadcrumbs">
-            <a href="index.html"><i class="fa-solid fa-house"></i> HOME</a> <span>></span>
-            <a href="all-video.html">VIDEO</a> <span>></span> <a href="#">MUSIC VIDEO</a>
+            <i class="fa-solid fa-house"></i><a href="index.html" id="bcHome">HOME</a> <span>></span>
+            <a href="all-video.html" id="bcVideo">VIDEO</a> <span>></span> <a href="#" id="bcSub">MUSIC VIDEO</a>
         </nav>
 
         <div class="player-layout">
             <!-- LEFT COLUMN (Video & Info) -->
             <div class="main-column">
                 <div class="video-container" id="videoContainer">
-                    <!-- Tombol Lock/Unlock di Pojok Kiri Atas (Tanpa Hover, Langsung Muncul) -->
+                    <!-- Tombol Lock/Unlock di Pojok Kiri Atas -->
                     <button class="player-lock-btn" id="playerLockBtn" title="Lock Player">
                         <i class="fa-solid fa-lock-open" id="lockIcon"></i>
                     </button>
@@ -606,17 +701,17 @@
                                 <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
                             </div>
                             <div class="control-right">
-                                <i class="fa-solid fa-shuffle icon-btn" id="shuffleBtn" title="Acak (Shuffle)"></i>
+                                <i class="fa-solid fa-shuffle icon-btn" id="shuffleBtn" title="Acak"></i>
                                 
-                                <!-- Tombol Repeat dengan badge angka 1 mirip badge HD -->
-                                <div class="repeat-wrapper icon-btn" id="repeatBtnContainer" title="Ulangi (Repeat)">
+                                <!-- Tombol Repeat -->
+                                <div class="repeat-wrapper icon-btn" id="repeatBtnContainer" title="Ulangi">
                                     <i class="fa-solid fa-repeat" id="repeatIcon"></i>
                                     <span class="repeat-badge" id="repeatBadge">1</span>
                                 </div>
 
                                 <!-- Tombol Picture-in-Picture -->
                                 <i class="fa-solid fa-clone icon-btn" id="pipBtn" title="Picture-in-Picture"></i>
-                                <!-- Tombol CC (Closed Captions) -->
+                                <!-- Tombol CC -->
                                 <i class="fa-regular fa-closed-captioning icon-btn" id="ccBtn" title="Subtitle (CC)"></i>
                                 <div class="settings-wrap icon-btn">
                                     <i class="fa-solid fa-gear"></i>
@@ -654,8 +749,9 @@
                                 <div class="divider"></div>
                                 <button class="action-btn"><i class="fa-regular fa-thumbs-down"></i></button>
                             </div>
-                            <button class="action-btn"><i class="fa-solid fa-share"></i> 共有</button>
-                            <button class="action-btn"><i class="fa-solid fa-plus"></i> 保存</button>
+                            <button class="action-btn" id="btnShareText"><i class="fa-solid fa-share"></i> <span id="trShare">Bagikan</span></button>
+                            <!-- Tombol Save to favorite -->
+                            <button class="action-btn" id="saveFavoriteBtn"><i class="fa-solid fa-plus"></i> <span id="trSaveFav">Simpan ke Favorit</span></button>
                             <button class="action-btn"><i class="fa-solid fa-ellipsis"></i></button>
                         </div>
                     </div>
@@ -664,7 +760,7 @@
                         <div class="desc-content" id="descContent">
                             Memuat deskripsi...
                         </div>
-                        <button class="show-more-btn" id="showMoreBtn">もっと見る <i class="fa-solid fa-chevron-down"></i></button>
+                        <button class="show-more-btn" id="showMoreBtn"><span id="trShowMore">Selengkapnya</span> <i class="fa-solid fa-chevron-down"></i></button>
                     </div>
                 </div>
             </div>
@@ -672,20 +768,28 @@
             <!-- RIGHT COLUMN (Playlist / Drawer Panel) -->
             <div class="sidebar-column" id="sidebarColumn">
                 <div class="playlist-header">
-                    <button id="sortBtn" style="font-family: var(--font-en); font-size: 1rem; letter-spacing: 1px; cursor: pointer; background: none; color: inherit; border: none; display: flex; align-items: center; gap: 8px; padding: 0;">
-                        <i class="fa-solid fa-arrow-down-short-wide"></i> <span>News</span>
-                    </button>
-                    <span class="playlist-count" id="closeDrawerBtn" style="cursor: pointer;">
-                        <span>再生リスト (<span id="totalPlaylist">0</span>)</span> 
-                        <i class="fa-solid fa-xmark" style="font-size: 1.1rem; margin-left: 5px;"></i>
-                    </span>
+                    <div class="playlist-header-left" style="display: flex; align-items: center; gap: 8px;">
+                        <button id="sortBtn" style="font-family: var(--font-en); font-size: 0.9rem; letter-spacing: 1px; cursor: pointer; background: none; color: inherit; border: none; display: flex; align-items: center; gap: 6px; padding: 0;">
+                            <i class="fa-solid fa-arrow-down-short-wide"></i> <span id="trSortOrder">Terbaru</span>
+                        </button>
+                    </div>
+                    
+                    <!-- KELOMPOK KANAN HEADER PLAYLIST (Label Playlist + Tombol X Close) -->
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="playlist-count" id="openSwitchPlaylistModalBtn" style="cursor: pointer;" title="Klik untuk ganti playlist/folder">
+                            <span id="activePlaylistLabel">再生リスト</span> (<span id="totalPlaylist">0</span>) 
+                            <i class="fa-solid fa-caret-down" style="font-size: 0.8rem; margin-left: 3px;"></i>
+                        </span>
+                        <!-- Tombol X Close khusus untuk menutup panel playlist di mode HP / Sidebar -->
+                        <button id="closeDrawerBtn" style="cursor: pointer; background: none; border: none; color: var(--text-main); font-size: 1.1rem; padding: 2px;" title="Tutup">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <!-- Wrapper khusus list video & custom scrollbar -->
                 <div class="playlist-scroll-wrapper">
                     <div class="playlist-items" id="playlistContainer"></div>
                     
-                    <!-- Custom Thin Scrollbar Track & Thumb -->
                     <div class="custom-scrollbar-track" id="customScrollTrack">
                         <div class="custom-scrollbar-thumb" id="customScrollThumb"></div>
                     </div>
@@ -693,10 +797,10 @@
                 
                 <div class="playlist-footer">
                     <button class="btn-full-outline" id="loadMoreBtn" style="display: none;">
-                        <i class="fa-solid fa-chevron-down" style="margin-right: 5px;"></i> More +
+                        <i class="fa-solid fa-chevron-down" style="margin-right: 5px;"></i> <span id="trMoreText">Muat Lebih Banyak</span>
                     </button>
                     <a href="all-video.html" style="display: block; width: 100%;">
-                        <button class="btn-full-outline">すべてのMVを見る <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i></button>
+                        <button class="btn-full-outline"><span id="trAllVideos">Lihat Semua Video</span> <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i></button>
                     </a>
                 </div>
             </div>
@@ -704,7 +808,7 @@
         </div>
     </main>
 
-    <!-- Subtitle data (ditanam di JS, aman dibuka file:// tanpa server) -->
+    <!-- Subtitle data -->
     <script src="高嶺のなでしこ/sub/sub.js"></script>
     
     <!-- PANGGIL DATA PLAYLIST EKSTERNAL -->
@@ -713,15 +817,167 @@
     <!-- JavaScript Utama -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authButton = document.getElementById('authButton');
+            const authSubText = document.getElementById('authSubText');
+
+            const currentLang = localStorage.getItem('userLang') || 'id';
+
+            // KAMUS TERJEMAHAN HALAMAN PLAYER
+            const playerTranslations = {
+                id: {
+                    navHome: "BERANDA",
+                    navNews: "BERITA",
+                    navMusic: "MUSIK",
+                    navVideo: "VIDEO",
+                    navMember: "ANGGOTA",
+                    navSchedule: "JADWAL",
+                    navGoods: "MERCHANDISE",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFIL",
+                    authSub: "Daftar / Masuk",
+                    bcHome: "BERANDA",
+                    bcVideo: "VIDEO",
+                    bcSub: "MUSIK VIDEO",
+                    favModalTitle: "SIMPAN KE PLAYLIST FAVORIT",
+                    switchModalTitle: "PILIH PLAYLIST / FOLDER",
+                    share: "Bagikan",
+                    saveFav: "Simpan ke Favorit",
+                    showMore: "Selengkapnya",
+                    showLess: "Sembunyikan",
+                    sortNew: "Terbaru",
+                    sortOld: "Terlama",
+                    moreText: "Muat Lebih Banyak",
+                    allVideos: "Lihat Semua Video",
+                    viewsText: "x ditonton",
+                    defaultPlaylistName: "Daftar Putar",
+                    toastFolderCreated: "berhasil dibuat!",
+                    toastFolderExists: "Folder dengan nama tersebut sudah ada.",
+                    toastLoginRequired: "Silakan login terlebih dahulu untuk menyimpan!",
+                    toastSaved: "Disimpan ke folder",
+                    toastRemoved: "Dihapus dari folder",
+                    mainPlaylistSystem: "Semua Video Utama",
+                    mainPlaylistSub: "Bawaan sistem"
+                },
+                en: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authSub: "Register / Login",
+                    bcHome: "HOME",
+                    bcVideo: "VIDEO",
+                    bcSub: "MUSIC VIDEO",
+                    favModalTitle: "SAVE TO FAVORITE PLAYLIST",
+                    switchModalTitle: "SELECT PLAYLIST / FOLDER",
+                    share: "Share",
+                    saveFav: "Save to Favorite",
+                    showMore: "Show more",
+                    showLess: "Show less",
+                    sortNew: "Newest",
+                    sortOld: "Oldest",
+                    moreText: "Load More",
+                    allVideos: "View All Videos",
+                    viewsText: "views",
+                    defaultPlaylistName: "Playlist",
+                    toastFolderCreated: "successfully created!",
+                    toastFolderExists: "Folder with that name already exists.",
+                    toastLoginRequired: "Please log in first to save!",
+                    toastSaved: "Saved to folder",
+                    toastRemoved: "Removed from folder",
+                    mainPlaylistSystem: "All Main Videos",
+                    mainPlaylistSub: "System default"
+                },
+                jp: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authSub: "会員登録 / ログイン",
+                    bcHome: "HOME",
+                    bcVideo: "VIDEO",
+                    bcSub: "MUSIC VIDEO",
+                    favModalTitle: "お気に入りプレイリストに保存",
+                    switchModalTitle: "プレイリスト / フォルダを選択",
+                    share: "共有",
+                    saveFav: "お気に入りに追加",
+                    showMore: "もっと見る",
+                    showLess: "一部を表示",
+                    sortNew: "新着順",
+                    sortOld: "古い順",
+                    moreText: "もっと見る",
+                    allVideos: "すべてのMVを見る",
+                    viewsText: "回視聴",
+                    defaultPlaylistName: "再生リスト",
+                    toastFolderCreated: "が作成されました！",
+                    toastFolderExists: "同名のフォルダが既に存在します。",
+                    toastLoginRequired: "保存するには先にログインしてください！",
+                    toastSaved: "フォルダに保存しました",
+                    toastRemoved: "フォルダから削除しました",
+                    mainPlaylistSystem: "すべてのメイン動画",
+                    mainPlaylistSub: "システムデフォルト"
+                }
+            };
+
+            const t = playerTranslations[currentLang] || playerTranslations.id;
+
+            function applyPlayerTranslations() {
+                document.getElementById('navHome').textContent = t.navHome;
+                document.getElementById('navNews').textContent = t.navNews;
+                document.getElementById('navMusic').textContent = t.navMusic;
+                document.getElementById('navVideo').textContent = t.navVideo;
+                document.getElementById('navMember').textContent = t.navMember;
+                document.getElementById('navSchedule').textContent = t.navSchedule;
+                document.getElementById('navGoods').textContent = t.navGoods;
+                document.getElementById('navFanclub').textContent = t.navFanclub;
+                document.getElementById('navProfile').textContent = t.navProfile;
+
+                if (isLoggedIn === 'true') {
+                    authButton.href = 'profile.html';
+                    authSubText.textContent = currentLang === 'jp' ? 'マイページ' : (currentLang === 'en' ? 'My Page' : 'Halaman Saya');
+                } else {
+                    authButton.href = 'login.html';
+                    authSubText.textContent = t.authSub;
+                }
+
+                document.getElementById('bcHome').textContent = t.bcHome;
+                document.getElementById('bcVideo').textContent = t.bcVideo;
+                document.getElementById('bcSub').textContent = t.bcSub;
+                document.getElementById('trFavModalTitle').textContent = t.favModalTitle;
+                document.getElementById('trSwitchModalTitle').textContent = t.switchModalTitle;
+                document.getElementById('trShare').textContent = t.share;
+                document.getElementById('trSaveFav').textContent = t.saveFav;
+                document.getElementById('trShowMore').textContent = t.showMore;
+                document.getElementById('trSortOrder').textContent = t.sortNew;
+                document.getElementById('trMoreText').textContent = t.moreText;
+                document.getElementById('trAllVideos').textContent = t.allVideos;
+            }
+
+            applyPlayerTranslations();
+
+            let activePlaylistSource = [...playlistData];
+            let activePlaylistName = t.defaultPlaylistName;
+            document.getElementById('activePlaylistLabel').textContent = activePlaylistName;
+
             let currentIndex = 0;
             let visibleCount = 5;
             let isShuffleActive = false;
-            let repeatMode = 0; // 0: Off, 1: Infinite, 2: Repeat Once (1)
+            let repeatMode = 0; 
 
             const urlParams = new URLSearchParams(window.location.search);
             const titleParam = urlParams.get('title');
             if (titleParam !== null) {
-                const foundIndex = playlistData.findIndex(item => item.title === decodeURIComponent(titleParam));
+                const foundIndex = activePlaylistSource.findIndex(item => item.title === decodeURIComponent(titleParam));
                 if (foundIndex !== -1) {
                     currentIndex = foundIndex;
                     if (currentIndex >= visibleCount) {
@@ -742,6 +998,7 @@
             const totalPlaylistText = document.getElementById('totalPlaylist');
             const drawerCount = document.getElementById('drawerCount');
             const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const activePlaylistLabel = document.getElementById('activePlaylistLabel');
             
             const playPauseBtn = document.getElementById('playPauseBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -764,7 +1021,163 @@
             const showMoreBtn = document.getElementById('showMoreBtn');
             const sortBtn = document.getElementById('sortBtn');
 
-            // Tombol Lock Player Elements
+            const customToast = document.getElementById('customToast');
+            const toastMessage = document.getElementById('toastMessage');
+            let toastTimer;
+
+            function showToast(message) {
+                toastMessage.textContent = message;
+                customToast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    customToast.classList.remove('show');
+                }, 3000);
+            }
+
+            const openSwitchPlaylistModalBtn = document.getElementById('openSwitchPlaylistModalBtn');
+            const switchPlaylistModal = document.getElementById('switchPlaylistModal');
+            const closeSwitchModal = document.getElementById('closeSwitchModal');
+            const switchPlaylistContent = document.getElementById('switchPlaylistContent');
+
+            openSwitchPlaylistModalBtn.addEventListener('click', () => {
+                renderSwitchModalContent();
+                switchPlaylistModal.classList.add('active');
+            });
+            closeSwitchModal.addEventListener('click', () => switchPlaylistModal.classList.remove('active'));
+            switchPlaylistModal.addEventListener('click', (e) => { if(e.target === switchPlaylistModal) switchPlaylistModal.classList.remove('active'); });
+
+            function renderSwitchModalContent() {
+                switchPlaylistContent.innerHTML = '';
+                
+                let mainActiveHtml = activePlaylistName === t.defaultPlaylistName ? 'border: 1px solid var(--accent-pink); background: var(--accent-pink-transparent);' : 'background: rgba(0,0,0,0.3);';
+                switchPlaylistContent.insertAdjacentHTML('beforeend', `
+                    <div onclick="switchSourceToMain()" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; ${mainActiveHtml} border-radius: 6px; cursor: pointer;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 0.9rem; color: var(--text-main);"><i class="fa-solid fa-list" style="color: var(--accent-pink); margin-right: 8px;"></i> ${t.mainPlaylistSystem}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-sub);">${t.mainPlaylistSub} (${playlistData.length} video)</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                `);
+
+                let savedFolders = JSON.parse(localStorage.getItem('userFavoriteFolders')) || {};
+                Object.keys(savedFolders).forEach(folderName => {
+                    const folderVideos = savedFolders[folderName];
+                    let isThisActive = activePlaylistName === folderName;
+                    let folderActiveHtml = isThisActive ? 'border: 1px solid var(--accent-pink); background: var(--accent-pink-transparent);' : 'background: rgba(0,0,0,0.3);';
+
+                    switchPlaylistContent.insertAdjacentHTML('beforeend', `
+                        <div onclick="switchSourceToFolder('${folderName}')" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; ${folderActiveHtml} border-radius: 6px; cursor: pointer;">
+                            <div>
+                                <div style="font-weight: bold; font-size: 0.9rem; color: var(--text-main);"><i class="fa-regular fa-folder" style="color: var(--accent-pink); margin-right: 8px;"></i> ${folderName}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-sub);">${folderVideos.length} video</div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                        </div>
+                    `);
+                });
+            }
+
+            window.switchSourceToMain = function() {
+                activePlaylistSource = [...playlistData];
+                activePlaylistName = t.defaultPlaylistName;
+                activePlaylistLabel.textContent = activePlaylistName;
+                currentIndex = 0;
+                visibleCount = 5;
+                loadVideoData(currentIndex);
+                switchPlaylistModal.classList.remove('active');
+            };
+
+            window.switchSourceToFolder = function(folderName) {
+                let savedFolders = JSON.parse(localStorage.getItem('userFavoriteFolders')) || {};
+                let folderVideos = savedFolders[folderName] || [];
+
+                if (folderVideos.length === 0) {
+                    showToast(`Folder "${folderName}" kosong!`);
+                    return;
+                }
+
+                activePlaylistSource = folderVideos;
+                activePlaylistName = folderName;
+                activePlaylistLabel.textContent = folderName;
+                currentIndex = 0;
+                visibleCount = Math.min(5, activePlaylistSource.length);
+                loadVideoData(currentIndex);
+                switchPlaylistModal.classList.remove('active');
+            };
+
+            const saveFavoriteBtn = document.getElementById('saveFavoriteBtn');
+            const favoriteModal = document.getElementById('favoriteModal');
+            const closeFavModal = document.getElementById('closeFavModal');
+            const folderCheckList = document.getElementById('folderCheckList');
+            const newFolderNameInput = document.getElementById('newFolderName');
+            const btnCreateFolder = document.getElementById('btnCreateFolder');
+
+            saveFavoriteBtn.addEventListener('click', () => {
+                if (!localStorage.getItem('isLoggedIn') || localStorage.getItem('isLoggedIn') !== 'true') {
+                    showToast(t.toastLoginRequired);
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                    return;
+                }
+                renderFolderCheckboxes();
+                favoriteModal.classList.add('active');
+            });
+
+            closeFavModal.addEventListener('click', () => favoriteModal.classList.remove('active'));
+            favoriteModal.addEventListener('click', (e) => { if(e.target === favoriteModal) favoriteModal.classList.remove('active'); });
+
+            btnCreateFolder.addEventListener('click', () => {
+                const folderName = newFolderNameInput.value.trim();
+                if (!folderName) return;
+
+                let savedFolders = JSON.parse(localStorage.getItem('userFavoriteFolders')) || {};
+                if (!savedFolders[folderName]) {
+                    savedFolders[folderName] = [];
+                    localStorage.setItem('userFavoriteFolders', JSON.stringify(savedFolders));
+                    newFolderNameInput.value = '';
+                    renderFolderCheckboxes();
+                    showToast(`Folder "${folderName}" ${t.toastFolderCreated}`);
+                } else {
+                    showToast(t.toastFolderExists);
+                }
+            });
+
+            function getFavoriteFolders() {
+                return JSON.parse(localStorage.getItem('userFavoriteFolders')) || { "Favorites": [] };
+            }
+
+            function renderFolderCheckboxes() {
+                folderCheckList.innerHTML = '';
+                let savedFolders = getFavoriteFolders();
+                const currentVideo = activePlaylistSource[currentIndex];
+
+                Object.keys(savedFolders).forEach(folderName => {
+                    const isChecked = savedFolders[folderName].some(v => v.title === currentVideo.title);
+                    folderCheckList.insertAdjacentHTML('beforeend', `
+                        <label class="folder-check-item">
+                            <input type="checkbox" value="${folderName}" ${isChecked ? 'checked' : ''} onchange="toggleVideoInFolder('${folderName}', this.checked)">
+                            <span>${folderName} (${savedFolders[folderName].length})</span>
+                        </label>
+                    `);
+                });
+            }
+
+            window.toggleVideoInFolder = function(folderName, isChecked) {
+                let savedFolders = getFavoriteFolders();
+                const currentVideo = activePlaylistSource[currentIndex];
+
+                if (isChecked) {
+                    if (!savedFolders[folderName].some(v => v.title === currentVideo.title)) {
+                        savedFolders[folderName].push(currentVideo);
+                        showToast(`${t.toastSaved} "${folderName}"`);
+                    }
+                } else {
+                    savedFolders[folderName] = savedFolders[folderName].filter(v => v.title !== currentVideo.title);
+                    showToast(`${t.toastRemoved} "${folderName}"`);
+                }
+                localStorage.setItem('userFavoriteFolders', JSON.stringify(savedFolders));
+            };
+
             const playerLockBtn = document.getElementById('playerLockBtn');
             const lockIcon = document.getElementById('lockIcon');
             let isPlayerLocked = false;
@@ -774,12 +1187,10 @@
                 if (isPlayerLocked) {
                     videoContainerDOM.classList.add('is-locked');
                     playerLockBtn.classList.add('locked');
-                    playerLockBtn.title = "Unlock Player";
                     lockIcon.className = "fa-solid fa-lock";
                 } else {
                     videoContainerDOM.classList.remove('is-locked');
                     playerLockBtn.classList.remove('locked');
-                    playerLockBtn.title = "Lock Player";
                     lockIcon.className = "fa-solid fa-lock-open";
                 }
             });
@@ -804,7 +1215,6 @@
                 }
             });
 
-            // Custom Subtitle Parser Variables
             let parsedCues = [];
             let isCcEnabled = false;
             const customSubtitleOverlay = document.getElementById('customSubtitleOverlay');
@@ -823,7 +1233,7 @@
                     const text = await response.text();
                     parseVTT(text);
                 } catch (e) {
-                    console.log("Gagal memuat subtitle:", e);
+                    console.log("Subtitle error:", e);
                 }
             }
 
@@ -862,7 +1272,6 @@
                 return seconds;
             }
 
-            // Custom Scrollbar Elements
             const customScrollTrack = document.getElementById('customScrollTrack');
             const customScrollThumb = document.getElementById('customScrollThumb');
 
@@ -918,27 +1327,7 @@
                 playlistContainer.scrollTop = startScrollTop + scrollRatio * (scrollHeight - clientHeight);
             });
 
-            document.addEventListener('mouseup', () => {
-                isDraggingScroll = false;
-            });
-
-            customScrollTrack.addEventListener('click', (e) => {
-                if (e.target === customScrollThumb) return;
-                const rect = customScrollTrack.getBoundingClientRect();
-                const clickY = e.clientY - rect.top;
-                const trackHeight = customScrollTrack.clientHeight;
-                const thumbHeight = customScrollThumb.clientHeight;
-                const scrollHeight = playlistContainer.scrollHeight;
-                const clientHeight = playlistContainer.clientHeight;
-                
-                const maxTrackScroll = trackHeight - thumbHeight;
-                const targetTrackTop = Math.max(0, Math.min(clickY - thumbHeight / 2, maxTrackScroll));
-                const ratio = maxTrackScroll > 0 ? targetTrackTop / maxTrackScroll : 0;
-                playlistContainer.scrollTop = ratio * (scrollHeight - clientHeight);
-            });
-
-            totalPlaylistText.textContent = playlistData.length;
-            drawerCount.textContent = playlistData.length;
+            document.addEventListener('mouseup', () => { isDraggingScroll = false; });
 
             let hideControlsTimeout;
 
@@ -964,7 +1353,10 @@
 
             function renderPlaylist() {
                 playlistContainer.innerHTML = '';
-                const itemsToRender = playlistData.slice(0, visibleCount);
+                const itemsToRender = activePlaylistSource.slice(0, visibleCount);
+
+                totalPlaylistText.textContent = activePlaylistSource.length;
+                drawerCount.textContent = activePlaylistSource.length;
 
                 itemsToRender.forEach((data, index) => {
                     const isActive = index === currentIndex;
@@ -988,9 +1380,8 @@
                     playlistContainer.insertAdjacentHTML('beforeend', itemHTML);
                 });
 
-                if (visibleCount < playlistData.length) {
+                if (visibleCount < activePlaylistSource.length) {
                     loadMoreBtn.style.display = 'block';
-                    loadMoreBtn.innerHTML = `<i class="fa-solid fa-chevron-down" style="margin-right: 5px;"></i> Tampilkan Lebih Banyak (+5)`;
                 } else {
                     loadMoreBtn.style.display = 'none';
                 }
@@ -1017,7 +1408,8 @@
             });
 
             function loadVideoData(index) {
-                const data = playlistData[index];
+                const data = activePlaylistSource[index];
+                if (!data) return;
                 
                 let source = data.videoSrc;
                 if (source && !source.startsWith('http')) {
@@ -1033,14 +1425,14 @@
                 customSubtitleOverlay.style.display = 'none';
 
                 mainVideoTitle.textContent = data.title;
-                viewCount.textContent = `${data.views} 回視聴`;
+                viewCount.textContent = `${data.views} ${t.viewsText}`;
                 publishDate.textContent = data.date;
                 videoTags.innerHTML = data.tags.map(tag => `<a href="#">${tag}</a>`).join(' ');
                 descContent.innerHTML = data.description;
                 
                 descContent.classList.remove('expanded');
                 showMoreBtn.classList.remove('active');
-                showMoreBtn.innerHTML = 'もっと見る <i class="fa-solid fa-chevron-down"></i>';
+                showMoreBtn.innerHTML = `${t.showMore} <i class="fa-solid fa-chevron-down"></i>`;
 
                 renderPlaylist();
             }
@@ -1077,7 +1469,7 @@
             function togglePlay() {
                 if (isPlayerLocked) return;
                 if (video.paused) {
-                    video.play().catch(e => console.log("Play error:", e));
+                    video.play().catch(e => console.log(e));
                 } else {
                     video.pause();
                 }
@@ -1185,55 +1577,39 @@
                 if (!isDraggingProgress) progressPreview.style.display = 'none';
             });
 
-            document.addEventListener('keydown', (e) => {
-                if (isPlayerLocked) return;
-                if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
-                if (e.key === 'ArrowRight') {
-                    video.currentTime = Math.min(video.duration, video.currentTime + 5);
-                    e.preventDefault();
-                } else if (e.key === 'ArrowLeft') {
-                    video.currentTime = Math.max(0, video.currentTime - 5);
-                    e.preventDefault();
-                }
-            });
-
             nextBtn.addEventListener('click', () => {
                 if (isPlayerLocked) return;
                 if (isShuffleActive) {
-                    currentIndex = Math.floor(Math.random() * playlistData.length);
+                    currentIndex = Math.floor(Math.random() * activePlaylistSource.length);
                 } else {
-                    currentIndex = (currentIndex + 1) % playlistData.length;
+                    currentIndex = (currentIndex + 1) % activePlaylistSource.length;
                 }
                 loadVideoData(currentIndex);
-                setTimeout(() => video.play().catch(e => console.log("Play error:", e)), 100);
+                setTimeout(() => video.play().catch(e => console.log(e)), 100);
             });
 
             prevBtn.addEventListener('click', () => {
                 if (isPlayerLocked) return;
-                currentIndex = (currentIndex - 1 + playlistData.length) % playlistData.length;
+                currentIndex = (currentIndex - 1 + activePlaylistSource.length) % activePlaylistSource.length;
                 loadVideoData(currentIndex);
-                setTimeout(() => video.play().catch(e => console.log("Play error:", e)), 100);
+                setTimeout(() => video.play().catch(e => console.log(e)), 100);
             });
 
             video.addEventListener('ended', () => {
                 if (repeatMode === 2) {
-                    // Repeat 1 kali: Putar ulang sekali, lalu matikan mode repeat-nya secara otomatis
                     video.currentTime = 0;
-                    video.play().catch(e => console.log("Repeat error:", e));
-                    
+                    video.play().catch(e => console.log(e));
                     repeatMode = 0;
                     repeatBtnContainer.classList.remove('active', 'repeat-one');
                 } else if (repeatMode === 1) {
-                    // Repeat Infinite: Putar ulang terus menerus
                     video.currentTime = 0;
-                    video.play().catch(e => console.log("Repeat error:", e));
+                    video.play().catch(e => console.log(e));
                 } else if (isShuffleActive) {
-                    currentIndex = Math.floor(Math.random() * playlistData.length);
+                    currentIndex = Math.floor(Math.random() * activePlaylistSource.length);
                     loadVideoData(currentIndex);
                     setTimeout(() => video.play().catch(e => console.log(e)), 100);
                 } else {
-                    currentIndex = (currentIndex + 1) % playlistData.length;
+                    currentIndex = (currentIndex + 1) % activePlaylistSource.length;
                     loadVideoData(currentIndex);
                     setTimeout(() => video.play().catch(e => console.log(e)), 100);
                 }
@@ -1267,11 +1643,7 @@
             muteBtn.addEventListener('click', () => {
                 if (isPlayerLocked) return;
                 video.muted = !video.muted;
-                if(video.muted) {
-                    video.volume = 0;
-                } else {
-                    video.volume = 1; 
-                }
+                video.volume = video.muted ? 0 : 1;
                 updateVolumeIcon();
             });
             
@@ -1294,7 +1666,7 @@
                 if (isPlayerLocked) return;
                 if (!document.fullscreenElement) {
                     document.getElementById('videoContainer').requestFullscreen().catch(err => {
-                        alert(`Gagal fullscreen: ${err.message}`);
+                        showToast(`Fullscreen error: ${err.message}`);
                     });
                 } else {
                     document.exitFullscreen();
@@ -1314,8 +1686,8 @@
                 descContent.classList.toggle('expanded');
                 showMoreBtn.classList.toggle('active');
                 showMoreBtn.innerHTML = descContent.classList.contains('expanded') 
-                    ? '一部を表示 <i class="fa-solid fa-chevron-up"></i>' 
-                    : 'もっと見る <i class="fa-solid fa-chevron-down"></i>';
+                    ? `${t.showLess} <i class="fa-solid fa-chevron-up"></i>` 
+                    : `${t.showMore} <i class="fa-solid fa-chevron-down"></i>`;
             });
 
             const sidebarColumn = document.getElementById('sidebarColumn');
@@ -1344,28 +1716,24 @@
                 const sortText = sortBtn.querySelector('span');
                 const sortIcon = sortBtn.querySelector('i');
                 if (isSortedOldest) {
-                    sortText.textContent = 'Olders';
+                    sortText.textContent = t.sortOld;
                     sortIcon.className = 'fa-solid fa-arrow-up-wide-short';
                 } else {
-                    sortText.textContent = 'News';
+                    sortText.textContent = t.sortNew;
                     sortIcon.className = 'fa-solid fa-arrow-down-short-wide';
                 }
 
-                // Ambil data video yang sedang diputar saat ini agar tidak ikut tersesat
-                const activeVideo = playlistData[currentIndex];
+                const activeVideo = activePlaylistSource[currentIndex];
 
-                playlistData.sort((a, b) => {
+                activePlaylistSource.sort((a, b) => {
                     if (isSortedOldest) {
-                        // Terlama ke Terbaru (Ascending)
                         return a.date.localeCompare(b.date);
                     } else {
-                        // Terbaru ke Terlama (Descending) -> Diperbaiki dari b.date ke a.date
                         return b.date.localeCompare(a.date);
                     }
                 });
 
-                // Sesuaikan kembali posisi currentIndex berdasarkan video yang sedang aktif
-                currentIndex = playlistData.indexOf(activeVideo);
+                currentIndex = activePlaylistSource.indexOf(activeVideo);
 
                 if (currentIndex >= visibleCount) {
                     visibleCount = Math.ceil((currentIndex + 1) / 5) * 5;

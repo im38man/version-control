@@ -155,7 +155,7 @@
             font-size: 0.75rem; letter-spacing: 1px; border: none; border-radius: 3px;
             cursor: pointer; transition: background 0.3s;
             display: flex; flex-direction: column; line-height: 1.2;
-            z-index: 1001;
+            z-index: 1001; text-decoration: none;
         }
         .btn-fanclub .sub { font-family: var(--font-jp); font-size: 0.6rem; transform: scale(0.9); color: #fff; opacity: 0.9; }
         .btn-fanclub:hover { background-color: var(--accent-pink); }
@@ -247,7 +247,6 @@
         .video-small-thumb { position: relative; width: 100%; overflow: hidden; border-radius: 4px; }
         .video-small-thumb img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform 0.5s ease; }
         .video-small:hover .video-small-thumb img { transform: scale(1.05); }
-        /* FIX: Perfectly centered on image frame */
         .video-small-thumb .play-btn {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 32px; height: 32px; background-color: rgba(255, 255, 255, 0.9); border-radius: 50%;
@@ -364,7 +363,7 @@
         .fc-title { color: var(--accent-pink); font-family: var(--font-en); font-size: 1rem; letter-spacing: 2px; }
         .fc-name { font-size: 1.3rem; margin-bottom: 10px; }
         .fc-desc { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.8; }
-        .btn-fc-join { background-color: var(--accent-pink-dark); color: white; padding: 10px 20px; font-size: 0.8rem; border-radius: 2px; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-fc-join { background-color: var(--accent-pink-dark); color: white; padding: 10px 20px; font-size: 0.8rem; border-radius: 2px; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 
         /* Mail Magazine */
         .mail-box { position: relative; overflow: hidden; }
@@ -474,7 +473,7 @@
 
     <!-- Header -->
     <header>
-        <a href="#" class="header-logo">
+        <a href="index.html" class="header-logo">
             <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b87b92'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" alt="Logo Mark">
             <div class="header-logo-text">
                 <span class="en">TAKANE NO<br>NADESHIKO</span>
@@ -484,15 +483,15 @@
         
         <nav id="mobileNav">
             <ul>
-                <li><a href="#" class="active">HOME</a></li>
-                <li><a href="#">NEWS</a></li>
-                <li><a href="#">MUSIC</a></li>
-                <li><a href="all-video.html">VIDEO</a></li>
-                <li><a href="#">MEMBER</a></li>
-                <li><a href="#">SCHEDULE</a></li>
-                <li><a href="#">GOODS</a></li>
-                <li><a href="#">FANCLUB</a></li>
-                <li><a href="#">PROFILE</a></li>
+                <li><a href="index.html" class="active" id="navHome">HOME</a></li>
+                <li><a href="#" id="navNews">NEWS</a></li>
+                <li><a href="#" id="navMusic">MUSIC</a></li>
+                <li><a href="all-video.html" id="navVideo">VIDEO</a></li>
+                <li><a href="#" id="navMember">MEMBER</a></li>
+                <li><a href="#" id="navSchedule">SCHEDULE</a></li>
+                <li><a href="#" id="navGoods">GOODS</a></li>
+                <li><a href="fanclub.html" id="navFanclub">FANCLUB</a></li>
+                <li><a href="profile.html" id="navProfile">PROFILE</a></li>
             </ul>
             <div class="mobile-socials">
                 <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
@@ -509,10 +508,10 @@
                 <a href="#"><i class="fa-brands fa-youtube"></i></a>
                 <a href="#"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            <button class="btn-fanclub">
+            <a href="fanclub.html" class="btn-fanclub" id="authButton">
                 FANCLUB
-                <span class="sub">会員登録 / ログイン</span>
-            </button>
+                <span class="sub" id="authSubText">会員登録 / ログイン</span>
+            </a>
             <div class="hamburger" id="hamburger">
                 <i class="fa-solid fa-bars"></i>
             </div>
@@ -525,12 +524,12 @@
             <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23ffffff'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" alt="Icon" class="hero-logo-mark">
             <h1>TAKANE NO<br>NADESHIKO</h1>
             <div class="subtitle">高嶺のなでしこ</div>
-            <div class="tagline">JAPAN IDOL GROUP</div>
-            <div class="jp-tagline">
+            <div class="tagline" id="heroTagline">JAPAN IDOL GROUP</div>
+            <div class="jp-tagline" id="heroJpTagline">
                 オトナの魅力を、<br>
                 アイドルで。
             </div>
-            <a href="#" class="btn-outline">VIEW PROFILE <i class="fa-solid fa-arrow-right-long"></i></a>
+            <a href="profile.html" class="btn-outline" id="viewProfileBtn">VIEW PROFILE <i class="fa-solid fa-arrow-right-long"></i></a>
         </div>
     </section>
 
@@ -542,8 +541,8 @@
             <!-- NEWS -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">NEWS</h2>
-                    <a href="#" class="view-all">VIEW ALL <i class="fa-solid fa-arrow-right"></i></a>
+                    <h2 class="section-title" id="secNewsTitle">NEWS</h2>
+                    <a href="#" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
                 <div class="news-list">
                     <a href="#" class="news-item">
@@ -582,8 +581,8 @@
             <!-- NEW MUSIC VIDEO -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">NEW MUSIC VIDEO</h2>
-                    <a href="all-video.html" class="view-all">VIEW ALL <i class="fa-solid fa-arrow-right"></i></a>
+                    <h2 class="section-title" id="secMvTitle">NEW MUSIC VIDEO</h2>
+                    <a href="all-video.html" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
                 <a href="video-player.html?title=【Dance Performance Video】ハートブーケ／高嶺のなでしこ【HoneyWorks】" class="video-main">
                     <span class="video-tag">MV</span>
@@ -622,8 +621,8 @@
             <!-- NEW VIDEO (YOUTUBE) -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">NEW VIDEO (YOUTUBE)</h2>
-                    <a href="all-video.html" class="view-all">VIEW ALL <i class="fa-solid fa-arrow-right"></i></a>
+                    <h2 class="section-title" id="secYtTitle">NEW VIDEO (YOUTUBE)</h2>
+                    <a href="all-video.html" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
                 <a href="https://www.youtube.com/watch?v=SNcdk1DJa_k" class="video-main">
                     <span class="video-tag" style="background-color: #ff0000;">YOUTUBE</span>
@@ -656,11 +655,10 @@
         <!-- Row 2: MEMBER -->
         <div class="section-box members-container">
             <div class="section-header">
-                <h2 class="section-title">MEMBER</h2>
-                <a href="#" class="view-all">VIEW ALL <i class="fa-solid fa-arrow-right"></i></a>
+                <h2 class="section-title" id="secMemberTitle">MEMBER</h2>
+                <a href="#" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
             </div>
             <div class="member-grid" id="memberGrid">
-			
                 <a href="#" class="member-card">
                     <img src="高嶺のなでしこ/img/momona_3.webp" alt="Matsumoto">
                     <div class="member-info">
@@ -761,7 +759,6 @@
                         <div class="member-arrow"><i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </a>
-				
             </div>
             <div class="scroll-arrow-right" id="scrollRightBtn"><i class="fa-solid fa-angle-right"></i></div>
         </div>
@@ -771,8 +768,8 @@
             <!-- SCHEDULE -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">SCHEDULE</h2>
-                    <a href="#" class="view-all">VIEW ALL <i class="fa-solid fa-arrow-right"></i></a>
+                    <h2 class="section-title" id="secSchedTitle">SCHEDULE</h2>
+                    <a href="#" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
                 <div class="schedule-list">
                     <a href="#" class="schedule-item">
@@ -809,13 +806,13 @@
                         <div class="schedule-tag tag-event">EVENT</div>
                     </a>
                 </div>
-                <a href="#" class="btn-full">スケジュール一覧へ <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="#" class="btn-full" id="btnSchedAll">スケジュール一覧へ <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
             <!-- NEW RELEASE -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">NEW RELEASE</h2>
+                    <h2 class="section-title" id="secReleaseTitle">NEW RELEASE</h2>
                 </div>
                 <div class="release-content">
                     <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="CD Cover" class="release-cover">
@@ -833,7 +830,7 @@
                             02. ラブソングはいらない<br>
                             03. 恋を知った世界<br>
                         </div>
-                        <a href="#" class="btn-outline" style="width: 100%; justify-content: center; padding: 10px; margin-top: 10px;">LISTEN / BUY <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#" class="btn-outline" id="btnListenBuy" style="width: 100%; justify-content: center; padding: 10px; margin-top: 10px;">LISTEN / BUY <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -841,28 +838,28 @@
             <!-- OFFICIAL GOODS -->
             <div class="section-box">
                 <div class="section-header">
-                    <h2 class="section-title">OFFICIAL GOODS</h2>
-                    <a href="#" class="view-all">VIEW SHOP <i class="fa-solid fa-arrow-right"></i></a>
+                    <h2 class="section-title" id="secGoodsTitle">OFFICIAL GOODS</h2>
+                    <a href="#" class="view-all"><span id="viewShopText">VIEW SHOP</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
                 <div class="goods-grid">
                     <a href="#" class="good-item">
                         <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="T-Shirt">
-                        <div class="good-name">Tシャツ (ロゴ)</div>
+                        <div class="good-name" id="good1Name">Tシャツ (ロゴ)</div>
                         <div class="good-price">¥3,500</div>
                     </a>
                     <a href="#" class="good-item">
                         <img src="https://images.unsplash.com/photo-1614031679268-80f2d9bc99c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Towel">
-                        <div class="good-name">マフラータオル</div>
+                        <div class="good-name" id="good2Name">マフラータオル</div>
                         <div class="good-price">¥2,200</div>
                     </a>
                     <a href="#" class="good-item">
                         <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Stand">
-                        <div class="good-name">アクリルスタンド</div>
+                        <div class="good-name" id="good3Name">アクリルスタンド</div>
                         <div class="good-price">¥1,500</div>
                     </a>
                     <a href="#" class="good-item">
                         <img src="https://images.unsplash.com/photo-1591561954557-26941169b49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Bag">
-                        <div class="good-name">トートバッグ</div>
+                        <div class="good-name" id="good4Name">トートバッグ</div>
                         <div class="good-price">¥2,800</div>
                     </a>
                 </div>
@@ -873,8 +870,8 @@
         <div class="grid-bottom">
             <!-- OFFICIAL SNS -->
             <div class="section-box sns-box">
-                <h2 class="section-title" style="margin-bottom: 5px;">OFFICIAL SNS</h2>
-                <div class="sub">FOLLOW US!</div>
+                <h2 class="section-title" id="secSnsTitle" style="margin-bottom: 5px;">OFFICIAL SNS</h2>
+                <div class="sub" id="snsSub">FOLLOW US!</div>
                 <div class="sns-grid">
                     <a href="#" class="sns-icon"><i class="fa-brands fa-x-twitter"></i></a>
                     <a href="#" class="sns-icon"><i class="fa-brands fa-instagram"></i></a>
@@ -888,11 +885,11 @@
                 <div class="fanclub-content">
                     <div class="fc-title">OFFICIAL FANCLUB</div>
                     <div class="fc-name">高嶺の花園</div>
-                    <div class="fc-desc">
+                    <div class="fc-desc" id="fcDescText">
                         会員限定コンテンツが満載！<br>
                         チケット先行・限定ブログ・生配信など
                     </div>
-                    <a href="#" class="btn-fc-join">新規入会はこちら <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="profile.html" class="btn-fc-join" id="btnFcJoin">新規入会はこちら <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -900,10 +897,10 @@
             <div class="section-box mail-box">
                 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23ffffff'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" class="mail-bg-icon" alt="bg">
                 <div class="mail-title">MAIL MAGAZINE</div>
-                <div class="mail-sub">メルマガ登録はこちら</div>
-                <div class="mail-desc">最新情報やメンバーからの<br>メッセージをお届けします！</div>
+                <div class="mail-sub" id="mailSubText">メルマガ登録はこちら</div>
+                <div class="mail-desc" id="mailDescText">最新情報やメンバーからの<br>メッセージをお届けします！</div>
                 <div class="mail-form">
-                    <input type="email" placeholder="メールアドレスを入力">
+                    <input type="email" id="mailInputPlaceholder" placeholder="メールアドレスを入力">
                     <button type="button"><i class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
@@ -926,26 +923,26 @@
 
         <nav class="footer-nav">
             <ul>
-                <li><a href="#">NEWS</a></li>
-                <li><a href="#">MUSIC</a></li>
-                <li><a href="all-video.html">VIDEO</a></li>
+                <li><a href="#" id="fNavNews">NEWS</a></li>
+                <li><a href="#" id="fNavMusic">MUSIC</a></li>
+                <li><a href="all-video.html" id="fNavVideo">VIDEO</a></li>
             </ul>
             <ul>
-                <li><a href="#">MEMBER</a></li>
-                <li><a href="#">SCHEDULE</a></li>
-                <li><a href="#">GOODS</a></li>
+                <li><a href="#" id="fNavMember">MEMBER</a></li>
+                <li><a href="#" id="fNavSchedule">SCHEDULE</a></li>
+                <li><a href="#" id="fNavGoods">GOODS</a></li>
             </ul>
             <ul>
-                <li><a href="#">FANCLUB</a></li>
-                <li><a href="#">PROFILE</a></li>
-                <li><a href="#">CONTACT</a></li>
+                <li><a href="profile.html" id="fNavFanclub">FANCLUB</a></li>
+                <li><a href="profile.html" id="fNavProfile">PROFILE</a></li>
+                <li><a href="#" id="fNavContact">CONTACT</a></li>
             </ul>
         </nav>
 
         <div class="footer-links">
-            <a href="#">PRIVACY POLICY</a>
-            <a href="#">TERMS OF USE</a>
-            <a href="#">特定商取引法に基づく表記</a>
+            <a href="#" id="fLinkPrivacy">PRIVACY POLICY</a>
+            <a href="#" id="fLinkTerms">TERMS OF USE</a>
+            <a href="#" id="fLinkCommercial">特定商取引法に基づく表記</a>
         </div>
 
         <button class="btn-top" id="backToTop">
@@ -954,47 +951,270 @@
         </button>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- JavaScript & Terjemahan Otomatis Berdasarkan Profil -->
     <script>
-        const hamburger = document.getElementById('hamburger');
-        const mobileNav = document.getElementById('mobileNav');
-        
-        hamburger.addEventListener('click', () => {
-            mobileNav.classList.toggle('active');
-            const icon = hamburger.querySelector('i');
-            if (mobileNav.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-xmark');
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authButton = document.getElementById('authButton');
+            const authSubText = document.getElementById('authSubText');
+            const currentLang = localStorage.getItem('userLang') || 'id';
+
+            // Kamus Terjemahan Halaman Utama (Index)
+            const indexTranslations = {
+                id: {
+                    navHome: "BERANDA",
+                    navNews: "BERITA",
+                    navMusic: "MUSIK",
+                    navVideo: "VIDEO",
+                    navMember: "ANGGOTA",
+                    navSchedule: "JADWAL",
+                    navGoods: "MERCHANDISE",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFIL",
+                    authSub: "Daftar / Masuk",
+                    heroTagline: "GRUP IDOL JEPANG",
+                    heroJp: "Pesona dewasa,<br>dalam wujud idol.",
+                    viewProfile: "LIHAT PROFIL",
+                    viewAll: "LIHAT SEMUA",
+                    viewShop: "LIHAT TOKO",
+                    secNews: "BERITA",
+                    secMv: "VIDEO MUSIK TERBARU",
+                    secYt: "VIDEO TERBARU (YOUTUBE)",
+                    secMember: "ANGGOTA",
+                    secSched: "JADWAL",
+                    btnSchedAll: "Lihat Semua Jadوال",
+                    secRelease: "RILIS TERBARU",
+                    listenBuy: "DENGARKAN / BELI",
+                    secGoods: "MERCHANDISE RESMI",
+                    good1: "Kaos (Logo)",
+                    good2: "Handuk Muffler",
+                    good3: "Stand Akrilik",
+                    good4: "Tas Tote",
+                    secSns: "SNS RESMI",
+                    snsSub: "IKUTI KAMI!",
+                    fcDesc: "Penuh dengan konten khusus member!<br>Mulai dari tiket presale, blog eksklusif, hingga live streaming.",
+                    btnFcJoin: "Pendaftaran Member Baru",
+                    mailSub: "Pendaftaran Buletin Email",
+                    mailDesc: "Dapatkan informasi terbaru dan pesan dari para member!",
+                    mailPlaceholder: "Masukkan alamat email Anda",
+                    fNews: "BERITA",
+                    fMusic: "MUSIK",
+                    fVideo: "VIDEO",
+                    fMember: "ANGGOTA",
+                    fSchedule: "JADWAL",
+                    fGoods: "MERCHANDISE",
+                    fFanclub: "FANCLUB",
+                    fProfile: "PROFIL",
+                    fContact: "KONTAK",
+                    fPrivacy: "KEBIJAKAN PRIVASI",
+                    fTerms: "KETENTUAN PENGGUNAAN",
+                    fCommercial: "Berdasarkan Hukum Transaksi Komersial Tertentu"
+                },
+                en: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authSub: "Register / Login",
+                    heroTagline: "JAPAN IDOL GROUP",
+                    heroJp: "A mature charm,<br>through idols.",
+                    viewProfile: "VIEW PROFILE",
+                    viewAll: "VIEW ALL",
+                    viewShop: "VIEW SHOP",
+                    secNews: "NEWS",
+                    secMv: "NEW MUSIC VIDEO",
+                    secYt: "NEW VIDEO (YOUTUBE)",
+                    secMember: "MEMBER",
+                    secSched: "SCHEDULE",
+                    btnSchedAll: "View All Schedules",
+                    secRelease: "NEW RELEASE",
+                    listenBuy: "LISTEN / BUY",
+                    secGoods: "OFFICIAL GOODS",
+                    good1: "T-Shirt (Logo)",
+                    good2: "Muffler Towel",
+                    good3: "Acrylic Stand",
+                    good4: "Tote Bag",
+                    secSns: "OFFICIAL SNS",
+                    snsSub: "FOLLOW US!",
+                    fcDesc: "Full of member-exclusive content!<br>Including priority tickets, limited blogs, and live streams.",
+                    btnFcJoin: "Join New Member",
+                    mailSub: "Mail Magazine Signup",
+                    mailDesc: "Get the latest news and messages from the members!",
+                    mailPlaceholder: "Enter email address",
+                    fNews: "NEWS",
+                    fMusic: "MUSIC",
+                    fVideo: "VIDEO",
+                    fMember: "MEMBER",
+                    fSchedule: "SCHEDULE",
+                    fGoods: "GOODS",
+                    fFanclub: "FANCLUB",
+                    fProfile: "PROFILE",
+                    fContact: "CONTACT",
+                    fPrivacy: "PRIVACY POLICY",
+                    fTerms: "TERMS OF USE",
+                    fCommercial: "Specified Commercial Transactions Act"
+                },
+                jp: {
+                    navHome: "HOME",
+                    navNews: "NEWS",
+                    navMusic: "MUSIC",
+                    navVideo: "VIDEO",
+                    navMember: "MEMBER",
+                    navSchedule: "SCHEDULE",
+                    navGoods: "GOODS",
+                    navFanclub: "FANCLUB",
+                    navProfile: "PROFILE",
+                    authSub: "会員登録 / ログイン",
+                    heroTagline: "JAPAN IDOL GROUP",
+                    heroJp: "オトナの魅力を、<br>アイドルで。",
+                    viewProfile: "VIEW PROFILE",
+                    viewAll: "VIEW ALL",
+                    viewShop: "VIEW SHOP",
+                    secNews: "NEWS",
+                    secMv: "NEW MUSIC VIDEO",
+                    secYt: "NEW VIDEO (YOUTUBE)",
+                    secMember: "MEMBER",
+                    secSched: "SCHEDULE",
+                    btnSchedAll: "スケジュール一覧へ",
+                    secRelease: "NEW RELEASE",
+                    listenBuy: "LISTEN / BUY",
+                    secGoods: "OFFICIAL GOODS",
+                    good1: "Tシャツ (ロゴ)",
+                    good2: "マフラータオル",
+                    good3: "アクリルスタンド",
+                    good4: "トートバッグ",
+                    secSns: "OFFICIAL SNS",
+                    snsSub: "FOLLOW US!",
+                    fcDesc: "会員限定コンテンツが満載！<br>チケット先行・限定ブログ・生配信など",
+                    btnFcJoin: "新規入会はこちら",
+                    mailSub: "メルマガ登録はこちら",
+                    mailDesc: "最新情報やメンバーからの<br>メッセージをお届けします！",
+                    mailPlaceholder: "メールアドレスを入力",
+                    fNews: "NEWS",
+                    fMusic: "MUSIC",
+                    fVideo: "VIDEO",
+                    fMember: "MEMBER",
+                    fSchedule: "SCHEDULE",
+                    fGoods: "GOODS",
+                    fFanclub: "FANCLUB",
+                    fProfile: "PROFILE",
+                    fContact: "CONTACT",
+                    fPrivacy: "PRIVACY POLICY",
+                    fTerms: "TERMS OF USE",
+                    fCommercial: "特定商取引法に基づく表記"
+                }
+            };
+
+            const t = indexTranslations[currentLang] || indexTranslations.id;
+
+            // Terapkan teks terjemahan ke elemen HTML
+            document.getElementById('navHome').textContent = t.navHome;
+            document.getElementById('navNews').textContent = t.navNews;
+            document.getElementById('navMusic').textContent = t.navMusic;
+            document.getElementById('navVideo').textContent = t.navVideo;
+            document.getElementById('navMember').textContent = t.navMember;
+            document.getElementById('navSchedule').textContent = t.navSchedule;
+            document.getElementById('navGoods').textContent = t.navGoods;
+            document.getElementById('navFanclub').textContent = t.navFanclub;
+            document.getElementById('navProfile').textContent = t.navProfile;
+
+            if (isLoggedIn === 'true') {
+                authButton.href = 'profile.html';
+                authSubText.textContent = currentLang === 'jp' ? 'マイページ' : (currentLang === 'en' ? 'My Page' : 'Halaman Saya');
             } else {
-                icon.classList.remove('fa-xmark');
-                icon.classList.add('fa-bars');
+                authButton.href = 'login.html';
+                authSubText.textContent = t.authSub;
+            }
+
+            document.getElementById('heroTagline').textContent = t.heroTagline;
+            document.getElementById('heroJpTagline').innerHTML = t.heroJp;
+            document.getElementById('viewProfileBtn').innerHTML = `${t.viewProfile} <i class="fa-solid fa-arrow-right-long"></i>`;
+
+            document.querySelectorAll('.viewAllText').forEach(el => el.textContent = t.viewAll);
+            document.getElementById('viewShopText').textContent = t.viewShop;
+
+            document.getElementById('secNewsTitle').textContent = t.secNews;
+            document.getElementById('secMvTitle').textContent = t.secMv;
+            document.getElementById('secYtTitle').textContent = t.secYt;
+            document.getElementById('secMemberTitle').textContent = t.secMember;
+            document.getElementById('secSchedTitle').textContent = t.secSched;
+            document.getElementById('btnSchedAll').innerHTML = `${t.btnSchedAll} <i class="fa-solid fa-arrow-right"></i>`;
+            document.getElementById('secReleaseTitle').textContent = t.secRelease;
+            document.getElementById('btnListenBuy').innerHTML = `${t.listenBuy} <i class="fa-solid fa-arrow-right"></i>`;
+            document.getElementById('secGoodsTitle').textContent = t.secGoods;
+
+            document.getElementById('good1Name').textContent = t.good1;
+            document.getElementById('good2Name').textContent = t.good2;
+            document.getElementById('good3Name').textContent = t.good3;
+            document.getElementById('good4Name').textContent = t.good4;
+
+            document.getElementById('secSnsTitle').textContent = t.secSns;
+            document.getElementById('snsSub').textContent = t.snsSub;
+            document.getElementById('fcDescText').innerHTML = t.fcDesc;
+            document.getElementById('btnFcJoin').innerHTML = `${t.btnFcJoin} <i class="fa-solid fa-arrow-right"></i>`;
+            document.getElementById('mailSubText').textContent = t.mailSub;
+            document.getElementById('mailDescText').innerHTML = t.mailDesc;
+            document.getElementById('mailInputPlaceholder').placeholder = t.mailPlaceholder;
+
+            document.getElementById('fNavNews').textContent = t.fNews;
+            document.getElementById('fNavMusic').textContent = t.fMusic;
+            document.getElementById('fNavVideo').textContent = t.fVideo;
+            document.getElementById('fNavMember').textContent = t.fMember;
+            document.getElementById('fNavSchedule').textContent = t.fSchedule;
+            document.getElementById('fNavGoods').textContent = t.fGoods;
+            document.getElementById('fNavFanclub').textContent = t.fFanclub;
+            document.getElementById('fNavProfile').textContent = t.fProfile;
+            document.getElementById('fNavContact').textContent = t.fContact;
+            document.getElementById('fLinkPrivacy').textContent = t.fPrivacy;
+            document.getElementById('fLinkTerms').textContent = t.fTerms;
+            document.getElementById('fLinkCommercial').textContent = t.fCommercial;
+
+            // Script Interaktif Bawaan
+            const hamburger = document.getElementById('hamburger');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            hamburger.addEventListener('click', () => {
+                mobileNav.classList.toggle('active');
+                const icon = hamburger.querySelector('i');
+                if (mobileNav.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                } else {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            const navLinks = mobileNav.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileNav.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                });
+            });
+
+            document.getElementById('backToTop').addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            const scrollRightBtn = document.getElementById('scrollRightBtn');
+            const memberGrid = document.getElementById('memberGrid');
+            if (scrollRightBtn && memberGrid) {
+                scrollRightBtn.addEventListener('click', () => {
+                    memberGrid.scrollBy({ left: 220, behavior: 'smooth' });
+                });
             }
         });
-
-        const navLinks = mobileNav.querySelectorAll('a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileNav.classList.remove('active');
-                const icon = hamburger.querySelector('i');
-                icon.classList.remove('fa-xmark');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        document.getElementById('backToTop').addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        const scrollRightBtn = document.getElementById('scrollRightBtn');
-        const memberGrid = document.getElementById('memberGrid');
-        if (scrollRightBtn && memberGrid) {
-            scrollRightBtn.addEventListener('click', () => {
-                memberGrid.scrollBy({ left: 220, behavior: 'smooth' });
-            });
-        }
     </script>
 </body>
 </html>

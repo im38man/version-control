@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCOUNT - TAKANE NO NADESHIKO</title>
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b87b92'><path d='M50,10 C55,30 70,45 90,50 C70,55 55,70 50,90 C45,70 30,55 10,50 C30,45 45,30 50,10 Z'/></svg>" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --box-bg: rgba(21, 21, 21, 0.9);
+            --text-main: #f5f5f5;
+            --text-sub: #aaaaaa;
+            --accent-pink: #b87b92;
+            --border-color: #2a2a2a;
+            --font-en: 'Cinzel', serif;
+            --font-jp: 'Noto Sans JP', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(13, 13, 13, 0.88), rgba(13, 13, 13, 0.88)), 
+                              url('高嶺のなでしこ/img/takanenonadeshiko.jpg');
+            background-size: cover; background-attachment: fixed; background-position: center;
+            color: var(--text-main); font-family: var(--font-jp); line-height: 1.6;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .auth-container {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .auth-header h1 {
+            font-family: var(--font-en);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .auth-header p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+        }
+
+        /* Panel SPA Management */
+        .auth-panel { display: none; }
+        .auth-panel.active { display: block; }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-family: var(--font-en);
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            border-color: var(--accent-pink);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 11px;
+            font-family: var(--font-en);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* Divider Google */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-sub);
+            font-size: 0.7rem;
+            font-family: var(--font-en);
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .auth-divider:not(:empty)::before { margin-right: .75em; }
+        .auth-divider:not(:empty)::after { margin-left: .75em; }
+
+        /* Google Sign In Button */
+        .btn-google {
+            width: 100%;
+            background: #ffffff;
+            color: #333333;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        .btn-google:hover { background: #f1f1f1; }
+        .btn-google img { width: 18px; height: 18px; }
+
+        /* Switch Link Footer */
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+        .auth-switch a {
+            color: var(--accent-pink);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .auth-switch a:hover { text-decoration: underline; }
+        
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            margin-top: -10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .forgot-link:hover { color: var(--accent-pink); }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        
+        <!-- 1. LOGIN PANEL -->
+        <div id="loginPanel" class="auth-panel active">
+            <div class="auth-header">
+                <h1>MEMBER LOGIN</h1>
+                <p>会員ログイン</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="loginEmail" class="form-control" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+                </div>
+                <span class="forgot-link" onclick="switchPanel('forgotPanel')">Forgot Password?</span>
+                <button type="submit" class="btn-submit">LOGIN</button>
+            </form>
+
+            <div class="auth-divider">OR</div>
+
+            <button type="button" class="btn-google" onclick="handleGoogleAuth()">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
+                Sign in with Google
+            </button>
+
+            <div class="auth-switch">
+                Don't have an account? <a onclick="switchPanel('registerPanel')">Register here</a>
+            </div>
+        </div>
+
+        <!-- 2. REGISTER PANEL -->
+        <div id="registerPanel" class="auth-panel">
+            <div class="auth-header">
+                <h1>CREATE ACCOUNT</h1>
+                <p>新規会員登録</p>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="regEmail" class="form-control" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-submit">REGISTER</button>
+            </form>
+
+            <div class="auth-divider">OR</div>
+
+            <button type="button" class="btn-google" onclick="handleGoogleAuth()">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
+                Sign up with Google
+            </button>
+
+            <div class="auth-switch">
+                Already have an account? <a onclick="switchPanel('loginPanel')">Login here</a>
+            </div>
+        </div>
+
+        <!-- 3. FORGOT PASSWORD PANEL -->
+        <div id="forgotPanel" class="auth-panel">
+            <div class="auth-header">
+                <h1>RESET PASSWORD</h1>
+                <p>パスワードリセット</p>
+            </div>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <label>REGISTERED EMAIL</label>
+                    <input type="email" id="forgotEmail" class="form-control" required placeholder="name@example.com">
+                </div>
+                <button type="submit" class="btn-submit">SEND RESET LINK</button>
+            </form>
+            <div class="auth-switch" style="margin-top: 20px;">
+                Remember your password? <a onclick="switchPanel('loginPanel')">Back to Login</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SPA & Auth Logic Script -->
+    <script>
+        // Fungsi untuk mengganti panel SPA secara halus
+        function switchPanel(panelId) {
+            document.querySelectorAll('.auth-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(panelId).classList.add('active');
+        }
+
+        // Simulasi Login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            window.location.href = 'profile.html';
+        });
+
+        // Simulasi Register
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            alert('Registration successful!');
+            window.location.href = 'profile.html';
+        });
+
+        // Simulasi Forgot Password
+        document.getElementById('forgotForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Password reset instructions have been sent to your email.');
+            switchPanel('loginPanel');
+        });
+
+        // Simulasi Sign in / Sign up with Google
+        function handleGoogleAuth() {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', 'google_user@gmail.com');
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>

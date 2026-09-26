@@ -1,5 +1,18 @@
 const playlistData = [
     {
+        title: "高嶺のなでしこ「〜CROWNED IN BLOOM〜」ワンマンライブ (2026-09-13)",
+        channel: "たかねこぽけっと",
+        duration: "01:15:58",
+        thumbnail: "高嶺のなでしこ/img/2oiUJVIaffA.jpg",
+        videoSrc: "高嶺のなでしこ/vid/高嶺のなでしこ「〜CROWNED IN BLOOM〜」ワンマンライブ (2026-09-13).mp4",
+        subtitleSrc: "",
+        views: "16k",
+        date: "2026/09/13",
+        tags: ["#高嶺のなでしこ", "#LIVE"],
+        description: `2026年09月13日(日) 「〜CROWNED IN BLOOM〜」ワンマンライブ <br>
+                    <a href="https://www.youtube.com/watch?v=2oiUJVIaffA2oiUJVIaffA">https://www.youtube.com/watch?v=2oiUJVIaffA</a>`
+    },
+    {
         title: "【MV】僕らの青／高嶺のなでしこ【HoneyWorks】",
         channel: "高嶺のなでしこ Official",
         duration: "03:09",
@@ -227,6 +240,23 @@ const playlistData = [
                     —<br>
                     ▼ 配信はこちら<br>
                     <a href="https://www.youtube.com/watch?v=rYlY5-Wv_xA">https://www.youtube.com/watch?v=rYlY5-Wv_xA</a>`
+    },
+    {
+        title: "高嶺のなでしこ 3rd ANNIVERSARY CONCERT 「A Wonderful Encounter」2025-09-07",
+        channel: "レナ",
+        duration: "02:23:18",
+        thumbnail: "高嶺のなでしこ/img/qukuSmPyesU.jpg",
+        videoSrc: "高嶺のなでしこ/vid/高嶺のなでしこ 3rd ANNIVERSARY CONCERT 「A Wonderful Encounter」2025-09-07.mp4",
+        subtitleSrc: "",
+        views: "38k",
+        date: "2025/09/07",
+        tags: ["#高嶺のなでしこ", "#LIVE"],
+        description: `2025年9月7日に開催された <br>
+                    高嶺のなでしこ 3rd ANNIVERSARY CONCERT『A Wonderful Encounter』より <br>
+                    『花は誓いを忘れない』ライブ映像を公開！<br>
+                    —<br>
+                    ▼ 配信はこちら<br>
+                    <a href="https://www.youtube.com/watch?v=qukuSmPyesU">https://www.youtube.com/watch?v=qukuSmPyesU</a>`
     },
     {
         title: "【LIVE】アイドル衣装／『高嶺のなでしこ 東名阪ツアー 2025 - Spring Ride -』",
