@@ -1,0 +1,26 @@
+.rotated-label {
+  /* Rotate the label 90 degrees clockwise */
+  transform: rotate(15deg);
+
+  /* Adjust the pivot point (optional, default is center) */
+  /* This is helpful for positioning the rotated element correctly in the layout */
+  transform-origin: left top;
+
+  /* Display as block or inline-block for transform to work effectively on layout */
+  display: inline-block;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.rotated-labels {
+  /* Rotate the label 90 degrees clockwise */
+  transform: rotate(-10deg);
+
+  /* Adjust the pivot point (optional, default is center) */
+  /* This is helpful for positioning the rotated element correctly in the layout */
+  transform-origin: left top;
+
+  /* Display as block or inline-block for transform to work effectively on layout */
+  display: inline-block;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
