@@ -490,6 +490,7 @@
                 <li><a href="#" id="navMember">MEMBER</a></li>
                 <li><a href="#" id="navSchedule">SCHEDULE</a></li>
                 <li><a href="#" id="navGoods">GOODS</a></li>
+                <li><a href="高嶺のなでしこ/main.html" id="navGoods">MANWOTA</a></li>
                 <li><a href="fanclub.html" id="navFanclub">FANCLUB</a></li>
                 <li><a href="profile.html" id="navProfile">PROFILE</a></li>
             </ul>
@@ -578,77 +579,24 @@
                 </div>
             </div>
 
-            <!-- NEW MUSIC VIDEO -->
+            <!-- NEW MUSIC VIDEO (dirender otomatis dari data terbaru di datavideo.js) -->
             <div class="section-box">
                 <div class="section-header">
                     <h2 class="section-title" id="secMvTitle">NEW MUSIC VIDEO</h2>
                     <a href="all-video.html" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <a href="video-player.html?title=【Dance Performance Video】ハートブーケ／高嶺のなでしこ【HoneyWorks】" class="video-main">
-                    <span class="video-tag">MV</span>
-                    <img src="高嶺のなでしこ/img/Vlpqp4QA61Y.jpg" alt="MV Main">
-                    <div class="video-overlay">
-                        <div class="play-btn"><i class="fa-solid fa-play"></i></div>
-                        <div class="video-title">ハートブーケ</div>
-                        <div class="video-sub">【Dance Performance Video】<br>2026.06.07 Release</div>
-                    </div>
-                </a>
-                <div class="video-grid-small">
-                    <a href="video-player.html?title=【MV】生きてりゃいい／高嶺のなでしこ【HoneyWorks】" class="video-small">
-                        <div class="video-small-thumb">
-                            <img src="高嶺のなでしこ/img/957yJCyB-tk.jpg" alt="MV Small">
-                            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
-                        </div>
-                        <div class="video-small-title">【Music Video】<br>生きてりゃいい</div>
-                    </a>
-                    <a href="video-player.html?title=【Dance Performance Video】私は、わたしの事が好き。／高嶺のなでしこ【HoneyWorks】" class="video-small">
-                        <div class="video-small-thumb">
-                            <img src="高嶺のなでしこ/img/IoCC9aOnX-E.jpg" alt="MV Small">
-                            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
-                        </div>
-                        <div class="video-small-title">【Dance Performance】<br>私は、わたしの事が好き。</div>
-                    </a>
-                    <a href="video-player.html?title=高嶺のなでしこ「3rdファンミーティング〜私たちの宣言式〜 」1部" class="video-small">
-                        <div class="video-small-thumb">
-                            <img src="高嶺のなでしこ/img/mSjZM5ob_jg.jpg" alt="MV Small">
-                            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
-                        </div>
-                        <div class="video-small-title">3rd Anniversary<br>2025.08.07 realease</div>
-                    </a>
-                </div>
+                <div id="mvMainContainer"></div>
+                <div class="video-grid-small" id="mvSmallGrid"></div>
             </div>
 
-            <!-- NEW VIDEO (YOUTUBE) -->
+            <!-- NEW VIDEO (YOUTUBE) (dirender otomatis dari data terbaru di all-youtube.js) -->
             <div class="section-box">
                 <div class="section-header">
                     <h2 class="section-title" id="secYtTitle">NEW VIDEO (YOUTUBE)</h2>
-                    <a href="all-video.html" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="all-youtube.html" class="view-all"><span class="viewAllText">VIEW ALL</span> <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <a href="https://www.youtube.com/watch?v=SNcdk1DJa_k" class="video-main">
-                    <span class="video-tag" style="background-color: #ff0000;">YOUTUBE</span>
-                    <img src="高嶺のなでしこ/img/SNcdk1DJa_k.jpg" alt="Vlog">
-                    <div class="video-overlay">
-                        <div class="play-btn pink"><i class="fa-solid fa-play"></i></div>
-                        <div class="video-title">【TAKANEKO TV】<br>#49 桃呼お誕生日会🎂</div>
-                        <div class="video-sub">高嶺のなでしこ Official</div>
-                    </div>
-                </a>
-                <div class="yt-list">
-                    <a href="https://www.youtube.com/watch?v=EdMUPEGbHcA" class="yt-item">
-                        <img src="高嶺のなでしこ/img/EdMUPEGbHcA.jpg" alt="yt thumb">
-                        <div class="yt-info">
-                            <div class="yt-title">【TAKANEKO TV】 #48 目指せマルチタレント❤️‍🔥演技力向上委員会!!</div>
-                            <div class="yt-meta"><span>2026.06.25</span><span>25:40</span></div>
-                        </div>
-                    </a>
-                    <a href="https://www.youtube.com/watch?v=CCOCA-bl7Ew" class="yt-item">
-                        <img src="高嶺のなでしこ/img/CCOCA-bl7Ew.jpg" alt="yt thumb">
-                        <div class="yt-info">
-                            <div class="yt-title">高嶺のなでしこ Live Tour - Bouquet of 9 Flowers - Digest ~ FINAL ~</div>
-                            <div class="yt-meta"><span>2026.06.20</span><span>08:24</span></div>
-                        </div>
-                    </a>
-                </div>
+                <div id="ytMainContainer"></div>
+                <div class="yt-list" id="ytListContainer"></div>
             </div>
         </div>
 
@@ -951,6 +899,10 @@
         </button>
     </footer>
 
+    <!-- Data dummy: daftar Music Video & daftar video YouTube (terpisah dari halaman) -->
+    <script src="datavideo.js"></script>
+    <script src="all-youtube.js"></script>
+
     <!-- JavaScript & Terjemahan Otomatis Berdasarkan Profil -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1214,6 +1166,85 @@
                     memberGrid.scrollBy({ left: 220, behavior: 'smooth' });
                 });
             }
+
+            // ------- NEW MUSIC VIDEO: ambil data terbaru dari datavideo.js -------
+            function renderNewMusicVideo() {
+                const mvMainContainer = document.getElementById('mvMainContainer');
+                const mvSmallGrid = document.getElementById('mvSmallGrid');
+                if (!mvMainContainer || !mvSmallGrid) return;
+
+                const source = (typeof allVideos !== 'undefined') ? allVideos.slice() : [];
+                const mvList = source
+                    .filter(v => v.tag === 'MV')
+                    .sort((a, b) => new Date(b.date.replace(/\./g, '-')) - new Date(a.date.replace(/\./g, '-')));
+
+                if (mvList.length === 0) return;
+
+                const main = mvList[0];
+                const smalls = mvList.slice(1, 4);
+
+                mvMainContainer.innerHTML = `
+                    <a href="video-player.html?title=${encodeURIComponent(main.title)}" class="video-main">
+                        <span class="video-tag">${main.tag}</span>
+                        <img src="${main.thumb}" alt="MV Main">
+                        <div class="video-overlay">
+                            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+                            <div class="video-title">${main.title}</div>
+                            <div class="video-sub">${main.date} Release</div>
+                        </div>
+                    </a>
+                `;
+
+                mvSmallGrid.innerHTML = smalls.map(v => `
+                    <a href="video-player.html?title=${encodeURIComponent(v.title)}" class="video-small">
+                        <div class="video-small-thumb">
+                            <img src="${v.thumb}" alt="MV Small">
+                            <div class="play-btn"><i class="fa-solid fa-play"></i></div>
+                        </div>
+                        <div class="video-small-title">${v.title}</div>
+                    </a>
+                `).join('');
+            }
+
+            // ------- NEW VIDEO (YOUTUBE): ambil data terbaru dari all-youtube.js -------
+            function renderNewYoutubeVideo() {
+                const ytMainContainer = document.getElementById('ytMainContainer');
+                const ytListContainer = document.getElementById('ytListContainer');
+                if (!ytMainContainer || !ytListContainer) return;
+
+                const source = (typeof youtubeVideos !== 'undefined') ? youtubeVideos.slice() : [];
+                const sorted = source.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (sorted.length === 0) return;
+
+                const main = sorted[0];
+                const list = sorted.slice(1, 3);
+
+                ytMainContainer.innerHTML = `
+                    <a href="https://www.youtube.com/watch?v=${main.videoId}" class="video-main">
+                        <span class="video-tag" style="background-color: #ff0000;">YOUTUBE</span>
+                        <img src="${main.thumbnail}" alt="Vlog">
+                        <div class="video-overlay">
+                            <div class="play-btn pink"><i class="fa-solid fa-play"></i></div>
+                            <div class="video-title">${main.title}</div>
+                            <div class="video-sub">高嶺のなでしこ Official</div>
+                        </div>
+                    </a>
+                `;
+
+                ytListContainer.innerHTML = list.map(v => `
+                    <a href="https://www.youtube.com/watch?v=${v.videoId}" class="yt-item">
+                        <img src="${v.thumbnail}" alt="yt thumb">
+                        <div class="yt-info">
+                            <div class="yt-title">${v.title}</div>
+                            <div class="yt-meta"><span>${v.date}</span><span>${v.duration}</span></div>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            renderNewMusicVideo();
+            renderNewYoutubeVideo();
         });
     </script>
 </body>
