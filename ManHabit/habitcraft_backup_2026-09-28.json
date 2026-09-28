@@ -1,0 +1,42 @@
+[
+  {
+    "id": "h1",
+    "name": "Minum Air Mineral",
+    "category": "Kesehatan",
+    "type": "counter",
+    "target": 10,
+    "icon": "fa-solid fa-droplet",
+    "repeatMode": "everyday",
+    "specificDays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "startDate": "2026-09-28",
+    "progress": {}
+  },
+  {
+    "id": "h2",
+    "name": "Membaca Buku 15 Menit",
+    "category": "Pengembangan",
+    "type": "boolean",
+    "target": 1,
+    "icon": "fa-solid fa-book",
+    "repeatMode": "everyday",
+    "specificDays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "startDate": "2026-09-28",
+    "progress": {}
+  }
+]

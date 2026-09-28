@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitCraft - Elegant Habit Tracker</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Pro / Latest -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Arabic', 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', 'Microsoft YaHei UI', 'PingFang SC', system-ui, sans-serif;
+            background-color: #f8fafc;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Elegant Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+            transition: background 0.2s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .completed-card {
+            background-color: #f0fdf4 !important;
+            border-color: #bbf7d0 !important;
+        }
+
+        .completed-text {
+            color: #15803d !important;
+            text-decoration: line-through;
+            opacity: 0.85;
+        }
+
+        .habit-card {
+            touch-action: pan-y;
+            user-select: none;
+            will-change: transform;
+        }
+
+        .day-checkbox input:checked + div {
+            background-color: #22c55e;
+            color: #ffffff;
+            border-color: #22c55e;
+            box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);
+        }
+
+        .dragging {
+            opacity: 0.5;
+            border: 2px dashed #22c55e !important;
+        }
+
+        /* Responsive habit grid: as many cards per row as fit, never squeezed below 340px */
+        .habit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+        }
+
+        /* RTL support (Arabic) */
+        [dir="rtl"] .rtl-flip,
+        [dir="rtl"] .fa-chevron-left,
+        [dir="rtl"] .fa-chevron-right {
+            transform: scaleX(-1);
+        }
+        @media (max-width: 767px) {
+            [dir="rtl"] #sidebar.-translate-x-full { --tw-translate-x: 100%; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 bg-[#f8fafc] min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <!-- ================= AUTHENTICATION WRAPPER (SPA) ================= -->
+    <div id="auth-container" class="fixed inset-0 z-50 bg-[#f8fafc] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md shadow-xl border border-slate-100 p-8 space-y-6">
+            <div class="flex items-center gap-3 justify-center">
+                <div class="w-12 h-12 rounded-2xl bg-brand-500 text-white flex items-center justify-center text-xl shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-slate-800 tracking-tight leading-tight">HabitCraft</h1>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest" data-i18n="tagline">Daily Progress</p>
+                </div>
+            </div>
+
+            <!-- LOGIN VIEW -->
+            <div id="auth-view-login" class="space-y-4">
+                <div class="text-center">
+                    <h2 class="font-bold text-lg text-slate-800" data-i18n="welcomeBack">Selamat Datang Kembali</h2>
+                    <p class="text-xs text-slate-400 mt-1" data-i18n="welcomeSub">Masuk untuk melanjutkan progres kebiasaan Anda.</p>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="email">Email</label>
+                        <input type="email" id="login-email" placeholder="daxsa@example.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="switchAuthView('forgot')" class="text-xs font-medium text-brand-600 hover:underline" data-i18n="forgotPw">Lupa Password?</button>
+                    </div>
+                    <button onclick="handleLogin()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow-md transition-all" data-i18n="signIn">Masuk</button>
+                    
+                    <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-slate-200"></div>
+                        <span class="flex-shrink mx-4 text-slate-400 text-[11px] uppercase tracking-wider" data-i18n="or">Atau</span>
+                        <div class="flex-grow border-t border-slate-200"></div>
+                    </div>
+
+                    <!-- Google Sign In Button with Official Multicolor Icon -->
+                    <button onclick="handleGoogleLogin()" class="w-full py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2.5">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.22 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.5-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.82 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                        </svg>
+                        <span data-i18n="googleSignIn">Masuk dengan Google</span>
+                    </button>
+                </div>
+
+                <p class="text-center text-xs text-slate-500 pt-2"><span data-i18n="noAccount">Belum punya akun?</span> <button onclick="switchAuthView('register')" class="font-bold text-brand-600 hover:underline" data-i18n="register">Daftar</button></p>
+            </div>
+
+            <!-- REGISTER VIEW -->
+            <div id="auth-view-register" class="space-y-4 hidden">
+                <div class="text-center">
+                    <h2 class="font-bold text-lg text-slate-800" data-i18n="createAccount">Buat Akun Baru</h2>
+                    <p class="text-xs text-slate-400 mt-1" data-i18n="createAccountSub">Mulai perjalanan produktivitas harian Anda.</p>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="fullName">Nama Lengkap</label>
+                        <input type="text" id="reg-name" placeholder="Daxsa" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="email">Email</label>
+                        <input type="email" id="reg-email" placeholder="daxsa@example.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="password">Password</label>
+                        <input type="password" id="reg-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <button onclick="handleRegister()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow-md transition-all mt-2" data-i18n="registerBtn">Daftar Akun</button>
+                </div>
+
+                <p class="text-center text-xs text-slate-500 pt-2"><span data-i18n="haveAccount">Sudah punya akun?</span> <button onclick="switchAuthView('login')" class="font-bold text-brand-600 hover:underline" data-i18n="signIn">Masuk</button></p>
+            </div>
+
+            <!-- FORGOT PASSWORD VIEW -->
+            <div id="auth-view-forgot" class="space-y-4 hidden">
+                <div class="text-center">
+                    <h2 class="font-bold text-lg text-slate-800" data-i18n="resetPassword">Reset Password</h2>
+                    <p class="text-xs text-slate-400 mt-1" data-i18n="resetSub">Masukkan email terdaftar untuk pemulihan akun.</p>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" data-i18n="registeredEmail">Email Terdaftar</label>
+                        <input type="email" id="forgot-email" placeholder="daxsa@example.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <button onclick="handleResetPassword()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow-md transition-all mt-2" data-i18n="sendReset">Kirim Instruksi Reset</button>
+                </div>
+
+                <p class="text-center text-xs text-slate-500 pt-2"><button onclick="switchAuthView('login')" class="font-bold text-brand-600 hover:underline"><i class="fa-solid fa-arrow-left me-1"></i> <span data-i18n="backToLogin">Kembali ke Login</span></button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN APP WRAPPER ================= -->
+    <div id="main-app-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen hidden">
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 start-0 z-40 w-64 bg-white border-e border-slate-100 flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 shadow-sm">
+            <!-- Logo Area -->
+            <div class="h-20 flex items-center px-6 gap-3 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-2xl bg-brand-500 text-white flex items-center justify-center text-lg shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-800 tracking-tight leading-tight">HabitCraft</h1>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest" data-i18n="tagline">Daily Progress</p>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="md:hidden ms-auto text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-brand-700 bg-brand-50">
+                    <i class="fa-solid fa-house-chimney w-5 text-center"></i> <span data-i18n="navDashboard">Dashboard</span>
+                </a>
+                <a href="#" onclick="switchTab('habits')" id="nav-habits" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <i class="fa-solid fa-list-check w-5 text-center"></i> <span data-i18n="navHabits">Kelola Habit</span>
+                </a>
+                <a href="#" onclick="switchTab('analytics')" id="nav-analytics" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> <span data-i18n="navAnalytics">Statistik</span>
+                </a>
+                <a href="#" onclick="switchTab('settings')" id="nav-settings" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <i class="fa-solid fa-gear w-5 text-center"></i> <span data-i18n="navSettings">Pengaturan</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer with Logout & Profile -->
+            <div class="p-4 border-t border-slate-100 flex flex-col gap-2">
+                <div class="bg-slate-50 rounded-2xl p-3.5 flex items-center gap-3 border border-slate-100">
+                    <button type="button" onclick="openProfileModal()" data-i18n-title="editProfile" title="Edit profile" class="flex items-center gap-3 flex-1 min-w-0 text-start rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                        <span class="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm overflow-hidden shrink-0 ring-2 ring-transparent hover:ring-brand-200 transition-all">
+                            <img id="sidebar-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Daxsa" alt="" class="w-full h-full object-cover">
+                        </span>
+                        <span class="flex-1 min-w-0">
+                            <span id="sidebar-username" class="block text-xs font-bold text-slate-800 truncate">Daxsa</span>
+                            <span class="block text-[11px] text-slate-400 truncate" data-i18n="activeUser">Pengguna Aktif</span>
+                        </span>
+                    </button>
+                    <button onclick="confirmResetData()" data-i18n-title="resetTitle" title="Reset All Data" class="text-slate-400 hover:text-red-500 transition-colors p-1 shrink-0">
+                        <i class="fa-solid fa-rotate-right text-xs"></i>
+                    </button>
+                </div>
+                <button onclick="handleLogout()" class="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Keluar (Logout)</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 min-w-0 md:ms-64 flex flex-col min-h-screen">
+            
+            <!-- Top Navbar Clean & Fully Wrapped without overflow -->
+            <header class="bg-white/95 backdrop-blur-md border-b border-slate-100 px-3 sm:px-6 py-3.5 sticky top-0 z-30 flex flex-col gap-3">
+                <!-- Top Row: Title & Clean User Profile (Avatar & Name Only) -->
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <button onclick="toggleMobileSidebar()" class="md:hidden w-9 h-9 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 shrink-0">
+                            <i class="fa-solid fa-bars text-sm"></i>
+                        </button>
+                        <div class="min-w-0 flex-1">
+                            <h2 id="page-title" class="text-sm sm:text-lg font-bold tracking-tight text-slate-800 truncate">Dashboard Utama</h2>
+                            <p id="current-date-display" class="text-[10px] sm:text-xs font-medium text-slate-400 truncate mt-0.5"></p>
+                        </div>
+                    </div>
+
+                    <!-- Clean User Profile (Fixed mobile width truncation handling) -->
+                    <button type="button" onclick="openProfileModal()" data-i18n-title="editProfile" title="Edit profile" class="flex items-center gap-2 shrink-0 max-w-[150px] sm:max-w-none rounded-full ps-0.5 pe-2.5 sm:pe-3 py-0.5 hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                        <span class="w-8 h-8 rounded-full bg-brand-500 overflow-hidden shadow-sm shrink-0">
+                            <img id="topbar-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Daxsa" alt="" class="w-full h-full object-cover">
+                        </span>
+                        <span id="topbar-username" class="text-xs font-bold text-slate-700 truncate">Daxsa</span>
+                    </button>
+                </div>
+
+                <!-- Bottom Row: Date Picker, Streak, Percentage, Prev, Next, & Add Button (Flex Wrap, Non-scrollable) -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-50">
+                    <div class="flex items-center gap-1.5 sm:gap-2">
+                        <!-- Interactive Date Picker Badge -->
+                        <div class="flex items-center gap-1 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-[10px] sm:text-xs font-semibold shadow-sm">
+                            <i class="fa-regular fa-calendar text-brand-600 shrink-0"></i>
+                            <input type="date" id="header-date-picker" onchange="onDateChanged(this.value)" class="bg-transparent text-[10px] sm:text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer">
+                        </div>
+
+                        <!-- Streak Badge -->
+                        <div class="flex items-center gap-1 px-2 py-1.5 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-[10px] sm:text-xs font-semibold shadow-sm" data-i18n-title="streakTitle" title="Streak">
+                            <i class="fa-solid fa-fire-flame-curved text-amber-500 shrink-0"></i>
+                            <span id="header-streak-val">0 Hari</span>
+                        </div>
+
+                        <!-- Percentage Badge -->
+                        <div class="flex items-center gap-1 px-2 py-1.5 bg-emerald-50 border border-emerald-100 rounded-xl text-emerald-700 text-[10px] sm:text-xs font-semibold shadow-sm" data-i18n-title="percentTitle" title="Completion">
+                            <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
+                            <span id="header-percent-val">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Controls: Prev, Next, Add -->
+                    <div class="flex items-center gap-1">
+                        <button onclick="changeDateByOffset(-1)" data-i18n-title="prevDayTitle" title="Previous day" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] sm:text-xs transition-all shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-chevron-left text-[9px]"></i> <span data-i18n="prev">Prev</span>
+                        </button>
+                        <button onclick="changeDateByOffset(1)" data-i18n-title="nextDayTitle" title="Next day" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] sm:text-xs transition-all shadow-sm flex items-center gap-1">
+                            <span data-i18n="next">Next</span> <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                        </button>
+                        <button onclick="openAddModal()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-[10px] sm:text-xs transition-all shadow-md flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> <span data-i18n="add">Tambah</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Banner Slider Otomatis: mobile = baris penuh di bawah tombol, PC = di tengah navbar -->
+                <div id="mini-slider" class="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-36 lg:w-40 xl:w-72 2xl:w-96 md:h-[calc(100%-1.5rem)]" aria-hidden="true">
+                    <!-- Ganti daftar gambar di array MINI_SLIDER_IMAGES di bawah -->
+                    <div class="absolute bottom-1.5 inset-x-0 flex justify-center gap-1 z-10" id="mini-slider-dots"></div>
+                </div>
+            </header>
+            <script>
+            (function () {
+                // ====== EDIT DI SINI: daftar gambar slider ======
+                var MINI_SLIDER_IMAGES = [
+                    'https://picsum.photos/seed/habit1/800/300',
+                    'https://picsum.photos/seed/habit2/800/300',
+                    'https://picsum.photos/seed/habit3/800/300',
+                    'https://picsum.photos/seed/habit4/800/300'
+                ];
+                var INTERVAL_MS = 3000;
+                // ================================================
+                var box = document.getElementById('mini-slider');
+                var dotsBox = document.getElementById('mini-slider-dots');
+                if (!box || !MINI_SLIDER_IMAGES.length) return;
+                var imgs = [], dots = [], cur = 0;
+                MINI_SLIDER_IMAGES.forEach(function (src, i) {
+                    var im = document.createElement('img');
+                    im.src = src; im.alt = ''; im.loading = 'lazy';
+                    im.className = 'absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ' + (i === 0 ? 'opacity-100' : 'opacity-0');
+                    box.insertBefore(im, dotsBox);
+                    imgs.push(im);
+                    var d = document.createElement('span');
+                    d.className = 'w-1.5 h-1.5 rounded-full transition-colors ' + (i === 0 ? 'bg-white' : 'bg-white/50');
+                    dotsBox.appendChild(d);
+                    dots.push(d);
+                });
+                if (imgs.length < 2) { dotsBox.style.display = 'none'; return; }
+                setInterval(function () {
+                    imgs[cur].classList.replace('opacity-100', 'opacity-0');
+                    dots[cur].classList.replace('bg-white', 'bg-white/50');
+                    cur = (cur + 1) % imgs.length;
+                    imgs[cur].classList.replace('opacity-0', 'opacity-100');
+                    dots[cur].classList.replace('bg-white/50', 'bg-white');
+                }, INTERVAL_MS);
+            })();
+            </script>
+
+            <!-- Dynamic Content Body -->
+            <main class="flex-1 p-3 sm:p-6 md:p-8 overflow-y-auto max-w-[1600px] w-full mx-auto">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="space-y-6">
+                    <div class="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-sm">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm sm:text-base text-slate-800 tracking-tight" data-i18n="habitListTitle">Daftar Habit Tanggal Terpilih</h3>
+                                <p id="active-date-subtitle" class="text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">Seret ikon pegangan (&#8942;&#8942;) ke atas/bawah untuk atur urutan. Swipe kiri untuk hapus, kanan untuk selesai.</p>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                                <button onclick="goToToday()" class="text-[11px] sm:text-xs font-semibold px-3 py-1.5 bg-brand-50 text-brand-700 rounded-xl hover:bg-brand-100 transition-colors" data-i18n="today">Hari Ini</button>
+                                <span id="habit-count-badge" class="text-[11px] sm:text-xs font-semibold px-3 py-1.5 bg-slate-100 text-slate-600 rounded-xl">0 Habit</span>
+                            </div>
+                        </div>
+
+                        <!-- List Container with 3-Column Grid Layout for PC and responsive view -->
+                        <div id="habit-list-container" class="habit-grid gap-3.5 sm:gap-4 pt-1">
+                            <!-- Dynamic Habits Injected Here -->
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="empty-state" class="hidden flex-col items-center justify-center text-center py-16">
+                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300 text-3xl">
+                                <i class="fa-solid fa-seedling"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-700 text-base" data-i18n="emptyTitle">Tidak ada habit untuk hari ini</h4>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto" data-i18n="emptySub">Buat habit baru atau pilih hari lain untuk melihat daftar kebiasaan.</p>
+                            <button onclick="openAddModal()" class="mt-5 px-5 py-2.5 rounded-xl bg-brand-500 text-white font-semibold text-xs shadow-md shadow-brand-500/20 hover:bg-brand-600 transition-all" data-i18n="createHabit">
+                                Buat Habit Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: KELOLA HABIT -->
+                <div id="view-habits" class="hidden space-y-6">
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800" data-i18n="manageTitle">Manajemen Habit</h3>
+                                <p class="text-xs text-slate-400 mt-0.5" data-i18n="manageSub">Kelola atau hapus daftar kebiasaan Anda.</p>
+                            </div>
+                            <button onclick="openAddModal()" class="px-4 py-2.5 rounded-xl bg-brand-500 text-white font-semibold text-xs hover:bg-brand-600 transition-all shadow-sm">
+                                <i class="fa-solid fa-plus me-1"></i> <span data-i18n="addNew">Tambah Baru</span>
+                            </button>
+                        </div>
+                        <div id="manage-habit-list" class="space-y-3">
+                            <!-- Dynamic Management List -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: STATISTIK -->
+                <div id="view-analytics" class="hidden space-y-6">
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="analyticsTitle">Statistik & Performa Tanggal Ini</h3>
+                        <p id="analytics-date-subtitle" class="text-xs text-slate-400">Ringkasan performa kebiasaan pada tanggal yang dipilih.</p>
+                        <div id="analytics-content" class="grid grid-cols-1 gap-4 pt-2">
+                            <!-- Dynamic Analytics breakdown -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PENGATURAN -->
+                <div id="view-settings" class="hidden space-y-6">
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6 max-w-2xl">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="settingsTitle">Pengaturan Aplikasi</h3>
+                            <p class="text-xs text-slate-400 mt-0.5" data-i18n="settingsSub">Sesuaikan preferensi penyimpanan dan data aplikasi.</p>
+                        </div>
+                        
+                        <div class="space-y-4 pt-2">
+                            <!-- Language Card -->
+                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-brand-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-language"></i></span>
+                                    <div>
+                                        <h4 class="font-semibold text-sm text-slate-800" data-i18n="languageTitle">Language</h4>
+                                        <p class="text-xs text-slate-400" data-i18n="languageSub">Choose the language used across the app.</p>
+                                    </div>
+                                </div>
+                                <div id="language-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                            </div>
+
+                            <!-- Backup & Import Card -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 gap-3">
+                                <div>
+                                    <h4 class="font-semibold text-sm text-slate-800" data-i18n="backupTitle">Cadangan & Pulihkan Data</h4>
+                                    <p class="text-xs text-slate-400" data-i18n="backupSub">Ekspor atau impor data habit (.json).</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="exportData()" class="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-medium text-xs shadow-sm transition-all">
+                                        <i class="fa-solid fa-download me-1"></i> <span data-i18n="export">Ekspor</span>
+                                    </button>
+                                    <label class="px-3 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium text-xs shadow-sm transition-all cursor-pointer">
+                                        <i class="fa-solid fa-upload me-1"></i> <span data-i18n="import">Impor</span>
+                                        <input type="file" id="import-file-input" accept=".json" onchange="importData(event)" class="hidden">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Reset Data Card -->
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-red-50/50 border border-red-100">
+                                <div>
+                                    <h4 class="font-semibold text-sm text-red-700" data-i18n="resetTitle">Reset Semua Data</h4>
+                                    <p class="text-xs text-red-400" data-i18n="resetSub">Hapus seluruh riwayat dan daftar habit secara permanen.</p>
+                                </div>
+                                <button onclick="confirmResetData()" class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium text-xs shadow-sm transition-all">
+                                    <i class="fa-solid fa-triangle-exclamation me-1.5"></i> <span data-i18n="resetBtn">Reset</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Add Habit -->
+    <div id="add-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-900/30 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="modal-content">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-base text-slate-800" data-i18n="addHabitTitle">Tambah Habit Baru</h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-5 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="habitName">Nama Habit</label>
+                    <input type="text" id="input-habit-name" data-i18n-placeholder="habitNamePh" placeholder="Contoh: Minum Air Mineral" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" autocomplete="off">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="category">Kategori / Keterangan</label>
+                    <input type="text" id="input-habit-category" data-i18n-placeholder="categoryPh" placeholder="Contoh: Kesehatan" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all" autocomplete="off">
+                </div>
+
+                <!-- Repeat Option Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="repeatSchedule">Jadwal Pengulangan (Repeat)</label>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <button type="button" onclick="selectRepeatMode('today')" id="repeat-btn-today" class="py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all text-center" data-i18n="repeatToday">Hari Ini Saja</button>
+                        <button type="button" onclick="selectRepeatMode('everyday')" id="repeat-btn-everyday" class="py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all text-center" data-i18n="repeatEveryday">Setiap Hari</button>
+                        <button type="button" onclick="selectRepeatMode('custom')" id="repeat-btn-custom" class="py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all text-center" data-i18n="repeatCustom">Pilih Hari</button>
+                    </div>
+                    <input type="hidden" id="input-repeat-mode" value="everyday">
+
+                    <!-- Custom Days Checkboxes Container -->
+                    <div id="custom-days-container" class="hidden grid grid-cols-7 gap-1.5 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="1" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Sen</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="2" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Sel</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="3" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Rab</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="4" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Kam</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="5" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Jum</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="6" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Sab</div>
+                        </label>
+                        <label class="day-checkbox flex flex-col items-center cursor-pointer">
+                            <input type="checkbox" name="custom-day" value="0" class="sr-only" checked>
+                            <div class="w-full py-2 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 text-center transition-all">Min</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="targetType">Tipe Target</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="selectHabitType('boolean')" id="type-btn-boolean" class="py-3 px-3 text-xs font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-square-check"></i> <span data-i18n="typeChecklist">Checklist Biasa</span>
+                        </button>
+                        <button type="button" onclick="selectHabitType('counter')" id="type-btn-counter" class="py-3 px-3 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-sort-numeric-up"></i> <span data-i18n="typeCounter">Hitungan (+/-)</span>
+                        </button>
+                    </div>
+                    <input type="hidden" id="input-habit-type" value="boolean">
+                </div>
+
+                <div id="target-count-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="dailyTarget">Target Harian (Gelas/Kali)</label>
+                    <input type="number" id="input-habit-target" min="1" value="10" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="pickIcon">Pilih Ikon (Font Awesome Lengkap)</label>
+                    <div class="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-100 rounded-2xl bg-slate-50/50" id="icon-selector-grid">
+                        <!-- Extensive Icon options injected via JS -->
+                    </div>
+                    <input type="hidden" id="input-habit-icon" value="fa-solid fa-droplet">
+                </div>
+            </div>
+
+            <div class="p-5 bg-slate-50 border-t border-slate-100 flex gap-3 shrink-0">
+                <button onclick="closeAddModal()" class="flex-1 py-3 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors" data-i18n="cancel">Batal</button>
+                <button onclick="saveNewHabit()" class="flex-1 py-3 text-xs font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 shadow-md transition-all" data-i18n="saveHabit">Simpan Habit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Profile -->
+    <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-900/30 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0" onclick="if(event.target===this)closeProfileModal()">
+        <div id="profile-content" role="dialog" aria-modal="true" aria-labelledby="pf-title" class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex items-center gap-2 shrink-0">
+                <button id="pf-back" type="button" onclick="showProfilePanel('menu')" data-i18n-title="back" class="hidden w-8 h-8 rounded-xl text-slate-500 hover:bg-slate-100 items-center justify-center transition-colors"><i class="fa-solid fa-arrow-left rtl-flip text-sm"></i></button>
+                <h3 id="pf-title" class="font-bold text-base text-slate-800 flex-1"></h3>
+                <button type="button" onclick="closeProfileModal()" data-i18n-title="close" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1">
+                <!-- Menu -->
+                <div id="pf-menu" class="space-y-5">
+                    <div class="flex flex-col items-center text-center">
+                        <button type="button" onclick="showProfilePanel('picture')" data-i18n-title="changePicture" class="relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+                            <span class="block w-24 h-24 rounded-full overflow-hidden bg-slate-100 ring-4 ring-brand-50"><img id="pf-menu-avatar" src="" alt="" class="w-full h-full object-cover"></span>
+                            <span class="absolute bottom-0 end-0 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs border-2 border-white"><i class="fa-solid fa-camera"></i></span>
+                        </button>
+                        <p id="pf-menu-name" class="font-bold text-slate-800 mt-3"></p>
+                        <p id="pf-menu-email" class="text-xs text-slate-400 break-all"></p>
+                    </div>
+                    <p id="pf-msg-menu" class="hidden text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2 text-center"></p>
+                    <div class="space-y-2">
+                        <button type="button" onclick="showProfilePanel('picture')" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 text-start transition-colors">
+                            <span class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-image"></i></span>
+                            <span class="flex-1 text-sm font-semibold text-slate-700" data-i18n="changePicture"></span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button type="button" onclick="showProfilePanel('name')" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 text-start transition-colors">
+                            <span class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-user"></i></span>
+                            <span class="flex-1 text-sm font-semibold text-slate-700" data-i18n="changeName"></span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button type="button" onclick="showProfilePanel('email')" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 text-start transition-colors">
+                            <span class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-envelope"></i></span>
+                            <span class="flex-1 text-sm font-semibold text-slate-700" data-i18n="changeEmail"></span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                        <button type="button" onclick="showProfilePanel('password')" class="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-100 text-start transition-colors">
+                            <span class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-lock"></i></span>
+                            <span class="flex-1 text-sm font-semibold text-slate-700" data-i18n="changePassword"></span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Change picture -->
+                <div id="pf-picture" class="hidden space-y-5">
+                    <div class="flex justify-center"><span class="block w-32 h-32 rounded-full overflow-hidden bg-slate-100 ring-4 ring-brand-50"><img id="pf-picture-preview" src="" alt="" class="w-full h-full object-cover"></span></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-[11px] font-semibold text-center transition-all"><i class="fa-solid fa-upload text-sm"></i><span data-i18n="uploadPhoto"></span><input type="file" accept="image/*" class="hidden" onchange="handleAvatarFile(event)"></label>
+                        <button type="button" onclick="pickRandomAvatar()" class="flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-[11px] font-semibold text-center transition-all"><i class="fa-solid fa-dice text-sm"></i><span data-i18n="randomAvatar"></span></button>
+                        <button type="button" onclick="pickDefaultAvatar()" class="flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-[11px] font-semibold text-center transition-all"><i class="fa-solid fa-rotate-left text-sm"></i><span data-i18n="defaultAvatar"></span></button>
+                    </div>
+                    <p id="pf-err-picture" class="pf-err hidden text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2"></p>
+                    <button type="button" onclick="saveProfile('picture')" class="w-full py-3 text-xs font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 shadow-md transition-all" data-i18n="save"></button>
+                </div>
+
+                <!-- Change name -->
+                <div id="pf-name" class="hidden space-y-5" onkeydown="if(event.key==='Enter'){event.preventDefault();saveProfile('name')}">
+                    <div>
+                        <label for="pf-input-name" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="newName"></label>
+                        <input type="text" id="pf-input-name" maxlength="40" autocomplete="name" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                    <p id="pf-err-name" class="pf-err hidden text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2"></p>
+                    <button type="button" onclick="saveProfile('name')" class="w-full py-3 text-xs font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 shadow-md transition-all" data-i18n="save"></button>
+                </div>
+
+                <!-- Change email -->
+                <div id="pf-email" class="hidden space-y-5" onkeydown="if(event.key==='Enter'){event.preventDefault();saveProfile('email')}">
+                    <div>
+                        <label for="pf-input-email" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="newEmail"></label>
+                        <input type="email" id="pf-input-email" autocomplete="email" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                    <p id="pf-err-email" class="pf-err hidden text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2"></p>
+                    <button type="button" onclick="saveProfile('email')" class="w-full py-3 text-xs font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 shadow-md transition-all" data-i18n="save"></button>
+                </div>
+
+                <!-- Change password -->
+                <div id="pf-password" class="hidden space-y-4" onkeydown="if(event.key==='Enter'){event.preventDefault();saveProfile('password')}">
+                    <div id="pf-pw-current-wrap">
+                        <label for="pf-input-pw-current" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="currentPassword"></label>
+                        <input type="password" id="pf-input-pw-current" autocomplete="current-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                    <div>
+                        <label for="pf-input-pw-new" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="newPassword"></label>
+                        <input type="password" id="pf-input-pw-new" autocomplete="new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                    <div>
+                        <label for="pf-input-pw-confirm" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="confirmPassword"></label>
+                        <input type="password" id="pf-input-pw-confirm" autocomplete="new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                    <p id="pf-err-password" class="pf-err hidden text-xs font-medium text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2"></p>
+                    <button type="button" onclick="saveProfile('password')" class="w-full py-3 text-xs font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 shadow-md transition-all" data-i18n="save"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Custom Notification / Confirmation Alert -->
+    <div id="notification-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-900/30 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 text-center p-6 space-y-4" id="notification-content">
+            <div id="notif-icon-box" class="w-14 h-14 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <div>
+                <h4 id="notif-title" class="font-bold text-base text-slate-800">Konfirmasi Aksi</h4>
+                <p id="notif-message" class="text-xs text-slate-500 mt-1">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+            </div>
+            <div class="flex gap-3 pt-2" id="notif-buttons">
+                <button onclick="closeNotificationModal()" class="flex-1 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors" data-i18n="cancel">Batal</button>
+                <button id="notif-confirm-btn" class="flex-1 py-2.5 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-xl transition-colors shadow-sm" data-i18n="yesContinue">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'habitcraft_app_data_v15';
+        const AUTH_SESSION_KEY = 'habitcraft_user_session';
+        let habits = [];
+        let selectedDateStr = '';
+        let currentUser = null;
+        let currentTab = 'dashboard';
+        let appReady = false;
+
+        const iconList = [
+            'fa-solid fa-droplet', 'fa-solid fa-book', 'fa-solid fa-dumbbell', 
+            'fa-solid fa-person-running', 'fa-solid fa-apple-whole', 'fa-solid fa-bed', 
+            'fa-solid fa-code', 'fa-solid fa-music', 'fa-solid fa-heart', 
+            'fa-solid fa-leaf', 'fa-solid fa-pen-nib', 'fa-solid fa-briefcase', 
+            'fa-solid fa-wallet', 'fa-solid fa-broom', 'fa-solid fa-star', 'fa-solid fa-mug-hot',
+            'fa-solid fa-bicycle', 'fa-solid fa-brain', 'fa-solid fa-fire', 'fa-solid fa-sun',
+            'fa-solid fa-laptop', 'fa-solid fa-phone', 'fa-solid fa-camera', 'fa-solid fa-film',
+            'fa-solid fa-gamepad', 'fa-solid fa-graduation-cap', 'fa-solid fa-shirt', 'fa-solid fa-shoe-prints',
+            'fa-solid fa-utensils', 'fa-solid fa-carrot', 'fa-solid fa-glass-water', 'fa-solid fa-pills',
+            'fa-solid fa-kit-medical', 'fa-solid fa-person-swimming', 'fa-solid fa-person-biking',
+            'fa-solid fa-seedling', 'fa-solid fa-tree', 'fa-solid fa-mountain',
+            'fa-solid fa-compass', 'fa-solid fa-map', 'fa-solid fa-plane', 'fa-solid fa-car',
+            'fa-solid fa-house', 'fa-solid fa-key', 'fa-solid fa-lock', 'fa-solid fa-shield',
+            'fa-solid fa-bell', 'fa-solid fa-calendar-days', 'fa-solid fa-clock', 'fa-solid fa-hourglass'
+        ];
+
+        // ================= I18N =================
+        const LANG_KEY = 'habitcraft_lang';
+        const LANGS = [
+            { code: 'en', name: 'English',          sub: 'English',    locale: 'en-US',                dir: 'ltr' },
+            { code: 'id', name: 'Bahasa Indonesia', sub: 'Indonesian', locale: 'id-ID',                dir: 'ltr' },
+            { code: 'ja', name: '日本語',            sub: 'Japanese',   locale: 'ja-JP',                dir: 'ltr' },
+            { code: 'ar', name: 'العربية',           sub: 'Arabic',     locale: 'ar-EG-u-ca-gregory',   dir: 'rtl' },
+            { code: 'zh', name: '中文',              sub: 'Chinese',    locale: 'zh-CN',                dir: 'ltr' }
+        ];
+        const LANG_ORDER = ['en', 'id', 'ja', 'ar', 'zh'];
+        const DAYS_SHORT = {
+            en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            id: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+            ja: ['日', '月', '火', '水', '木', '金', '土'],
+            ar: ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'],
+            zh: ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+        };
+
+        // key: [en, id, ja, ar, zh]   (null = fall back to English)
+        const STR = {
+            docTitle: ["Elegant Habit Tracker", "Pelacak Kebiasaan Elegan", "エレガントな習慣トラッカー", "متتبع العادات الأنيق", "优雅的习惯追踪器"],
+            tagline: ["Daily Progress", "Progres Harian", "毎日の進捗", "التقدم اليومي", "每日进度"],
+            welcomeBack: ["Welcome Back", "Selamat Datang Kembali", "おかえりなさい", "مرحبًا بعودتك", "欢迎回来"],
+            welcomeSub: ["Sign in to continue your habit progress.", "Masuk untuk melanjutkan progres kebiasaan Anda.", "ログインして習慣の記録を続けましょう。", "سجّل الدخول لمتابعة تقدّم عاداتك.", "登录以继续你的习惯进度。"],
+            email: ["Email", "Email", "メールアドレス", "البريد الإلكتروني", "邮箱"],
+            password: ["Password", "Kata Sandi", "パスワード", "كلمة المرور", "密码"],
+            forgotPw: ["Forgot password?", "Lupa kata sandi?", "パスワードをお忘れですか？", "هل نسيت كلمة المرور؟", "忘记密码？"],
+            signIn: ["Sign In", "Masuk", "ログイン", "تسجيل الدخول", "登录"],
+            or: ["Or", "Atau", "または", "أو", "或"],
+            googleSignIn: ["Sign in with Google", "Masuk dengan Google", "Googleでログイン", "تسجيل الدخول عبر Google", "使用 Google 登录"],
+            noAccount: ["Don't have an account?", "Belum punya akun?", "アカウントをお持ちでない方は", "ليس لديك حساب؟", "还没有账号？"],
+            register: ["Sign Up", "Daftar", "新規登録", "إنشاء حساب", "注册"],
+            createAccount: ["Create a New Account", "Buat Akun Baru", "新しいアカウントを作成", "إنشاء حساب جديد", "创建新账号"],
+            createAccountSub: ["Start your daily productivity journey.", "Mulai perjalanan produktivitas harian Anda.", "毎日の生産性向上の旅を始めましょう。", "ابدأ رحلة إنتاجيتك اليومية.", "开启你的每日高效之旅。"],
+            fullName: ["Full Name", "Nama Lengkap", "氏名", "الاسم الكامل", "姓名"],
+            registerBtn: ["Create Account", "Daftar Akun", "アカウントを作成", "إنشاء الحساب", "创建账号"],
+            haveAccount: ["Already have an account?", "Sudah punya akun?", "すでにアカウントをお持ちですか？", "لديك حساب بالفعل？", "已有账号？"],
+            resetPassword: ["Reset Password", "Atur Ulang Kata Sandi", "パスワードの再設定", "إعادة تعيين كلمة المرور", "重置密码"],
+            resetSub: ["Enter your registered email to recover your account.", "Masukkan email terdaftar untuk pemulihan akun.", "登録済みのメールアドレスを入力してアカウントを復旧します。", "أدخل بريدك الإلكتروني المسجّل لاستعادة حسابك.", "输入注册邮箱以找回账号。"],
+            registeredEmail: ["Registered Email", "Email Terdaftar", "登録済みメールアドレス", "البريد الإلكتروني المسجّل", "注册邮箱"],
+            sendReset: ["Send Reset Instructions", "Kirim Instruksi Reset", "再設定の案内を送信", "إرسال تعليمات إعادة التعيين", "发送重置说明"],
+            backToLogin: ["Back to Sign In", "Kembali ke Login", "ログインに戻る", "العودة لتسجيل الدخول", "返回登录"],
+            navDashboard: ["Dashboard", "Dashboard", "ダッシュボード", "لوحة التحكم", "仪表盘"],
+            navHabits: ["Manage Habits", "Kelola Habit", "習慣の管理", "إدارة العادات", "管理习惯"],
+            navAnalytics: ["Statistics", "Statistik", "統計", "الإحصائيات", "统计"],
+            navSettings: ["Settings", "Pengaturan", "設定", "الإعدادات", "设置"],
+            activeUser: ["Active User", "Pengguna Aktif", "アクティブユーザー", "مستخدم نشط", "当前用户"],
+            editProfile: ["Edit profile", "Edit profil", "プロフィールを編集", "تعديل الملف الشخصي", "编辑资料"],
+            logout: ["Log Out", "Keluar (Logout)", "ログアウト", "تسجيل الخروج", "退出登录"],
+            page_dashboard: ["Main Dashboard", "Dashboard Utama", "メインダッシュボード", "لوحة التحكم الرئيسية", "主仪表盘"],
+            page_habits: ["Manage Habits", "Kelola Habit", "習慣の管理", "إدارة العادات", "管理习惯"],
+            page_analytics: ["Statistics & Performance", "Statistik & Performa", "統計とパフォーマンス", "الإحصائيات والأداء", "统计与表现"],
+            page_settings: ["App Settings", "Pengaturan Aplikasi", "アプリ設定", "إعدادات التطبيق", "应用设置"],
+            prev: ["Prev", "Sebelumnya", "前へ", "السابق", "上一天"],
+            next: ["Next", "Berikutnya", "次へ", "التالي", "下一天"],
+            prevDayTitle: ["Previous day", "Hari sebelumnya", "前の日", "اليوم السابق", "前一天"],
+            nextDayTitle: ["Next day", "Hari berikutnya", "次の日", "اليوم التالي", "后一天"],
+            add: ["Add", "Tambah", "追加", "إضافة", "添加"],
+            streakTitle: ["Current streak", "Streak beruntun", "連続日数", "أيام متتالية", "连续天数"],
+            percentTitle: ["Completion rate", "Persentase selesai", "達成率", "نسبة الإنجاز", "完成率"],
+            days: ["{n} Days", "{n} Hari", "{n}日", "{n} يوم", "{n} 天"],
+            daysOne: ["{n} Day", null, null, null, null],
+            habitListTitle: ["Habits for the Selected Date", "Daftar Habit Tanggal Terpilih", "選択した日の習慣", "عادات التاريخ المحدد", "所选日期的习惯"],
+            showingProgress: ["Showing progress for: {date}", "Menampilkan kemajuan untuk tanggal: {date}", "{date} の進捗を表示中", "عرض التقدّم لتاريخ: {date}", "显示 {date} 的进度"],
+            today: ["Today", "Hari Ini", "今日", "اليوم", "今天"],
+            habitCount: ["{n} Habits", "{n} Habit", "{n}件の習慣", "{n} عادة", "{n} 个习惯"],
+            habitCountOne: ["{n} Habit", null, null, null, null],
+            emptyTitle: ["No habits for this day", "Tidak ada habit untuk hari ini", "この日の習慣はありません", "لا توجد عادات لهذا اليوم", "这一天没有习惯"],
+            emptySub: ["Create a new habit or pick another day to see your list.", "Buat habit baru atau pilih hari lain untuk melihat daftar kebiasaan.", "新しい習慣を作成するか、別の日を選んでください。", "أنشئ عادة جديدة أو اختر يومًا آخر لعرض القائمة.", "创建新习惯或选择其他日期查看列表。"],
+            createHabit: ["Create New Habit", "Buat Habit Baru", "新しい習慣を作成", "إنشاء عادة جديدة", "创建新习惯"],
+            manageTitle: ["Habit Management", "Manajemen Habit", "習慣の管理", "إدارة العادات", "习惯管理"],
+            manageSub: ["Manage or delete your habit list.", "Kelola atau hapus daftar kebiasaan Anda.", "習慣リストを管理・削除します。", "أدر قائمة عاداتك أو احذفها.", "管理或删除你的习惯列表。"],
+            addNew: ["Add New", "Tambah Baru", "新規追加", "إضافة جديد", "新增"],
+            noHabitsManage: ["No habits to manage yet.", "Belum ada habit untuk dikelola.", "管理する習慣がまだありません。", "لا توجد عادات لإدارتها بعد.", "暂无可管理的习惯。"],
+            analyticsTitle: ["Statistics & Performance for This Date", "Statistik & Performa Tanggal Ini", "この日の統計とパフォーマンス", "إحصائيات وأداء هذا التاريخ", "当日统计与表现"],
+            analyticsSub: ["Summary of habit performance on: {date}", "Ringkasan performa kebiasaan pada tanggal: {date}", "{date} の習慣パフォーマンスの概要", "ملخص أداء العادات بتاريخ: {date}", "{date} 的习惯表现概览"],
+            noStats: ["No statistics for this date yet.", "Belum ada data statistik untuk tanggal ini.", "この日の統計データはまだありません。", "لا توجد إحصائيات لهذا التاريخ بعد.", "该日期暂无统计数据。"],
+            status: ["Status:", "Status:", "状態:", "الحالة:", "状态："],
+            done: ["Done", "Selesai", "完了", "مكتمل", "已完成"],
+            notDone: ["Not Done", "Belum Selesai", "未完了", "غير مكتمل", "未完成"],
+            settingsTitle: ["App Settings", "Pengaturan Aplikasi", "アプリ設定", "إعدادات التطبيق", "应用设置"],
+            settingsSub: ["Adjust your preferences and app data.", "Sesuaikan preferensi dan data aplikasi.", "設定とアプリのデータを調整します。", "اضبط تفضيلاتك وبيانات التطبيق.", "调整偏好设置与应用数据。"],
+            languageTitle: ["Language", "Bahasa", "言語", "اللغة", "语言"],
+            languageSub: ["Choose the language used across the app.", "Pilih bahasa yang digunakan di seluruh aplikasi.", "アプリ全体で使用する言語を選択します。", "اختر لغة واجهة التطبيق.", "选择应用界面语言。"],
+            backupTitle: ["Backup & Restore Data", "Cadangan & Pulihkan Data", "データのバックアップと復元", "النسخ الاحتياطي واستعادة البيانات", "备份与恢复数据"],
+            backupSub: ["Export or import habit data (.json).", "Ekspor atau impor data habit (.json).", "習慣データ（.json）をエクスポート／インポートします。", "صدّر بيانات العادات أو استوردها (.json).", "导出或导入习惯数据（.json）。"],
+            export: ["Export", "Ekspor", "エクスポート", "تصدير", "导出"],
+            import: ["Import", "Impor", "インポート", "استيراد", "导入"],
+            resetTitle: ["Reset All Data", "Reset Semua Data", "すべてのデータをリセット", "إعادة تعيين كل البيانات", "重置所有数据"],
+            resetSub: ["Permanently delete all history and habit lists.", "Hapus seluruh riwayat dan daftar habit secara permanen.", "すべての履歴と習慣リストを完全に削除します。", "احذف كل السجل وقوائم العادات نهائيًا.", "永久删除所有历史记录和习惯列表。"],
+            resetBtn: ["Reset", "Reset", "リセット", "إعادة تعيين", "重置"],
+            addHabitTitle: ["Add New Habit", "Tambah Habit Baru", "新しい習慣を追加", "إضافة عادة جديدة", "添加新习惯"],
+            habitName: ["Habit Name", "Nama Habit", "習慣の名前", "اسم العادة", "习惯名称"],
+            habitNamePh: ["e.g. Drink water", "Contoh: Minum Air Mineral", "例：水を飲む", "مثال: شرب الماء", "例如：喝水"],
+            category: ["Category / Note", "Kategori / Keterangan", "カテゴリ／メモ", "الفئة / ملاحظة", "分类 / 备注"],
+            categoryPh: ["e.g. Health", "Contoh: Kesehatan", "例：健康", "مثال: الصحة", "例如：健康"],
+            repeatSchedule: ["Repeat Schedule", "Jadwal Pengulangan", "繰り返しスケジュール", "جدول التكرار", "重复计划"],
+            repeatToday: ["Today Only", "Hari Ini Saja", "今日のみ", "اليوم فقط", "仅今天"],
+            repeatEveryday: ["Every Day", "Setiap Hari", "毎日", "كل يوم", "每天"],
+            repeatCustom: ["Pick Days", "Pilih Hari", "曜日を選択", "اختر الأيام", "选择星期"],
+            targetType: ["Target Type", "Tipe Target", "目標タイプ", "نوع الهدف", "目标类型"],
+            typeChecklist: ["Simple Checklist", "Checklist Biasa", "シンプルなチェック", "قائمة تحقق بسيطة", "简单清单"],
+            typeCounter: ["Counter (+/-)", "Hitungan (+/-)", "カウンター (+/-)", "عدّاد (+/-)", "计数 (+/-)"],
+            dailyTarget: ["Daily Target (Glasses/Times)", "Target Harian (Gelas/Kali)", "1日の目標（杯／回）", "الهدف اليومي (أكواب/مرات)", "每日目标（杯/次）"],
+            pickIcon: ["Choose Icon", "Pilih Ikon", "アイコンを選択", "اختر أيقونة", "选择图标"],
+            cancel: ["Cancel", "Batal", "キャンセル", "إلغاء", "取消"],
+            saveHabit: ["Save Habit", "Simpan Habit", "習慣を保存", "حفظ العادة", "保存习惯"],
+            yesContinue: ["Yes, Continue", "Ya, Lanjutkan", "はい、続行", "نعم، متابعة", "是，继续"],
+            deleteHabitTitle: ["Delete Habit", "Hapus Habit", "習慣を削除", "حذف العادة", "删除习惯"],
+            deleteHabitMsg: ["Are you sure you want to delete this habit from the list?", "Apakah Anda yakin ingin menghapus habit ini dari daftar?", "この習慣をリストから削除してもよろしいですか？", "هل أنت متأكد من حذف هذه العادة من القائمة؟", "确定要从列表中删除这个习惯吗？"],
+            resetConfirmMsg: ["This will permanently delete all habit data and history. Continue?", "Tindakan ini akan menghapus seluruh data dan riwayat habit secara permanen. Lanjutkan?", "すべての習慣データと履歴が完全に削除されます。続行しますか？", "سيؤدي هذا إلى حذف جميع بيانات العادات وسجلها نهائيًا. هل تريد المتابعة？", "这将永久删除所有习惯数据和历史记录。是否继续？"],
+            importOk: ["Data imported successfully!", "Data berhasil diimpor!", "データをインポートしました！", "تم استيراد البيانات بنجاح!", "数据导入成功！"],
+            importBadFormat: ["Invalid JSON file format.", "Format file JSON tidak valid.", "JSONファイルの形式が正しくありません。", "تنسيق ملف JSON غير صالح.", "JSON 文件格式无效。"],
+            importFail: ["Failed to read the JSON file.", "Gagal membaca file JSON.", "JSONファイルを読み込めませんでした。", "تعذّرت قراءة ملف JSON.", "无法读取 JSON 文件。"],
+            errEmailPass: ["Email and password are required!", "Email dan kata sandi wajib diisi!", "メールアドレスとパスワードは必須です。", "البريد الإلكتروني وكلمة المرور مطلوبان!", "请填写邮箱和密码！"],
+            errAllFields: ["All registration fields are required!", "Semua kolom pendaftaran wajib diisi!", "すべての項目を入力してください。", "جميع حقول التسجيل مطلوبة!", "请填写所有注册信息！"],
+            regSuccess: ["Registration successful!", "Registrasi berhasil!", "登録が完了しました！", "تم إنشاء الحساب بنجاح!", "注册成功！"],
+            errEnterEmail: ["Please enter your email first.", "Masukkan email Anda terlebih dahulu.", "先にメールアドレスを入力してください。", "يرجى إدخال بريدك الإلكتروني أولاً.", "请先输入邮箱。"],
+            resetSent: ["Password recovery instructions have been sent to {email}", "Instruksi pemulihan kata sandi telah dikirim ke {email}", "パスワード復旧の案内を {email} に送信しました", "تم إرسال تعليمات استعادة كلمة المرور إلى {email}", "密码找回说明已发送至 {email}"],
+            errWrongPass: ["Incorrect password.", "Kata sandi salah.", "パスワードが正しくありません。", "كلمة المرور غير صحيحة.", "密码不正确。"],
+            errEmailTaken: ["This email is already registered.", "Email ini sudah terdaftar.", "このメールアドレスは既に登録されています。", "هذا البريد الإلكتروني مسجّل بالفعل.", "该邮箱已被注册。"],
+            general: ["General", "Umum", "一般", "عام", "通用"],
+            daysPrefix: ["Days: {list}", "Hari: {list}", "曜日: {list}", "الأيام: {list}", "星期：{list}"],
+            customLabel: ["Custom", "Kustom", "カスタム", "مخصص", "自定义"],
+            seedWater: ["Drink Water", "Minum Air Mineral", "水を飲む", "شرب الماء", "喝水"],
+            seedHealth: ["Health", "Kesehatan", "健康", "الصحة", "健康"],
+            seedRead: ["Read a Book for 15 Minutes", "Membaca Buku 15 Menit", "15分間読書する", "قراءة كتاب لمدة 15 دقيقة", "阅读 15 分钟"],
+            seedGrowth: ["Personal Growth", "Pengembangan", "自己成長", "التطوير الذاتي", "个人成长"],
+            profileTitle: ["My Profile", "Profil Saya", "マイプロフィール", "ملفي الشخصي", "我的资料"],
+            changePicture: ["Change Picture", "Ganti Foto", "写真を変更", "تغيير الصورة", "更换头像"],
+            changeName: ["Change Name", "Ganti Nama", "名前を変更", "تغيير الاسم", "修改姓名"],
+            changeEmail: ["Change Email", "Ganti Email", "メールアドレスを変更", "تغيير البريد الإلكتروني", "修改邮箱"],
+            changePassword: ["Change Password", "Ganti Kata Sandi", "パスワードを変更", "تغيير كلمة المرور", "修改密码"],
+            uploadPhoto: ["Upload Photo", "Unggah Foto", "写真をアップロード", "رفع صورة", "上传照片"],
+            randomAvatar: ["Random Avatar", "Avatar Acak", "ランダムアバター", "أفاتار عشوائي", "随机头像"],
+            defaultAvatar: ["Use Default", "Pakai Bawaan", "デフォルトに戻す", "استخدام الافتراضي", "恢复默认"],
+            newName: ["New Name", "Nama Baru", "新しい名前", "الاسم الجديد", "新姓名"],
+            newEmail: ["New Email", "Email Baru", "新しいメールアドレス", "البريد الإلكتروني الجديد", "新邮箱"],
+            currentPassword: ["Current Password", "Kata Sandi Saat Ini", "現在のパスワード", "كلمة المرور الحالية", "当前密码"],
+            newPassword: ["New Password", "Kata Sandi Baru", "新しいパスワード", "كلمة المرور الجديدة", "新密码"],
+            confirmPassword: ["Confirm New Password", "Konfirmasi Kata Sandi Baru", "新しいパスワード（確認）", "تأكيد كلمة المرور الجديدة", "确认新密码"],
+            save: ["Save", "Simpan", "保存", "حفظ", "保存"],
+            back: ["Back", "Kembali", "戻る", "رجوع", "返回"],
+            close: ["Close", "Tutup", "閉じる", "إغلاق", "关闭"],
+            okPicture: ["Profile picture updated.", "Foto profil diperbarui.", "プロフィール写真を更新しました。", "تم تحديث صورة الملف الشخصي.", "头像已更新。"],
+            okName: ["Name updated.", "Nama diperbarui.", "名前を更新しました。", "تم تحديث الاسم.", "姓名已更新。"],
+            okEmail: ["Email updated.", "Email diperbarui.", "メールアドレスを更新しました。", "تم تحديث البريد الإلكتروني.", "邮箱已更新。"],
+            okPassword: ["Password updated.", "Kata sandi diperbarui.", "パスワードを更新しました。", "تم تحديث كلمة المرور.", "密码已更新。"],
+            errName: ["Name can't be empty.", "Nama tidak boleh kosong.", "名前を入力してください。", "لا يمكن ترك الاسم فارغًا.", "姓名不能为空。"],
+            errEmailInvalid: ["Enter a valid email address.", "Masukkan alamat email yang valid.", "有効なメールアドレスを入力してください。", "أدخل عنوان بريد إلكتروني صالحًا.", "请输入有效的邮箱地址。"],
+            errCurrentPass: ["Current password is incorrect.", "Kata sandi saat ini salah.", "現在のパスワードが正しくありません。", "كلمة المرور الحالية غير صحيحة.", "当前密码不正确。"],
+            errPassShort: ["New password must be at least 6 characters.", "Kata sandi baru minimal 6 karakter.", "新しいパスワードは6文字以上にしてください。", "يجب أن تتكون كلمة المرور الجديدة من 6 أحرف على الأقل.", "新密码至少需要 6 个字符。"],
+            errPassMismatch: ["Passwords don't match.", "Kata sandi tidak cocok.", "パスワードが一致しません。", "كلمتا المرور غير متطابقتين.", "两次输入的密码不一致。"],
+            errImage: ["Please choose an image file.", "Pilih file gambar.", "画像ファイルを選択してください。", "يرجى اختيار ملف صورة.", "请选择图片文件。"],
+            errImageRead: ["Couldn't read that image.", "Gambar tidak dapat dibaca.", "画像を読み込めませんでした。", "تعذّرت قراءة الصورة.", "无法读取该图片。"]
+        };
+        const I18N = {};
+        LANG_ORDER.forEach(c => { I18N[c] = {}; });
+        Object.keys(STR).forEach(k => STR[k].forEach((v, i) => { if (v !== null) I18N[LANG_ORDER[i]][k] = v; }));
+
+        let currentLang = (() => {
+            try { const l = localStorage.getItem(LANG_KEY); return I18N[l] ? l : 'en'; } catch (e) { return 'en'; }
+        })();
+
+        function t(key, vars) {
+            const dict = I18N[currentLang] || I18N.en;
+            let str = (key in dict) ? dict[key] : ((key in I18N.en) ? I18N.en[key] : key);
+            if (vars) Object.keys(vars).forEach(k => { str = str.split('{' + k + '}').join(vars[k]); });
+            return str;
+        }
+        function fmtCount(key, n) {
+            const dict = I18N[currentLang] || I18N.en;
+            const one = key + 'One';
+            const tpl = (n === 1 && dict[one]) ? dict[one] : t(key);
+            return tpl.split('{n}').join(n);
+        }
+        function getLocale() { return (LANGS.find(l => l.code === currentLang) || LANGS[0]).locale; }
+        function dayNames() { return DAYS_SHORT[currentLang] || DAYS_SHORT.en; }
+
+        function repeatDescription(habit) {
+            if (habit.repeatMode === 'today') return t('repeatToday');
+            if (habit.repeatMode === 'custom') {
+                const names = dayNames();
+                const sep = currentLang === 'ar' ? '، ' : (currentLang === 'ja' || currentLang === 'zh') ? '、' : ', ';
+                const list = (habit.specificDays || []).slice().sort((a, b) => a - b).map(d => names[d]).join(sep);
+                return list ? t('daysPrefix', { list }) : t('customLabel');
+            }
+            return t('repeatEveryday');
+        }
+
+        function setLanguage(code) {
+            if (!I18N[code]) return;
+            currentLang = code;
+            try { localStorage.setItem(LANG_KEY, code); } catch (e) {}
+            applyLanguage();
+        }
+
+        function renderLanguageOptions() {
+            const box = document.getElementById('language-options');
+            if (!box) return;
+            box.innerHTML = '';
+            LANGS.forEach(l => {
+                const active = l.code === currentLang;
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.setAttribute('aria-pressed', active);
+                b.className = `flex items-center justify-between gap-2 px-4 py-3 rounded-xl border text-start transition-all ${active ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`;
+                b.innerHTML = `<span><span class="block text-sm font-semibold" dir="auto">${l.name}</span><span class="block text-[11px] font-medium opacity-60">${l.sub}</span></span>${active ? '<i class="fa-solid fa-circle-check text-brand-500"></i>' : ''}`;
+                b.onclick = () => setLanguage(l.code);
+                box.appendChild(b);
+            });
+        }
+
+        function applyLanguage() {
+            const L = LANGS.find(l => l.code === currentLang) || LANGS[0];
+            document.documentElement.lang = L.code;
+            document.documentElement.dir = L.dir;
+            document.title = 'HabitCraft - ' + t('docTitle');
+
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+            document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
+
+            const names = dayNames();
+            document.querySelectorAll('#custom-days-container label').forEach(lb => {
+                const v = parseInt(lb.querySelector('input').value, 10);
+                lb.querySelector('div').textContent = names[v];
+            });
+
+            document.getElementById('page-title').textContent = t('page_' + currentTab);
+            renderLanguageOptions();
+
+            if (appReady) {
+                updateUserUI();
+                displayDateHeader();
+                renderAll();
+                if (!document.getElementById('view-habits').classList.contains('hidden')) renderManageList();
+            }
+            if (pfPanel && document.getElementById('profile-modal') && !document.getElementById('profile-modal').classList.contains('hidden')) {
+                document.getElementById('pf-title').textContent = t(PF_TITLES[pfPanel]);
+            }
+        }
+
+        // ================= AUTH & USERS =================
+        const USERS_KEY = 'habitcraft_users';
+        const normEmail = e => (e || '').trim().toLowerCase();
+        function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch (e) { return {}; } }
+        function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+        async function hashPassword(pw) {
+            const input = 'habitcraft:' + pw;
+            try {
+                if (window.crypto && crypto.subtle) {
+                    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+                    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+                }
+            } catch (e) {}
+            let h = 5381;
+            for (let i = 0; i < input.length; i++) h = ((h << 5) + h + input.charCodeAt(i)) | 0;
+            return 'x' + (h >>> 0).toString(16);
+        }
+
+        function setSession(email) { localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ email })); }
+
+        function persistUser(oldEmail) {
+            const users = loadUsers();
+            if (oldEmail && normEmail(oldEmail) !== normEmail(currentUser.email)) delete users[normEmail(oldEmail)];
+            users[normEmail(currentUser.email)] = currentUser;
+            saveUsers(users);
+            setSession(currentUser.email);
+        }
+
+        function checkAuthSession() {
+            const session = localStorage.getItem(AUTH_SESSION_KEY);
+            if (session) {
+                try {
+                    const sess = JSON.parse(session);
+                    const key = normEmail(sess.email);
+                    if (!key) throw new Error('invalid session');
+                    const users = loadUsers();
+                    if (!users[key]) {
+                        users[key] = { name: sess.name || key.split('@')[0], email: sess.email, avatar: '', passHash: '' };
+                        saveUsers(users);
+                    }
+                    currentUser = users[key];
+                    document.getElementById('auth-container').classList.add('hidden');
+                    document.getElementById('main-app-wrapper').classList.remove('hidden');
+                    updateUserUI();
+                    initApp();
+                } catch (e) {
+                    showAuthView();
+                }
+            } else {
+                showAuthView();
+            }
+        }
+
+        function showAuthView() {
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('main-app-wrapper').classList.add('hidden');
+        }
+
+        function switchAuthView(viewName) {
+            document.getElementById('auth-view-login').classList.add('hidden');
+            document.getElementById('auth-view-register').classList.add('hidden');
+            document.getElementById('auth-view-forgot').classList.add('hidden');
+            document.getElementById(`auth-view-${viewName}`).classList.remove('hidden');
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) { alert(t('errEmailPass')); return; }
+
+            const users = loadUsers();
+            const key = normEmail(email);
+            const hash = await hashPassword(password);
+            let user = users[key];
+            if (user) {
+                if (user.passHash && user.passHash !== hash) { alert(t('errWrongPass')); return; }
+                if (!user.passHash) user.passHash = hash;
+            } else {
+                const name = email.split('@')[0];
+                user = { name: name.charAt(0).toUpperCase() + name.slice(1), email, avatar: '', passHash: hash };
+            }
+            users[key] = user;
+            saveUsers(users);
+            setSession(user.email);
+            document.getElementById('login-password').value = '';
+            checkAuthSession();
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            if (!name || !email || !password) { alert(t('errAllFields')); return; }
+
+            const users = loadUsers();
+            const key = normEmail(email);
+            if (users[key]) { alert(t('errEmailTaken')); return; }
+            users[key] = { name, email, avatar: '', passHash: await hashPassword(password) };
+            saveUsers(users);
+            setSession(email);
+            document.getElementById('reg-password').value = '';
+            alert(t('regSuccess'));
+            checkAuthSession();
+        }
+
+        function handleGoogleLogin() {
+            const email = 'daxsa@gmail.com';
+            const users = loadUsers();
+            if (!users[email]) { users[email] = { name: 'Daxsa', email, avatar: '', passHash: '' }; saveUsers(users); }
+            setSession(email);
+            checkAuthSession();
+        }
+
+        function handleResetPassword() {
+            const email = document.getElementById('forgot-email').value.trim();
+            if (!email) { alert(t('errEnterEmail')); return; }
+            alert(t('resetSent', { email }));
+            switchAuthView('login');
+        }
+
+        function handleLogout() {
+            closeProfileModal();
+            localStorage.removeItem(AUTH_SESSION_KEY);
+            currentUser = null;
+            appReady = false;
+            showAuthView();
+        }
+
+        function defaultAvatarUrl(name) { return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`; }
+        function getAvatarUrl(user) { return user.avatar || defaultAvatarUrl(user.name); }
+
+        function updateUserUI() {
+            if (!currentUser) return;
+            const url = getAvatarUrl(currentUser);
+            document.getElementById('sidebar-avatar').src = url;
+            document.getElementById('topbar-avatar').src = url;
+            document.getElementById('sidebar-username').textContent = currentUser.name;
+            document.getElementById('topbar-username').textContent = currentUser.name;
+        }
+
+        // ================= PROFILE MODAL =================
+        const PF_PANELS = ['menu', 'picture', 'name', 'email', 'password'];
+        const PF_TITLES = { menu: 'profileTitle', picture: 'changePicture', name: 'changeName', email: 'changeEmail', password: 'changePassword' };
+        let pfPanel = 'menu';
+        let pfPendingAvatar; // undefined = unchanged, '' = default, string = new url
+        let pfCloseTimer = null;
+        const $ = id => document.getElementById(id);
+
+        function openProfileModal() {
+            if (!currentUser) return;
+            clearTimeout(pfCloseTimer);
+            showProfilePanel('menu');
+            const modal = $('profile-modal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            $('profile-content').classList.remove('scale-95');
+        }
+
+        function closeProfileModal() {
+            const modal = $('profile-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('opacity-0');
+            $('profile-content').classList.add('scale-95');
+            clearTimeout(pfCloseTimer);
+            pfCloseTimer = setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function pfShowError(panel, msg) {
+            const el = $('pf-err-' + panel);
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function showProfilePanel(panel, okMsg) {
+            pfPanel = panel;
+            pfPendingAvatar = undefined;
+            PF_PANELS.forEach(p => $('pf-' + p).classList.toggle('hidden', p !== panel));
+            const back = $('pf-back');
+            back.classList.toggle('hidden', panel === 'menu');
+            back.classList.toggle('flex', panel !== 'menu');
+            $('pf-title').textContent = t(PF_TITLES[panel]);
+            document.querySelectorAll('.pf-err').forEach(e => { e.textContent = ''; e.classList.add('hidden'); });
+
+            const ok = $('pf-msg-menu');
+            if (okMsg && panel === 'menu') { ok.textContent = okMsg; ok.classList.remove('hidden'); } else { ok.classList.add('hidden'); }
+
+            $('pf-menu-avatar').src = getAvatarUrl(currentUser);
+            $('pf-menu-name').textContent = currentUser.name;
+            $('pf-menu-email').textContent = currentUser.email;
+
+            let focusId = null;
+            if (panel === 'picture') $('pf-picture-preview').src = getAvatarUrl(currentUser);
+            if (panel === 'name') { $('pf-input-name').value = currentUser.name; focusId = 'pf-input-name'; }
+            if (panel === 'email') { $('pf-input-email').value = currentUser.email; focusId = 'pf-input-email'; }
+            if (panel === 'password') {
+                ['pf-input-pw-current', 'pf-input-pw-new', 'pf-input-pw-confirm'].forEach(id => { $(id).value = ''; });
+                $('pf-pw-current-wrap').classList.toggle('hidden', !currentUser.passHash);
+                focusId = currentUser.passHash ? 'pf-input-pw-current' : 'pf-input-pw-new';
+            }
+            if (focusId) setTimeout(() => $(focusId).focus(), 50);
+        }
+
+        function refreshAvatarPreview() {
+            $('pf-picture-preview').src = pfPendingAvatar === undefined ? getAvatarUrl(currentUser) : (pfPendingAvatar || defaultAvatarUrl(currentUser.name));
+        }
+        function pickRandomAvatar() {
+            pfPendingAvatar = defaultAvatarUrl(Math.random().toString(36).slice(2, 10));
+            refreshAvatarPreview();
+        }
+        function pickDefaultAvatar() {
+            pfPendingAvatar = '';
+            refreshAvatarPreview();
+        }
+        function handleAvatarFile(e) {
+            const file = e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { pfShowError('picture', t('errImage')); return; }
+            const reader = new FileReader();
+            reader.onerror = () => pfShowError('picture', t('errImageRead'));
+            reader.onload = ev => {
+                const img = new Image();
+                img.onerror = () => pfShowError('picture', t('errImageRead'));
+                img.onload = () => {
+                    const size = 256;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = canvas.height = size;
+                    const m = Math.min(img.width, img.height);
+                    canvas.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, size, size);
+                    pfPendingAvatar = canvas.toDataURL('image/jpeg', 0.85);
+                    $('pf-err-picture').classList.add('hidden');
+                    refreshAvatarPreview();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function saveProfile(panel) {
+            const oldEmail = currentUser.email;
+
+            if (panel === 'picture') {
+                if (pfPendingAvatar !== undefined) currentUser.avatar = pfPendingAvatar;
+                persistUser(oldEmail);
+                updateUserUI();
+                showProfilePanel('menu', t('okPicture'));
+
+            } else if (panel === 'name') {
+                const name = $('pf-input-name').value.trim();
+                if (!name) { pfShowError('name', t('errName')); return; }
+                currentUser.name = name;
+                persistUser(oldEmail);
+                updateUserUI();
+                showProfilePanel('menu', t('okName'));
+
+            } else if (panel === 'email') {
+                const email = $('pf-input-email').value.trim();
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { pfShowError('email', t('errEmailInvalid')); return; }
+                const users = loadUsers();
+                if (normEmail(email) !== normEmail(oldEmail) && users[normEmail(email)]) { pfShowError('email', t('errEmailTaken')); return; }
+                currentUser.email = email;
+                persistUser(oldEmail);
+                showProfilePanel('menu', t('okEmail'));
+
+            } else if (panel === 'password') {
+                const cur = $('pf-input-pw-current').value;
+                const pw = $('pf-input-pw-new').value;
+                const confirmPw = $('pf-input-pw-confirm').value;
+                if (currentUser.passHash && (await hashPassword(cur)) !== currentUser.passHash) { pfShowError('password', t('errCurrentPass')); return; }
+                if (pw.length < 6) { pfShowError('password', t('errPassShort')); return; }
+                if (pw !== confirmPw) { pfShowError('password', t('errPassMismatch')); return; }
+                currentUser.passHash = await hashPassword(pw);
+                persistUser(oldEmail);
+                showProfilePanel('menu', t('okPassword'));
+            }
+        }
+
+        function initApp() {
+            const date = new Date();
+            const offset = date.getTimezoneOffset() * 60000;
+            selectedDateStr = (new Date(date - offset)).toISOString().split('T')[0];
+            
+            const picker = document.getElementById('header-date-picker');
+            if (picker) picker.value = selectedDateStr;
+
+            appReady = true;
+            displayDateHeader();
+            loadData();
+            renderIconSelector();
+            renderAll();
+        }
+
+        function displayDateHeader() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateObj = new Date(selectedDateStr + 'T00:00:00');
+            const formatted = dateObj.toLocaleDateString(getLocale(), options);
+            
+            const el = document.getElementById('current-date-display');
+            if (el) el.textContent = formatted;
+
+            const sub = document.getElementById('active-date-subtitle');
+            if (sub) sub.textContent = t('showingProgress', { date: formatted });
+
+            const analyticsSub = document.getElementById('analytics-date-subtitle');
+            if (analyticsSub) analyticsSub.textContent = t('analyticsSub', { date: formatted });
+        }
+
+        function onDateChanged(newDate) {
+            if (!newDate) return;
+            selectedDateStr = newDate;
+            displayDateHeader();
+            renderAll();
+        }
+
+        function goToToday() {
+            const date = new Date();
+            const offset = date.getTimezoneOffset() * 60000;
+            selectedDateStr = (new Date(date - offset)).toISOString().split('T')[0];
+            
+            const picker = document.getElementById('header-date-picker');
+            if (picker) picker.value = selectedDateStr;
+
+            displayDateHeader();
+            renderAll();
+        }
+
+        function changeDateByOffset(days) {
+            const dateObj = new Date(selectedDateStr + 'T00:00:00');
+            dateObj.setDate(dateObj.getDate() + days);
+            const offset = dateObj.getTimezoneOffset() * 60000;
+            selectedDateStr = (new Date(dateObj - offset)).toISOString().split('T')[0];
+
+            const picker = document.getElementById('header-date-picker');
+            if (picker) picker.value = selectedDateStr;
+
+            displayDateHeader();
+            renderAll();
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    habits = JSON.parse(stored);
+                } catch (e) {
+                    console.error("Failed to parse storage", e);
+                    habits = [];
+                }
+            } else {
+                habits = [
+                    { id: 'h1', name: t('seedWater'), category: t('seedHealth'), type: 'counter', target: 10, icon: 'fa-solid fa-droplet', repeatMode: 'everyday', specificDays: [0,1,2,3,4,5,6], startDate: selectedDateStr, progress: {} },
+                    { id: 'h2', name: t('seedRead'), category: t('seedGrowth'), type: 'boolean', target: 1, icon: 'fa-solid fa-book', repeatMode: 'everyday', specificDays: [0,1,2,3,4,5,6], startDate: selectedDateStr, progress: {} }
+                ];
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+        }
+
+        function generateId() {
+            return 'habit_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'habits', 'analytics', 'settings'];
+            tabs.forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900";
+                }
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all text-brand-700 bg-brand-50";
+            }
+
+            currentTab = tabId;
+            document.getElementById('page-title').textContent = t('page_' + tabId);
+
+            if (tabId === 'habits') renderManageList();
+            if (tabId === 'analytics') renderAnalytics();
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function renderAll() {
+            renderDashboardHabits();
+            updateHeaderStats();
+            const activeTab = document.getElementById('view-analytics').classList.contains('hidden') ? '' : 'analytics';
+            if (activeTab === 'analytics') renderAnalytics();
+        }
+
+        function isHabitActiveOnDate(habit, dateStr) {
+            if (!habit.repeatMode) return true;
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            const dayOfWeek = dateObj.getDay();
+
+            if (habit.repeatMode === 'today') {
+                return habit.startDate === dateStr;
+            } else if (habit.repeatMode === 'everyday') {
+                return true;
+            } else if (habit.repeatMode === 'custom') {
+                const days = habit.specificDays || [];
+                return days.includes(dayOfWeek);
+            }
+            return true;
+        }
+
+        function renderDashboardHabits() {
+            const container = document.getElementById('habit-list-container');
+            const emptyState = document.getElementById('empty-state');
+            const badge = document.getElementById('habit-count-badge');
+            
+            container.innerHTML = '';
+            const activeHabits = habits.filter(h => isHabitActiveOnDate(h, selectedDateStr));
+            badge.textContent = fmtCount('habitCount', activeHabits.length);
+
+            if (activeHabits.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            activeHabits.forEach((habit, index) => {
+                if (!habit.progress) habit.progress = {};
+                const currentVal = habit.progress[selectedDateStr] || 0;
+                const isCompleted = habit.type === 'counter' ? currentVal >= (habit.target || 1) : currentVal > 0;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'relative overflow-hidden rounded-2xl shadow-sm flex flex-col';
+                wrapper.setAttribute('data-id', habit.id);
+
+                const swipeBg = document.createElement('div');
+                swipeBg.className = 'absolute inset-0 flex items-center justify-between px-5 pointer-events-none rounded-2xl transition-colors duration-150';
+                swipeBg.innerHTML = `
+                    <div id="swipe-icon-left" class="text-emerald-600 font-bold text-base opacity-0 transform scale-50 transition-all flex items-center gap-1.5"><i class="fa-solid fa-check-double text-lg"></i></div>
+                    <div id="swipe-icon-right" class="text-red-500 font-bold text-base opacity-0 transform scale-50 transition-all flex items-center gap-1.5"><i class="fa-solid fa-trash-can text-lg"></i></div>
+                `;
+                wrapper.appendChild(swipeBg);
+
+                const card = document.createElement('div');
+                card.className = `habit-card relative z-10 p-3.5 sm:p-4 rounded-2xl border transition-colors duration-300 flex flex-col justify-center flex-1 bg-white ${isCompleted ? 'completed-card' : 'border-slate-200 hover:border-brand-200'}`;
+
+                const topRow = document.createElement('div');
+                topRow.className = 'flex items-center justify-between gap-2';
+
+                const leftInfo = document.createElement('div');
+                leftInfo.className = 'flex items-center gap-2.5 flex-1 min-w-0';
+
+                const dragHandle = document.createElement('div');
+                dragHandle.className = 'cursor-grab active:cursor-grabbing px-1 text-slate-300 hover:text-slate-500 flex items-center shrink-0';
+                dragHandle.setAttribute('draggable', 'true');
+                dragHandle.innerHTML = '<i class="fa-solid fa-grip-vertical text-xs"></i>';
+
+                dragHandle.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', habit.id);
+                    wrapper.classList.add('dragging');
+                });
+                dragHandle.addEventListener('dragend', () => {
+                    wrapper.classList.remove('dragging');
+                });
+
+                wrapper.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                wrapper.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const draggedId = e.dataTransfer.getData('text/plain');
+                    if (draggedId !== habit.id) {
+                        reorderHabits(draggedId, habit.id);
+                    }
+                });
+
+                const iconBox = document.createElement('div');
+                iconBox.className = `w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-sm sm:text-base shrink-0 transition-colors ${isCompleted ? 'bg-brand-100 text-brand-600' : 'bg-slate-50 text-slate-500'}`;
+                iconBox.innerHTML = `<i class="${habit.icon}"></i>`;
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'flex flex-col min-w-0 flex-1';
+
+                const titleEl = document.createElement('h4');
+                titleEl.className = `font-semibold text-xs sm:text-sm line-clamp-2 break-words leading-snug transition-all ${isCompleted ? 'completed-text' : 'text-slate-800'}`;
+                titleEl.textContent = habit.name;
+                textDiv.appendChild(titleEl);
+
+                const repeatDesc = repeatDescription(habit);
+
+                const catEl = document.createElement('span');
+                catEl.className = 'text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5 truncate';
+                catEl.textContent = `${habit.category || t('general')} • ${repeatDesc}`;
+                textDiv.appendChild(catEl);
+
+                leftInfo.appendChild(dragHandle);
+                leftInfo.appendChild(iconBox);
+                leftInfo.appendChild(textDiv);
+                topRow.appendChild(leftInfo);
+
+                const rightControls = document.createElement('div');
+                rightControls.className = 'flex items-center gap-1 sm:gap-1.5 shrink-0 ms-1.5';
+
+                if (habit.type === 'counter') {
+                    const minusBtn = document.createElement('button');
+                    minusBtn.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] sm:text-xs transition-colors shrink-0';
+                    minusBtn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                    minusBtn.onclick = (e) => { e.stopPropagation(); updateHabitCounter(habit.id, -1); };
+
+                    const countLabel = document.createElement('span');
+                    countLabel.className = 'text-[10px] sm:text-xs font-bold text-slate-700 min-w-[28px] sm:min-w-[32px] text-center shrink-0';
+                    countLabel.textContent = `${currentVal}/${habit.target}`;
+
+                    const plusBtn = document.createElement('button');
+                    plusBtn.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center text-[10px] sm:text-xs shadow-sm transition-colors shrink-0';
+                    plusBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                    plusBtn.onclick = (e) => { e.stopPropagation(); updateHabitCounter(habit.id, 1); };
+
+                    rightControls.appendChild(minusBtn);
+                    rightControls.appendChild(countLabel);
+                    rightControls.appendChild(plusBtn);
+                } else {
+                    const checkBtn = document.createElement('button');
+                    checkBtn.className = `w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 transition-all shrink-0 ${isCompleted ? 'bg-brand-500 border-brand-500 text-white' : 'border-slate-300 text-transparent hover:border-brand-400'}`;
+                    checkBtn.innerHTML = '<i class="fa-solid fa-check text-[10px] sm:text-xs"></i>';
+                    checkBtn.onclick = (e) => { e.stopPropagation(); toggleBooleanHabit(habit.id); };
+                    rightControls.appendChild(checkBtn);
+                }
+
+                topRow.appendChild(rightControls);
+                card.appendChild(topRow);
+
+                if (habit.type === 'counter') {
+                    const pct = Math.min(100, Math.round((currentVal / habit.target) * 100));
+                    const barBg = document.createElement('div');
+                    barBg.className = 'mt-2.5 sm:mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden';
+                    const barFill = document.createElement('div');
+                    barFill.className = `h-full rounded-full transition-all duration-300 ${isCompleted ? 'bg-emerald-500' : 'bg-brand-500'}`;
+                    barFill.style.width = `${pct}%`;
+                    barBg.appendChild(barFill);
+                    card.appendChild(barBg);
+                }
+
+                wrapper.appendChild(card);
+                initSwipeGesture(wrapper, card, swipeBg, habit.id);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function reorderHabits(draggedId, targetId) {
+            const draggedIndex = habits.findIndex(h => h.id === draggedId);
+            const targetIndex = habits.findIndex(h => h.id === targetId);
+            if (draggedIndex > -1 && targetIndex > -1) {
+                const [movedHabit] = habits.splice(draggedIndex, 1);
+                habits.splice(targetIndex, 0, movedHabit);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function initSwipeGesture(wrapper, card, swipeBg, habitId) {
+            let startX = 0;
+            let currentX = 0;
+            let isDragging = false;
+            const leftIcon = swipeBg.querySelector('#swipe-icon-left');
+            const rightIcon = swipeBg.querySelector('#swipe-icon-right');
+
+            const onStart = (clientX) => {
+                isDragging = true;
+                startX = clientX;
+                card.style.transition = 'none';
+            };
+
+            const onMove = (clientX) => {
+                if (!isDragging) return;
+                currentX = clientX - startX;
+                if (currentX > 130) currentX = 130;
+                if (currentX < -130) currentX = -130;
+
+                card.style.transform = `translateX(${currentX}px)`;
+
+                if (currentX > 0) {
+                    swipeBg.className = 'absolute inset-0 flex items-center justify-between px-5 pointer-events-none rounded-2xl bg-emerald-50 transition-colors duration-150';
+                    leftIcon.style.opacity = Math.min(1, currentX / 50);
+                    leftIcon.style.transform = `scale(${Math.min(1.2, 0.5 + (currentX / 100))})`;
+                    rightIcon.style.opacity = 0;
+                } else if (currentX < 0) {
+                    swipeBg.className = 'absolute inset-0 flex items-center justify-between px-5 pointer-events-none rounded-2xl bg-red-50 transition-colors duration-150';
+                    rightIcon.style.opacity = Math.min(1, Math.abs(currentX) / 50);
+                    rightIcon.style.transform = `scale(${Math.min(1.2, 0.5 + (Math.abs(currentX) / 100))})`;
+                    leftIcon.style.opacity = 0;
+                } else {
+                    leftIcon.style.opacity = 0;
+                    rightIcon.style.opacity = 0;
+                }
+            };
+
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                card.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+
+                if (currentX > 75) {
+                    markHabitComplete(habitId);
+                } else if (currentX < -75) {
+                    confirmDeleteHabit(habitId);
+                }
+
+                card.style.transform = 'translateX(0px)';
+                leftIcon.style.opacity = 0;
+                rightIcon.style.opacity = 0;
+                currentX = 0;
+            };
+
+            card.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button') || e.target.closest('.cursor-grab')) return;
+                onStart(e.clientX);
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (isDragging) onMove(e.clientX);
+            });
+            window.addEventListener('mouseup', () => {
+                if (isDragging) onEnd();
+            });
+
+            card.addEventListener('touchstart', (e) => {
+                if (e.target.closest('button') || e.target.closest('.cursor-grab')) return;
+                onStart(e.touches[0].clientX);
+            }, { passive: true });
+            card.addEventListener('touchmove', (e) => {
+                if (isDragging) onMove(e.touches[0].clientX);
+            }, { passive: true });
+            card.addEventListener('touchend', () => {
+                if (isDragging) onEnd();
+            });
+        }
+
+        function markHabitComplete(id) {
+            const habit = habits.find(h => h.id === id);
+            if (habit) {
+                if (!habit.progress) habit.progress = {};
+                if (habit.type === 'counter') {
+                    habit.progress[selectedDateStr] = habit.target || 1;
+                } else {
+                    habit.progress[selectedDateStr] = 1;
+                }
+                saveData();
+                renderAll();
+            }
+        }
+
+        function toggleBooleanHabit(id) {
+            const habit = habits.find(h => h.id === id);
+            if (habit) {
+                if (!habit.progress) habit.progress = {};
+                habit.progress[selectedDateStr] = habit.progress[selectedDateStr] > 0 ? 0 : 1;
+                saveData();
+                renderAll();
+            }
+        }
+
+        function updateHabitCounter(id, delta) {
+            const habit = habits.find(h => h.id === id);
+            if (habit) {
+                if (!habit.progress) habit.progress = {};
+                const current = habit.progress[selectedDateStr] || 0;
+                const updated = Math.max(0, current + delta);
+                habit.progress[selectedDateStr] = updated;
+                saveData();
+                renderAll();
+            }
+        }
+
+        function updateHeaderStats() {
+            const activeHabits = habits.filter(h => isHabitActiveOnDate(h, selectedDateStr));
+            if (activeHabits.length === 0) {
+                document.getElementById('header-streak-val').textContent = fmtCount('days', 0);
+                document.getElementById('header-percent-val').textContent = '0%';
+                return;
+            }
+
+            let completedCount = 0;
+            activeHabits.forEach(h => {
+                const val = h.progress && h.progress[selectedDateStr] ? h.progress[selectedDateStr] : 0;
+                if (h.type === 'counter' ? val >= (h.target || 1) : val > 0) {
+                    completedCount++;
+                }
+            });
+
+            const pct = Math.round((completedCount / activeHabits.length) * 100);
+            const currentStreak = completedCount > 0 ? 1 : 0;
+
+            document.getElementById('header-streak-val').textContent = fmtCount('days', currentStreak);
+            document.getElementById('header-percent-val').textContent = `${pct}%`;
+        }
+
+        function renderManageList() {
+            const container = document.getElementById('manage-habit-list');
+            container.innerHTML = '';
+
+            if (habits.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">${t('noHabitsManage')}</p>`;
+                return;
+            }
+
+            habits.forEach(habit => {
+                const repeatDesc = repeatDescription(habit);
+
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 gap-3';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm shrink-0">
+                            <i class="${habit.icon}"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-semibold text-sm text-slate-800 truncate">${habit.name}</h4>
+                            <p class="text-[11px] text-slate-400 truncate">${habit.category || t('general')} • ${repeatDesc}</p>
+                        </div>
+                    </div>
+                    <button onclick="confirmDeleteHabit('${habit.id}')" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 transition-all flex items-center justify-center shadow-sm shrink-0">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function confirmDeleteHabit(id) {
+            showNotificationModal(
+                t('deleteHabitTitle'),
+                t('deleteHabitMsg'),
+                'fa-solid fa-trash-can',
+                'bg-red-50 text-red-500',
+                () => {
+                    habits = habits.filter(h => h.id !== id);
+                    saveData();
+                    renderAll();
+                    if(!document.getElementById('view-habits').classList.contains('hidden')) {
+                        renderManageList();
+                    }
+                    closeNotificationModal();
+                }
+            );
+        }
+
+        function renderAnalytics() {
+            const container = document.getElementById('analytics-content');
+            container.innerHTML = '';
+
+            const activeHabits = habits.filter(h => isHabitActiveOnDate(h, selectedDateStr));
+            if (activeHabits.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">${t('noStats')}</p>`;
+                return;
+            }
+
+            activeHabits.forEach(habit => {
+                const currentVal = habit.progress && habit.progress[selectedDateStr] ? habit.progress[selectedDateStr] : 0;
+                const isCompleted = habit.type === 'counter' ? currentVal >= (habit.target || 1) : currentVal > 0;
+
+                const card = document.createElement('div');
+                card.className = 'p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3';
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-brand-600 shadow-sm shrink-0">
+                            <i class="${habit.icon}"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-semibold text-sm text-slate-800 truncate">${habit.name}</h4>
+                            <p class="text-[11px] text-slate-400 truncate">${t('status')} <span class="${isCompleted ? 'text-emerald-600 font-bold' : 'text-slate-500'}">${isCompleted ? t('done') + (habit.type === 'counter' ? ' (' + currentVal + '/' + habit.target + ')' : '') : t('notDone')}</span></p>
+                        </div>
+                    </div>
+                    <div class="text-end shrink-0">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}">
+                            ${isCompleted ? '100%' : '0%'}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openAddModal() {
+            const modal = document.getElementById('add-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('input-habit-name').value = '';
+            document.getElementById('input-habit-category').value = '';
+            document.getElementById('input-habit-target').value = '10';
+            selectRepeatMode('everyday');
+            selectHabitType('boolean');
+            document.getElementById('input-habit-icon').value = iconList[0];
+            renderIconSelector();
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            setTimeout(() => document.getElementById('input-habit-name').focus(), 300);
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            const content = document.getElementById('modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function selectRepeatMode(mode) {
+            document.getElementById('input-repeat-mode').value = mode;
+            const btnToday = document.getElementById('repeat-btn-today');
+            const btnEveryday = document.getElementById('repeat-btn-everyday');
+            const btnCustom = document.getElementById('repeat-btn-custom');
+            const customContainer = document.getElementById('custom-days-container');
+
+            [btnToday, btnEveryday, btnCustom].forEach(b => {
+                b.className = "py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all text-center";
+            });
+
+            if (mode === 'today') {
+                btnToday.className = "py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all text-center";
+                customContainer.classList.add('hidden');
+            } else if (mode === 'everyday') {
+                btnEveryday.className = "py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all text-center";
+                customContainer.classList.add('hidden');
+            } else if (mode === 'custom') {
+                btnCustom.className = "py-2.5 px-2 text-[11px] font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all text-center";
+                customContainer.classList.remove('hidden');
+            }
+        }
+
+        function selectHabitType(type) {
+            document.getElementById('input-habit-type').value = type;
+            const btnBool = document.getElementById('type-btn-boolean');
+            const btnCount = document.getElementById('type-btn-counter');
+            const targetCont = document.getElementById('target-count-container');
+
+            if (type === 'counter') {
+                btnCount.className = "py-3 px-3 text-xs font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all flex items-center justify-center gap-2";
+                btnBool.className = "py-3 px-3 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2";
+                targetCont.classList.remove('hidden');
+            } else {
+                btnBool.className = "py-3 px-3 text-xs font-semibold rounded-xl border border-brand-500 bg-brand-50 text-brand-700 transition-all flex items-center justify-center gap-2";
+                btnCount.className = "py-3 px-3 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2";
+                targetCont.classList.add('hidden');
+            }
+        }
+
+        function renderIconSelector() {
+            const grid = document.getElementById('icon-selector-grid');
+            grid.innerHTML = '';
+            const selectedInput = document.getElementById('input-habit-icon');
+
+            iconList.forEach(cls => {
+                const btn = document.createElement('button');
+                const isSelected = cls === selectedInput.value;
+                btn.type = 'button';
+                btn.className = `w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all ${isSelected ? 'bg-slate-900 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`;
+                btn.innerHTML = `<i class="${cls}"></i>`;
+                btn.onclick = () => {
+                    selectedInput.value = cls;
+                    renderIconSelector();
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function saveNewHabit() {
+            const nameInput = document.getElementById('input-habit-name');
+            const name = nameInput.value.trim();
+            const category = document.getElementById('input-habit-category').value.trim();
+            const repeatMode = document.getElementById('input-repeat-mode').value;
+            const type = document.getElementById('input-habit-type').value;
+            const target = parseInt(document.getElementById('input-habit-target').value) || 1;
+            const icon = document.getElementById('input-habit-icon').value;
+
+            let specificDays = [];
+            if (repeatMode === 'custom') {
+                const checkboxes = document.querySelectorAll('input[name="custom-day"]:checked');
+                checkboxes.forEach(cb => specificDays.push(parseInt(cb.value)));
+            }
+
+            if (!name) {
+                nameInput.classList.add('border-red-400', 'ring-2', 'ring-red-100');
+                setTimeout(() => nameInput.classList.remove('border-red-400', 'ring-2', 'ring-red-100'), 1500);
+                return;
+            }
+
+            const newHabit = {
+                id: generateId(),
+                name,
+                category,
+                repeatMode,
+                startDate: selectedDateStr,
+                specificDays,
+                type,
+                target: type === 'counter' ? target : 1,
+                icon,
+                progress: {}
+            };
+
+            habits.push(newHabit);
+            saveData();
+            renderAll();
+            closeAddModal();
+        }
+
+        function showNotificationModal(title, message, iconClass, iconBgColor, onConfirm) {
+            const modal = document.getElementById('notification-modal');
+            const content = document.getElementById('notification-content');
+            
+            document.getElementById('notif-title').textContent = title;
+            document.getElementById('notif-message').textContent = message;
+            document.getElementById('notif-icon-box').className = `w-14 h-14 rounded-full flex items-center justify-center mx-auto text-2xl ${iconBgColor}`;
+            document.getElementById('notif-icon-box').innerHTML = `<i class="${iconClass}"></i>`;
+
+            const confirmBtn = document.getElementById('notif-confirm-btn');
+            const newBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+            newBtn.onclick = onConfirm;
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }
+
+        function closeNotificationModal() {
+            const modal = document.getElementById('notification-modal');
+            const content = document.getElementById('notification-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function confirmResetData() {
+            showNotificationModal(
+                t('resetTitle'),
+                t('resetConfirmMsg'),
+                'fa-solid fa-triangle-exclamation',
+                'bg-red-50 text-red-500',
+                () => {
+                    localStorage.removeItem(STORAGE_KEY);
+                    habits = [];
+                    renderAll();
+                    closeNotificationModal();
+                }
+            );
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(habits, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `habitcraft_backup_${selectedDateStr}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        habits = imported;
+                        saveData();
+                        renderAll();
+                        alert(t('importOk'));
+                    } else {
+                        alert(t('importBadFormat'));
+                    }
+                } catch (err) {
+                    alert(t('importFail'));
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAddModal();
+                closeNotificationModal();
+                closeProfileModal();
+            }
+        });
+
+        window.onload = () => { applyLanguage(); checkAuthSession(); };
+    </script>
+</body>
+</html>
