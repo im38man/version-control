@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Mansekai</title>
+<link rel="icon" type="image/png" href="img/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --text:#111827;
+  --muted:#6b7280;
+  --btn:#111827;
+  --border:#e5e7eb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:#fff;
+  color:var(--text);
+  font-family:'Poppins',system-ui,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  text-align:center;
+}
+.error-page{
+  width:min(560px,100%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.logo{
+  width:82px;
+  height:82px;
+  object-fit:contain;
+  margin-bottom:24px;
+}
+.code{
+  font-size:clamp(5rem,18vw,8rem);
+  line-height:.9;
+  font-weight:800;
+  letter-spacing:-.07em;
+}
+.title{
+  margin-top:18px;
+  font-size:clamp(1.2rem,4vw,1.6rem);
+  font-weight:700;
+}
+.message{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.6;
+}
+.refresh{
+  margin-top:24px;
+  border:0;
+  background:var(--btn);
+  color:#fff;
+  border-radius:9px;
+  padding:11px 20px;
+  font:600 .82rem 'Poppins',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:transform .18s ease,background .18s ease;
+}
+.refresh:hover{
+  background:#000;
+  transform:translateY(-1px);
+}
+.refresh:active{transform:translateY(0)}
+.refresh:focus-visible{
+  outline:3px solid #9ca3af;
+  outline-offset:3px;
+}
+@media(max-width:480px){
+  .logo{width:68px;height:68px;margin-bottom:20px}
+  .title{margin-top:14px}
+  .message{font-size:.82rem}
+  .refresh{width:100%;max-width:220px}
+}
+</style>
+</head>
+<body>
+  <main class="error-page">
+    <img class="logo" src="img/icon.png" alt="Mansekai">
+    <div class="code">404</div>
+    <h1 class="title">Page not found</h1>
+    <p class="message">The page you are looking for could not be found or may have been moved.</p>
+    <button class="refresh" type="button" onclick="window.location.reload()">
+      Refresh
+    </button>
+  </main>
+</body>
+</html>
