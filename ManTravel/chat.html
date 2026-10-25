@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat - ManTravel Elite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar" aria-label="Navigasi utama">
+        <div class="container nav-container">
+            <a href="index.html" class="brand">ManTravel<span>Elite</span></a>
+            <div class="nav-links" style="gap:1.5rem;position:static;flex-direction:row;opacity:1;visibility:visible;transform:none;background:none;padding:0;border:0">
+                <a href="gallery.html">Galeri</a>
+                <a href="index.html" class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-left"></i> Beranda</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="chat-layout">
+        <aside class="chat-sidebar">
+            <h1>Concierge</h1>
+            <div class="agent">
+                <div class="avatar">M</div>
+                <div>
+                    <strong>VIP Concierge</strong>
+                    <small><i class="fa-solid fa-circle"></i> Online, balasan otomatis</small>
+                </div>
+            </div>
+            <div class="topics" id="topics">
+                <h2>Tanya cepat</h2>
+                <button class="topic" data-q="Berapa harga paket yang tersedia?">Harga paket</button>
+                <button class="topic" data-q="Bagaimana cara memesan perjalanan?">Cara memesan</button>
+                <button class="topic" data-q="Apa saja yang perlu disiapkan untuk visa dan paspor?">Visa dan paspor</button>
+                <button class="topic" data-q="Bagaimana kalau saya perlu membatalkan pesanan?">Pembatalan</button>
+            </div>
+            <button class="link-btn chat-note" id="clearChat" style="text-align:left">Hapus riwayat percakapan</button>
+        </aside>
+
+        <section class="chat-main" aria-label="Percakapan">
+            <div class="chat-messages" id="chatBox" aria-live="polite"></div>
+
+            <form class="chat-input" id="chatForm">
+                <label for="chatMsg" style="position:absolute;left:-9999px">Pesan Anda</label>
+                <input type="text" id="chatMsg" placeholder="Tulis pertanyaan Anda" autocomplete="off" maxlength="500">
+                <button type="submit" class="btn" aria-label="Kirim pesan"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+        </section>
+    </div>
+
+    <script src="data/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

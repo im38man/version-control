@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri - ManTravel Elite</title>
+    <meta name="description" content="Dokumentasi foto perjalanan ManTravel Elite.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar" aria-label="Navigasi utama">
+        <div class="container nav-container">
+            <a href="index.html" class="brand">ManTravel<span>Elite</span></a>
+            <button class="menu-toggle" id="mobile-menu" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Beranda</a>
+                <a href="index.html#destinations">Destinasi</a>
+                <a href="index.html#trips">Perjalanan Saya<span class="badge" id="tripBadge" hidden>0</span></a>
+                <a href="gallery.html" class="active" aria-current="page">Galeri</a>
+                <a href="chat.html">Live Chat</a>
+                <div id="authSlot"><a href="login.html" class="btn btn-sm">Sign In</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container page-pad">
+        <div class="trips-head">
+            <div>
+                <p class="muted" id="galleryCount">Dokumentasi perjalanan</p>
+                <h1>Galeri perjalanan</h1>
+            </div>
+            <button class="btn btn-brass" id="addPhotoBtn"><i class="fa-solid fa-plus"></i> Tambah foto</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="chips" id="galleryChips" role="group" aria-label="Filter galeri"></div>
+        </div>
+
+        <div class="masonry" id="masonry" aria-live="polite"></div>
+    </main>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Penampil foto" hidden>
+        <button class="lb-close" id="lbClose" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+        <button class="lb-nav lb-prev" id="lbPrev" aria-label="Foto sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+        <figure class="lb-figure">
+            <img id="lbImg" src="" alt="">
+            <figcaption id="lbCaption"></figcaption>
+        </figure>
+        <button class="lb-nav lb-next" id="lbNext" aria-label="Foto berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- TAMBAH FOTO -->
+    <div class="ticket-modal" id="uploadModal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle" hidden>
+        <form class="upload-card" id="uploadForm" novalidate>
+            <h2 id="uploadTitle">Tambah foto</h2>
+            <p class="muted" style="margin-bottom:1.25rem">Foto disimpan di perangkat ini dan dikecilkan otomatis.</p>
+            <div class="form-group">
+                <label for="upFile">Foto</label>
+                <input type="file" id="upFile" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="upDest">Perjalanan</label>
+                <select id="upDest"></select>
+            </div>
+            <div class="form-group">
+                <label for="upCaption">Keterangan</label>
+                <input type="text" id="upCaption" maxlength="80" placeholder="Contoh: Sarapan di ryokan">
+            </div>
+            <p class="field-error" id="uploadError" role="alert" hidden></p>
+            <div class="ticket-actions" style="margin-top:1.25rem">
+                <button type="button" class="btn btn-ghost" id="upCancel">Batal</button>
+                <button type="submit" class="btn">Simpan foto</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <a href="index.html" class="footer-brand">ManTravel<span>Elite</span></a>
+                <p>Menghadirkan standar baru dalam industri pariwisata premium.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navigasi</h4>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="index.html#destinations">Destinasi</a></li>
+                    <li><a href="index.html#trips">Perjalanan Saya</a></li>
+                    <li><a href="gallery.html">Galeri</a></li>
+                    <li><a href="chat.html">Live Chat</a></li>
+                    <li><a href="login.html">Sign In</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>VIP Concierge</h4>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> SCBD Sudirman, Jakarta Selatan</li>
+                    <li><i class="fa-solid fa-phone"></i> +62 21 5558 8888</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom"><p>&copy; 2026 ManTravel Elite. All Rights Reserved.</p></div>
+    </footer>
+
+    <script src="data/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

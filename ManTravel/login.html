@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - ManTravel Elite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <aside class="auth-aside">
+            <a href="index.html" class="brand">ManTravel<span>Elite</span></a>
+            <blockquote>Satu akun untuk semua perjalanan Anda.</blockquote>
+        </aside>
+
+        <main class="auth-panel">
+            <div class="auth-box">
+
+                <!-- 1. LOGIN -->
+                <section id="login-section" class="auth-section active-auth">
+                    <h2>Selamat datang kembali</h2>
+                    <p>Masuk untuk melihat perjalanan dan favorit Anda.</p>
+                    <form id="loginForm" novalidate>
+                        <div class="form-group">
+                            <label for="logEmail">Email</label>
+                            <input type="email" id="logEmail" autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="logPass">Password</label>
+                            <div class="input-wrap">
+                                <input type="password" id="logPass" autocomplete="current-password" required>
+                                <button type="button" class="toggle-pass" aria-label="Tampilkan password"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <p class="field-error" id="loginError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-block">Sign In</button>
+                    </form>
+                    <div class="auth-links">
+                        <button class="auth-link" data-auth="forgot-section">Lupa password?</button>
+                        <button class="auth-link" data-auth="register-section">Belum punya akun? Daftar</button>
+                        <a href="index.html" class="auth-link">Kembali ke beranda</a>
+                    </div>
+                </section>
+
+                <!-- 2. REGISTER -->
+                <section id="register-section" class="auth-section">
+                    <h2>Buat akun</h2>
+                    <p>Simpan favorit dan kelola pesanan di satu tempat.</p>
+                    <form id="registerForm" novalidate>
+                        <div class="form-group">
+                            <label for="regName">Nama lengkap</label>
+                            <input type="text" id="regName" autocomplete="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">Email</label>
+                            <input type="email" id="regEmail" autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regPass">Password (minimal 6 karakter)</label>
+                            <div class="input-wrap">
+                                <input type="password" id="regPass" autocomplete="new-password" minlength="6" required>
+                                <button type="button" class="toggle-pass" aria-label="Tampilkan password"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <p class="field-error" id="registerError" role="alert" hidden></p>
+                        <button type="submit" class="btn btn-block">Buat akun</button>
+                    </form>
+                    <div class="auth-links">
+                        <button class="auth-link" data-auth="login-section">Sudah punya akun? Sign In</button>
+                    </div>
+                </section>
+
+                <!-- 3. LUPA PASSWORD -->
+                <section id="forgot-section" class="auth-section">
+                    <h2>Reset password</h2>
+                    <p>Masukkan email Anda untuk menerima instruksi pemulihan.</p>
+                    <form id="forgotForm" novalidate>
+                        <div class="form-group">
+                            <label for="forgotEmail">Email terdaftar</label>
+                            <input type="email" id="forgotEmail" autocomplete="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-block">Kirim link reset</button>
+                    </form>
+                    <div class="auth-links">
+                        <button class="auth-link" data-auth="login-section">Kembali ke Sign In</button>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+    <script src="data/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

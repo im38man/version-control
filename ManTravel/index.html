@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManTravel Elite - Itinerary & Pemesanan Perjalanan Premium</title>
+    <meta name="description" content="Itinerary perjalanan premium dengan concierge pribadi, jadwal per jam, dan pemesanan langsung.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" aria-label="Navigasi utama">
+        <div class="container nav-container">
+            <a href="index.html" class="brand">ManTravel<span>Elite</span></a>
+            <button class="menu-toggle" id="mobile-menu" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-links" id="navLinks">
+                <a href="#/" data-nav="home">Beranda</a>
+                <a href="#destinations" data-nav="destinations">Destinasi</a>
+                <a href="#trips" data-nav="trips">Perjalanan Saya<span class="badge" id="tripBadge" hidden>0</span></a>
+                <a href="gallery.html">Galeri</a>
+                <a href="chat.html">Live Chat</a>
+                <div id="authSlot"><a href="login.html" class="btn btn-sm">Sign In</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+    <!-- VIEW 1: BERANDA -->
+    <div id="home-view" class="spa-view active-view">
+        <header class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <h1>Perjalanan kelas atas, tanpa urusan teknis.</h1>
+                    <p class="hero-lead">Concierge pribadi, penjemputan dari pintu ke pintu, dan jadwal yang disusun per jam. Anda cukup datang.</p>
+                    <form class="search-bar" id="heroSearch" role="search">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <label for="heroQuery" class="sr-only" style="position:absolute;left:-9999px">Cari kota atau negara</label>
+                        <input type="search" id="heroQuery" placeholder="Cari kota atau negara" autocomplete="off">
+                        <button type="submit" class="btn">Cari perjalanan</button>
+                    </form>
+                    <p class="search-hint">Coba: <span id="heroHints"></span></p>
+                </div>
+                <div class="hero-art">
+                    <div class="arch"><img id="heroImg" src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=80" alt="Pemandangan kota Paris" onerror="this.style.display='none'"></div>
+                    <div class="hero-pick" id="heroPick"></div>
+                </div>
+            </div>
+        </header>
+
+        <section id="destinations" class="section">
+            <div class="container">
+                <div class="section-head">
+                    <h2 class="section-title">Pilih tujuan Anda</h2>
+                    <p class="section-sub">Setiap itinerary sudah termasuk penjemputan, akomodasi, dan pendamping lokal.</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="chips" id="chips" role="group" aria-label="Filter kategori"></div>
+                    <div class="toolbar-right">
+                        <label for="sortSel">Urutkan</label>
+                        <select id="sortSel" class="select">
+                            <option value="featured">Pilihan kami</option>
+                            <option value="price-asc">Harga terendah</option>
+                            <option value="price-desc">Harga tertinggi</option>
+                            <option value="nights">Durasi terlama</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid" id="destGrid" aria-live="polite"></div>
+                <div class="load-more" id="loadMoreWrap"></div>
+            </div>
+        </section>
+
+        <section class="section promise">
+            <div class="container">
+                <h2 class="section-title">Yang kami urus, supaya Anda tidak perlu.</h2>
+                <div class="promise-grid">
+                    <div class="promise-item">
+                        <h3>Penjemputan pribadi</h3>
+                        <p>Sopir dan pendamping menunggu di pintu kedatangan, dari bandara sampai lobi hotel.</p>
+                    </div>
+                    <div class="promise-item">
+                        <h3>Jadwal per jam</h3>
+                        <p>Reservasi restoran, tiket masuk, dan transportasi sudah dipesan sebelum Anda berangkat.</p>
+                    </div>
+                    <div class="promise-item">
+                        <h3>Concierge 24 jam</h3>
+                        <p>Ada perubahan rencana di tengah perjalanan? Satu pesan, kami atur ulang.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- VIEW 2: DETAIL ITINERARY (diisi script.js) -->
+    <div id="detail-view" class="spa-view">
+        <div class="container page-pad" id="detailRoot"></div>
+    </div>
+
+    <!-- VIEW 3: PERJALANAN SAYA (diisi script.js) -->
+    <div id="trips-view" class="spa-view">
+        <div class="container page-pad" id="tripsRoot"></div>
+    </div>
+    </main>
+
+    <!-- E-TIKET -->
+    <div class="ticket-modal" id="ticketModal" role="dialog" aria-modal="true" aria-labelledby="ticketTitle" hidden>
+        <div class="ticket-wrap" id="ticketWrap"></div>
+    </div>
+
+    <div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <a href="index.html" class="footer-brand">ManTravel<span>Elite</span></a>
+                <p>Menghadirkan standar baru dalam industri pariwisata premium.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navigasi</h4>
+                <ul>
+                    <li><a href="#/">Beranda</a></li>
+                    <li><a href="#destinations">Destinasi</a></li>
+                    <li><a href="#trips">Perjalanan Saya</a></li>
+                    <li><a href="gallery.html">Galeri</a></li>
+                    <li><a href="chat.html">Live Chat</a></li>
+                    <li><a href="login.html">Sign In</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>VIP Concierge</h4>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> SCBD Sudirman, Jakarta Selatan</li>
+                    <li><i class="fa-solid fa-phone"></i> +62 21 5558 8888</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom"><p>&copy; 2026 ManTravel Elite. All Rights Reserved.</p></div>
+    </footer>
+
+    <script src="data/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
