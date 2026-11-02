@@ -44,7 +44,7 @@
     /* top bar */
     .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .back {
-      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none; cursor: pointer;
       color: #455b49; font: 12px Arial, sans-serif; letter-spacing: .06em;
       padding: 9px 16px; border: 1px solid #b9cbb8; border-radius: 999px; background: #ffffffa8; transition: .2s ease;
     }
@@ -68,6 +68,7 @@
     }
     .sheet::before { left: 8%; transform: rotate(-6deg); }
     .sheet::after { right: 8%; transform: rotate(5deg); }
+    #viewEdit .sheet { margin-top: 26px; }
 
     .row-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .tabs { display: inline-flex; padding: 4px; gap: 4px; background: #eff3e9; border-radius: 999px; }
@@ -97,6 +98,8 @@
     .chip:hover:not(:disabled) { background: #fff; transform: translateY(-1px); }
     .chip[aria-pressed="true"] { background: #e4ece1; border-color: #9caf98; }
     .chip:disabled { opacity: .45; cursor: not-allowed; }
+    .chip.primary { background: #e4ece1; border-color: #9caf98; color: #31473a; }
+    .chip.danger { color: #a05b5b; border-color: #e2c9c9; }
     .chip.f-elegan { font: italic 15px var(--f-elegan); }
     .chip.f-tangan { font: 17px var(--f-tangan); }
     .chip.f-klasik { font: italic 13px var(--f-klasik); }
@@ -133,6 +136,66 @@
     .files { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px dashed #dbe3d6; }
     .hint { text-align: center; margin: 12px auto 0; max-width: 520px; font: italic 12px/1.7 Georgia, serif; color: #8a9b88; }
 
+    /* ===== daftar catatan ===== */
+    .list-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .search {
+      flex: 1 1 200px; min-width: 0; max-width: 340px; min-height: 36px; padding: 8px 16px;
+      border: 1px solid #cdd9c8; border-radius: 999px; background: #ffffffb0; color: #455b49;
+      font: 13px Arial, sans-serif; outline: none; transition: .2s ease;
+    }
+    .search::placeholder { color: #a3b1a1; }
+    .search:focus { border-color: #9caf98; background: #fff; }
+    .list-spacer { flex: 1 1 0; }
+    .list-count { font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; margin: 6px 2px 0; }
+    .notes { list-style: none; margin: 0; padding: 18px 0 4px; display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 26px 20px; }
+    .note-card {
+      position: relative; background: #fffefa; border: 1px solid #ece8da;
+      box-shadow: 0 8px 20px #435b4718; transition: box-shadow .25s ease, translate .25s ease;
+    }
+    .note-card:nth-child(odd) { transform: rotate(-.7deg); }
+    .note-card:nth-child(even) { transform: rotate(.8deg); }
+    .note-card::before {
+      content: ""; position: absolute; top: -9px; left: 50%; width: 54px; height: 17px; margin-left: -27px; z-index: 2; pointer-events: none;
+      background: rgba(214,226,206,.85); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620; transform: rotate(-3deg);
+    }
+    .note-card:hover, .note-card:focus-within { translate: 0 -4px; box-shadow: 0 16px 32px #435b4730; }
+    .note-open {
+      display: block; width: 100%; margin: 0; padding: 18px 14px 14px; border: 0; background: none;
+      text-align: left; cursor: pointer; color: inherit; font: inherit; border-radius: inherit;
+    }
+    .note-open:focus-visible { outline: 2px solid #8fa58b; outline-offset: -2px; }
+    .nc-body {
+      position: relative; height: 120px; margin-bottom: 10px; padding-bottom: 8px; overflow: hidden;
+      border-bottom: 1px dashed #e3e6d8; font-size: 14px; line-height: 1.55; color: #4a5d4d; word-break: break-word; white-space: pre-line;
+    }
+    .nc-body::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30px; background: linear-gradient(rgba(255,254,250,0), #fffefa); pointer-events: none; }
+    .note-card[data-font="elegan"] .nc-body { font: italic 500 16px/1.5 var(--f-elegan); }
+    .note-card[data-font="tangan"] .nc-body { font: 500 18px/1.4 var(--f-tangan); }
+    .note-card[data-font="klasik"] .nc-body { font: italic 14px/1.55 var(--f-klasik); }
+    .nc-body.empty { color: #b4bfb1; font-style: italic; }
+    .nc-body canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .nc-title { margin: 0 0 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: italic 600 21px/1.25 var(--f-elegan); color: #31473a; }
+    .nc-title.untitled { color: #a3b1a1; font-weight: 500; }
+    .nc-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; font: 10px Arial, sans-serif; letter-spacing: .08em; color: #8a9b88; text-transform: uppercase; }
+    .nc-badge { color: #6f876d; }
+    .note-del {
+      position: absolute; top: 6px; right: 6px; z-index: 3; display: grid; place-items: center; width: 28px; height: 28px; margin: 0; padding: 0;
+      border: 0; border-radius: 50%; background: #fffefaf0; box-shadow: 0 2px 6px #435b4722; color: #8a9b88; font: 16px/1 Arial, sans-serif;
+      cursor: pointer; opacity: 0; transition: .2s ease;
+    }
+    .note-card:hover .note-del, .note-card:focus-within .note-del, .note-del:focus-visible { opacity: 1; }
+    .note-del:hover { color: #a05b5b; background: #fff; }
+    @media (hover: none) { .note-del { opacity: .9; } }
+    .note-add {
+      display: grid; place-items: center; align-content: center; gap: 6px; width: 100%; min-height: 236px; margin: 0; padding: 14px;
+      border: 1.5px dashed #bccab8; background: #ffffff70; color: #6f876d; cursor: pointer; text-align: center; font: italic 17px var(--f-elegan); transition: .2s ease;
+    }
+    .note-add b { font: 300 40px/1 Arial, sans-serif; color: #9caf98; }
+    .note-add:hover { background: #fff; border-color: #9caf98; }
+    .note-card.add { box-shadow: none; background: none; border: 0; }
+    .note-card.add::before { display: none; }
+    .empty-state { text-align: center; margin: 24px auto 4px; max-width: 380px; font: italic 14px/1.8 Georgia, serif; color: #8a9b88; }
+
     .toast {
       position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 20; transform: translate(-50%, 14px);
       max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #25352be6; color: #fffefa;
@@ -147,6 +210,7 @@
       body { padding-top: 44px; }
       .wrap { width: min(100%, 900px); }
       .sheet { padding: 34px 40px 28px; }
+      .notes { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
     }
     @media (max-width: 600px) {
       body { padding: 18px 12px 34px; }
@@ -158,6 +222,12 @@
       .chip { padding: 6px 11px; }
       .range input { width: 80px; }
       .note-date { width: 100%; }
+      .notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+      .note-open { padding: 16px 10px 12px; }
+      .nc-body { height: 104px; }
+      .nc-title { font-size: 18px; }
+      .note-add { min-height: 200px; }
+      .search { max-width: none; flex-basis: 100%; order: 2; }
     }
     @media (max-width: 360px) {
       .tools .sep { display: none; }
@@ -172,62 +242,83 @@
   <div class="glow one"></div><div class="glow two"></div>
   <main class="wrap">
     <div class="top">
-      <a class="back" href="index.html">← Kembali</a>
-      <div class="status" id="status" role="status" aria-live="polite">Siap menulis</div>
+      <a class="back" id="backHome" href="index.html">← Kembali</a>
+      <button type="button" class="back" id="backList" hidden>← Semua catatan</button>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
     </div>
 
-    <div class="eyebrow">Tempat kecil untuk menulis</div>
-    <h1>Notepad</h1>
-    <p class="lede">Ketik lewat keyboard atau goreskan dengan pensil digital. Semuanya tersimpan otomatis di perangkat ini.</p>
+    <div id="hero">
+      <div class="eyebrow">Tempat kecil untuk menulis</div>
+      <h1>Notepad</h1>
+      <p class="lede">Pilih catatan yang mau diedit, atau mulai yang baru. Semuanya tersimpan otomatis di perangkat ini.</p>
+    </div>
 
-    <section class="sheet" aria-label="Catatan">
-      <div class="row-top">
-        <div class="tabs" role="tablist" aria-label="Cara menulis">
-          <button type="button" class="tab" id="tabType" role="tab" aria-selected="true">⌨ Ketik</button>
-          <button type="button" class="tab" id="tabDraw" role="tab" aria-selected="false">✎ Pensil</button>
+    <!-- ===== tampilan 1: daftar catatan ===== -->
+    <div id="viewList">
+      <section class="sheet" aria-label="Daftar catatan">
+        <div class="list-bar">
+          <button type="button" class="chip primary" id="newBtn">＋ Catatan baru</button>
+          <button type="button" class="chip" id="importListBtn">⇧ Impor .txt</button>
+          <input class="search" id="search" type="search" placeholder="Cari catatan…" aria-label="Cari catatan" autocomplete="off">
         </div>
-        <div class="note-date" id="noteDate"></div>
-      </div>
+        <div class="list-count" id="listCount"></div>
+        <ul class="notes" id="notes"></ul>
+        <p class="empty-state" id="emptyState" hidden></p>
+      </section>
+    </div>
 
-      <input class="note-title" id="noteTitle" type="text" maxlength="80" placeholder="Judul catatan…" aria-label="Judul catatan" autocomplete="off">
+    <!-- ===== tampilan 2: editor satu catatan ===== -->
+    <div id="viewEdit" hidden>
+      <section class="sheet" aria-label="Catatan">
+        <div class="row-top">
+          <div class="tabs" role="tablist" aria-label="Cara menulis">
+            <button type="button" class="tab" id="tabType" role="tab" aria-selected="true">⌨ Ketik</button>
+            <button type="button" class="tab" id="tabDraw" role="tab" aria-selected="false">✎ Pensil</button>
+          </div>
+          <div class="note-date" id="noteDate"></div>
+        </div>
 
-      <!-- alat mode ketik -->
-      <div class="tools" id="toolsType">
-        <button type="button" class="chip f-elegan" data-font="elegan" aria-pressed="true">Elegan</button>
-        <button type="button" class="chip f-tangan" data-font="tangan" aria-pressed="false">Tulisan tangan</button>
-        <button type="button" class="chip f-klasik" data-font="klasik" aria-pressed="false">Klasik</button>
-        <span class="sep"></span>
-        <button type="button" class="chip" id="sizeDown" aria-label="Perkecil huruf">A−</button>
-        <button type="button" class="chip" id="sizeUp" aria-label="Perbesar huruf">A+</button>
-      </div>
+        <input class="note-title" id="noteTitle" type="text" maxlength="80" placeholder="Judul catatan…" aria-label="Judul catatan" autocomplete="off">
 
-      <!-- alat mode pensil -->
-      <div class="tools" id="toolsDraw" hidden>
-        <div class="swatches" id="swatches" role="group" aria-label="Warna tinta"></div>
-        <span class="sep"></span>
-        <button type="button" class="chip" data-tool="pen" aria-pressed="true">✎ Pensil</button>
-        <button type="button" class="chip" data-tool="eraser" aria-pressed="false">⌫ Penghapus</button>
-        <label class="range">Tebal <input type="range" id="penWidth" min="2" max="24" step="1" value="6"></label>
-        <span class="sep"></span>
-        <button type="button" class="chip" id="undoBtn" disabled>↶ Urungkan</button>
-        <button type="button" class="chip" id="clearBtn" disabled>Bersihkan</button>
-        <button type="button" class="chip" id="pngBtn">⇩ Simpan PNG</button>
-      </div>
+        <!-- alat mode ketik -->
+        <div class="tools" id="toolsType">
+          <button type="button" class="chip f-elegan" data-font="elegan" aria-pressed="true">Elegan</button>
+          <button type="button" class="chip f-tangan" data-font="tangan" aria-pressed="false">Tulisan tangan</button>
+          <button type="button" class="chip f-klasik" data-font="klasik" aria-pressed="false">Klasik</button>
+          <span class="sep"></span>
+          <button type="button" class="chip" id="sizeDown" aria-label="Perkecil huruf">A−</button>
+          <button type="button" class="chip" id="sizeUp" aria-label="Perbesar huruf">A+</button>
+        </div>
 
-      <div class="paper" id="paperType" data-font="elegan">
-        <textarea id="noteText" placeholder="Mulai menulis di sini…" spellcheck="true" aria-label="Isi catatan"></textarea>
-      </div>
-      <div class="paper draw" id="paperDraw" hidden>
-        <canvas id="pad" width="1000" height="1200" aria-label="Kertas tulis dengan pensil digital"></canvas>
-      </div>
-      <div class="count" id="count"></div>
+        <!-- alat mode pensil -->
+        <div class="tools" id="toolsDraw" hidden>
+          <div class="swatches" id="swatches" role="group" aria-label="Warna tinta"></div>
+          <span class="sep"></span>
+          <button type="button" class="chip" data-tool="pen" aria-pressed="true">✎ Pensil</button>
+          <button type="button" class="chip" data-tool="eraser" aria-pressed="false">⌫ Penghapus</button>
+          <label class="range">Tebal <input type="range" id="penWidth" min="2" max="24" step="1" value="6"></label>
+          <span class="sep"></span>
+          <button type="button" class="chip" id="undoBtn" disabled>↶ Urungkan</button>
+          <button type="button" class="chip" id="clearBtn" disabled>Bersihkan</button>
+          <button type="button" class="chip" id="pngBtn">⇩ Simpan PNG</button>
+        </div>
 
-      <div class="files">
-        <button type="button" class="chip" id="importBtn">⇧ Impor .txt</button>
-        <button type="button" class="chip" id="exportBtn">⇩ Ekspor .txt</button>
-      </div>
-      <p class="hint">Ekspor .txt menyimpan tulisan ketikan, dengan judul sebagai nama file. Saat impor, nama file jadi judul catatan.</p>
-    </section>
+        <div class="paper" id="paperType" data-font="elegan">
+          <textarea id="noteText" placeholder="Mulai menulis di sini…" spellcheck="true" aria-label="Isi catatan"></textarea>
+        </div>
+        <div class="paper draw" id="paperDraw" hidden>
+          <canvas id="pad" width="1000" height="1200" aria-label="Kertas tulis dengan pensil digital"></canvas>
+        </div>
+        <div class="count" id="count"></div>
+
+        <div class="files">
+          <button type="button" class="chip" id="importBtn">⇧ Impor .txt</button>
+          <button type="button" class="chip" id="exportBtn">⇩ Ekspor .txt</button>
+          <button type="button" class="chip danger" id="deleteBtn">🗑 Hapus catatan</button>
+        </div>
+        <p class="hint">Ekspor .txt menyimpan tulisan ketikan, dengan judul sebagai nama file. Saat impor, isi file menggantikan tulisan di catatan ini.</p>
+      </section>
+    </div>
 
     <footer>MADE WITH CARE · 2026</footer>
   </main>
@@ -238,14 +329,19 @@
   <script>
   (function () {
     'use strict';
-    var KEY = 'momona.notepad.v1';
+    var KEY = 'momona.notepad.v2';
+    var OLD_KEY = 'momona.notepad.v1'; // versi satu catatan, dimigrasi otomatis
     var $ = function (s) { return document.querySelector(s); };
     var el = {
-      status: $('#status'), title: $('#noteTitle'), date: $('#noteDate'), text: $('#noteText'), count: $('#count'),
+      status: $('#status'), hero: $('#hero'), viewList: $('#viewList'), viewEdit: $('#viewEdit'),
+      backHome: $('#backHome'), backList: $('#backList'),
+      notes: $('#notes'), search: $('#search'), listCount: $('#listCount'), empty: $('#emptyState'),
+      newBtn: $('#newBtn'), importListBtn: $('#importListBtn'),
+      title: $('#noteTitle'), date: $('#noteDate'), text: $('#noteText'), count: $('#count'),
       paperType: $('#paperType'), paperDraw: $('#paperDraw'), toolsType: $('#toolsType'), toolsDraw: $('#toolsDraw'),
       tabType: $('#tabType'), tabDraw: $('#tabDraw'), pad: $('#pad'), undo: $('#undoBtn'), clear: $('#clearBtn'),
       png: $('#pngBtn'), width: $('#penWidth'), file: $('#fileInput'), toast: $('#toast'),
-      sizeUp: $('#sizeUp'), sizeDown: $('#sizeDown'), swatches: $('#swatches')
+      sizeUp: $('#sizeUp'), sizeDown: $('#sizeDown'), swatches: $('#swatches'), del: $('#deleteBtn')
     };
     var COLORS = [
       ['#25352b', 'Hijau tua'], ['#5b7a5c', 'Hijau sage'], ['#b9707a', 'Mawar'],
@@ -254,20 +350,66 @@
     var FONT_SCALE = { elegan: 1.14, tangan: 1.28, klasik: 1 };
     var SIZES = [16, 18, 20, 23];
 
-    var state = { title: '', text: '', strokes: [], mode: 'type', font: 'elegan', size: 1, color: COLORS[0][0], width: 6, tool: 'pen', updated: 0 };
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (raw) {
-        var saved = JSON.parse(raw);
-        if (saved && typeof saved === 'object') Object.keys(state).forEach(function (k) { if (saved[k] !== undefined) state[k] = saved[k]; });
-      }
-    } catch (e) {}
-    if (!Array.isArray(state.strokes)) state.strokes = [];
-    if (!(state.font in FONT_SCALE)) state.font = 'elegan';
-    if (!(state.size >= 0 && state.size < SIZES.length)) state.size = 1;
+    /* ---------- data ---------- */
+    var data = { v: 2, notes: [], ui: { color: COLORS[0][0], width: 6, tool: 'pen' } };
+    var note = null;          // catatan yang sedang diedit
+    var editingId = null;
+    var pushed = false;       // true bila editor dibuka lewat klik (ada entri riwayat untuk kembali)
+    var importMode = 'current';
+
+    function uid() { return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function makeNote(src) {
+      var now = Date.now(), s = src || {};
+      return {
+        id: typeof s.id === 'string' && /^[\w-]+$/.test(s.id) ? s.id : uid(),
+        title: typeof s.title === 'string' ? s.title : '',
+        text: typeof s.text === 'string' ? s.text : '',
+        strokes: Array.isArray(s.strokes) ? s.strokes : [],
+        mode: s.mode === 'draw' ? 'draw' : 'type',
+        font: s.font in FONT_SCALE ? s.font : 'elegan',
+        size: (s.size >= 0 && s.size < SIZES.length) ? s.size : 1,
+        created: +s.created || +s.updated || now,
+        updated: +s.updated || now
+      };
+    }
+    function isEmpty(n) { return !n.title.trim() && !n.text.trim() && !n.strokes.length; }
+    function find(id) { for (var i = 0; i < data.notes.length; i++) if (data.notes[i].id === id) return data.notes[i]; return null; }
+
+    (function load() {
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (raw) {
+          var d = JSON.parse(raw);
+          if (d && Array.isArray(d.notes)) {
+            data.notes = d.notes.map(makeNote).filter(function (n) { return !isEmpty(n); });
+            if (d.ui && typeof d.ui === 'object') {
+              if (typeof d.ui.color === 'string') data.ui.color = d.ui.color;
+              if (d.ui.width >= 2 && d.ui.width <= 24) data.ui.width = +d.ui.width;
+              if (d.ui.tool === 'pen' || d.ui.tool === 'eraser') data.ui.tool = d.ui.tool;
+            }
+            return;
+          }
+        }
+        // migrasi dari versi satu catatan
+        var old = localStorage.getItem(OLD_KEY);
+        if (old) {
+          var o = JSON.parse(old);
+          if (o && typeof o === 'object') {
+            var n = makeNote(o);
+            n.id = uid();
+            if (!isEmpty(n)) data.notes.push(n);
+            if (typeof o.color === 'string') data.ui.color = o.color;
+            if (o.width >= 2 && o.width <= 24) data.ui.width = +o.width;
+            if (o.tool === 'pen' || o.tool === 'eraser') data.ui.tool = o.tool;
+            localStorage.setItem(KEY, JSON.stringify(data));
+          }
+        }
+      } catch (e) {}
+    })();
 
     /* ---------- util ---------- */
     function clock(ts) { return new Date(ts).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'); }
+    function shortDate(ts) { return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
     var toastTimer = null;
     function toast(msg) {
       el.toast.textContent = msg; el.toast.classList.add('show');
@@ -275,38 +417,194 @@
     }
     function setStatus(msg, err) { el.status.textContent = msg; el.status.classList.toggle('error', !!err); }
     function renderDate() {
-      el.date.textContent = new Date(state.updated || Date.now()).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      el.date.textContent = new Date(note ? note.updated : Date.now()).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     }
 
     /* ---------- autosave (localStorage) ---------- */
     var saveTimer = null;
     function save() {
       clearTimeout(saveTimer); saveTimer = null;
-      state.updated = Date.now();
       try {
-        localStorage.setItem(KEY, JSON.stringify(state));
-        setStatus('Tersimpan otomatis · ' + clock(state.updated));
-        renderDate();
+        localStorage.setItem(KEY, JSON.stringify(data));
+        setStatus('Tersimpan otomatis · ' + clock(Date.now()));
+        if (note) renderDate();
+        return true;
       } catch (e) {
         setStatus('Gagal menyimpan — penyimpanan penuh atau diblokir', true);
+        return false;
       }
     }
-    function schedule() { setStatus('Menyimpan…'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 350); }
-    window.addEventListener('pagehide', function () { if (saveTimer) save(); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden && saveTimer) save(); });
+    // touch = true bila isi catatan berubah (memperbarui waktu "terakhir diubah")
+    function schedule(touch) {
+      if (touch && note) note.updated = Date.now();
+      setStatus('Menyimpan…');
+      clearTimeout(saveTimer); saveTimer = setTimeout(save, 350);
+    }
+    function flush() { if (saveTimer) save(); }
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) flush(); });
 
-    /* ---------- mode ketik ---------- */
+    /* ---------- goresan pensil (dipakai editor & thumbnail) ---------- */
+    function wf(s, p) { return s.e ? s.w * 3.2 : s.w * (0.55 + (p[2] === undefined ? 0.5 : p[2]) * 0.9); }
+    function mid(a, b) { return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; }
+    function setStyle(c, s) {
+      c.globalCompositeOperation = s.e ? 'destination-out' : 'source-over';
+      c.strokeStyle = s.c; c.fillStyle = s.c; c.lineCap = 'round'; c.lineJoin = 'round';
+    }
+    function dot(c, s) { var p = s.p[0]; c.beginPath(); c.arc(p[0], p[1], wf(s, p) / 2, 0, Math.PI * 2); c.fill(); }
+    function seg(c, s, i) {
+      var a = s.p[i - 1], b = s.p[i];
+      var m0 = i === 1 ? a : mid(s.p[i - 2], a), m1 = mid(a, b);
+      c.lineWidth = wf(s, b);
+      c.beginPath(); c.moveTo(m0[0], m0[1]); c.quadraticCurveTo(a[0], a[1], m1[0], m1[1]); c.stroke();
+    }
+    function tail(c, s) {
+      var n = s.p.length; if (n < 2) return;
+      var m = mid(s.p[n - 2], s.p[n - 1]), b = s.p[n - 1];
+      c.lineWidth = wf(s, b);
+      c.beginPath(); c.moveTo(m[0], m[1]); c.lineTo(b[0], b[1]); c.stroke();
+    }
+    function paint(c, strokes) {
+      strokes.forEach(function (s) {
+        if (!s || !s.p || !s.p.length) return;
+        setStyle(c, s);
+        if (s.p.length === 1) { dot(c, s); return; }
+        for (var i = 1; i < s.p.length; i++) seg(c, s, i);
+        tail(c, s);
+      });
+      c.globalCompositeOperation = 'source-over';
+    }
+
+    /* =====================================================
+       DAFTAR CATATAN
+       ===================================================== */
+    function snippet(n) { return n.text.replace(/\s+/g, ' ').trim().slice(0, 220); }
+
+    function renderList() {
+      var q = el.search.value.trim().toLowerCase();
+      var all = data.notes.slice().sort(function (a, b) { return b.updated - a.updated; });
+      var items = q ? all.filter(function (n) { return (n.title + ' ' + n.text).toLowerCase().indexOf(q) !== -1; }) : all;
+
+      el.notes.textContent = '';
+
+      // kartu "catatan baru"
+      var li0 = document.createElement('li'); li0.className = 'note-card add';
+      var add = document.createElement('button'); add.type = 'button'; add.className = 'note-add';
+      var plus = document.createElement('b'); plus.textContent = '+';
+      var lbl = document.createElement('span'); lbl.textContent = 'Catatan baru';
+      add.appendChild(plus); add.appendChild(lbl);
+      add.addEventListener('click', createNote);
+      li0.appendChild(add); el.notes.appendChild(li0);
+
+      items.forEach(function (n) {
+        var li = document.createElement('li'); li.className = 'note-card'; li.dataset.font = n.font;
+
+        var open = document.createElement('button'); open.type = 'button'; open.className = 'note-open';
+        open.setAttribute('aria-label', 'Buka catatan: ' + (n.title.trim() || 'Tanpa judul'));
+        open.addEventListener('click', function () { openNote(n.id); });
+
+        var body = document.createElement('div'); body.className = 'nc-body';
+        var hasText = !!n.text.trim();
+        if (hasText) {
+          body.textContent = snippet(n);
+        } else if (n.strokes.length) {
+          var cv = document.createElement('canvas'); cv.width = 250; cv.height = 300;
+          var c = cv.getContext('2d'); c.scale(0.25, 0.25); paint(c, n.strokes);
+          body.appendChild(cv);
+        } else {
+          body.classList.add('empty'); body.textContent = 'Belum ada isi';
+        }
+
+        var title = document.createElement('p'); title.className = 'nc-title';
+        if (n.title.trim()) title.textContent = n.title; else { title.textContent = 'Tanpa judul'; title.classList.add('untitled'); }
+
+        var meta = document.createElement('div'); meta.className = 'nc-meta';
+        var d = document.createElement('span'); d.textContent = shortDate(n.updated);
+        meta.appendChild(d);
+        if (hasText && n.strokes.length) { var b = document.createElement('span'); b.className = 'nc-badge'; b.textContent = '✎ coretan'; meta.appendChild(b); }
+        else if (!hasText && n.strokes.length) { var b2 = document.createElement('span'); b2.className = 'nc-badge'; b2.textContent = '✎ gambar'; meta.appendChild(b2); }
+
+        open.appendChild(body); open.appendChild(title); open.appendChild(meta);
+
+        var del = document.createElement('button'); del.type = 'button'; del.className = 'note-del';
+        del.setAttribute('aria-label', 'Hapus catatan: ' + (n.title.trim() || 'Tanpa judul')); del.textContent = '×';
+        del.addEventListener('click', function () { if (removeNote(n.id)) renderList(); });
+
+        li.appendChild(open); li.appendChild(del); el.notes.appendChild(li);
+      });
+
+      var total = data.notes.length;
+      el.listCount.textContent = total ? (q ? items.length + ' dari ' + total + ' catatan' : total + ' catatan') : '';
+      if (!total) { el.empty.textContent = 'Belum ada catatan. Mulai dengan menekan “Catatan baru”.'; el.empty.hidden = false; }
+      else if (q && !items.length) { el.empty.textContent = 'Tidak ada catatan yang cocok dengan “' + el.search.value.trim() + '”.'; el.empty.hidden = false; }
+      else el.empty.hidden = true;
+    }
+    el.search.addEventListener('input', renderList);
+
+    function removeNote(id) {
+      var n = find(id); if (!n) return false;
+      if (!confirm('Hapus catatan “' + (n.title.trim() || 'Tanpa judul') + '”? Tindakan ini tidak bisa dibatalkan.')) return false;
+      data.notes = data.notes.filter(function (x) { return x.id !== id; });
+      save(); toast('Catatan dihapus');
+      return true;
+    }
+
+    /* =====================================================
+       NAVIGASI (hash: #note-<id>) — tombol Back browser/HP ikut bekerja
+       ===================================================== */
+    function openNote(id) { pushed = true; location.hash = 'note-' + id; }
+    function goList() {
+      if (pushed) { pushed = false; history.back(); }
+      else location.hash = '';
+    }
+    function createNote() {
+      var n = makeNote(); data.notes.push(n);   // belum disimpan; dibuang bila dibiarkan kosong
+      openNote(n.id);
+    }
+    function idFromHash() { var m = /^#note-([\w-]+)$/.exec(location.hash); return m ? m[1] : null; }
+
+    function leaveEditor() {
+      flush();
+      var n = find(editingId);
+      if (n && isEmpty(n)) { data.notes = data.notes.filter(function (x) { return x !== n; }); save(); }
+      editingId = null; note = null;
+    }
+    function showView(v) {
+      var edit = v === 'edit';
+      el.viewList.hidden = edit; el.viewEdit.hidden = !edit; el.hero.hidden = edit;
+      el.backHome.hidden = edit; el.backList.hidden = !edit;
+    }
+    function route() {
+      var id = idFromHash();
+      var n = id ? find(id) : null;
+      if (editingId && (!n || n.id !== editingId)) leaveEditor();
+      if (n) {
+        if (editingId !== n.id) enterEditor(n);
+        showView('edit');
+      } else {
+        showView('list');
+        renderList();
+        setStatus(data.notes.length ? 'Pilih catatan untuk diedit' : 'Siap menulis');
+        window.scrollTo(0, 0);
+      }
+    }
+    window.addEventListener('hashchange', route);
+    el.backList.addEventListener('click', goList);
+
+    /* =====================================================
+       EDITOR
+       ===================================================== */
     function applyType() {
-      var fs = Math.round(SIZES[state.size] * FONT_SCALE[state.font]);
+      var fs = Math.round(SIZES[note.size] * FONT_SCALE[note.font]);
       var lh = Math.round(fs * 1.75);
-      el.paperType.dataset.font = state.font;
+      el.paperType.dataset.font = note.font;
       el.paperType.style.setProperty('--fs', fs + 'px');
       el.paperType.style.setProperty('--lh', lh + 'px');
-      document.querySelectorAll('[data-font]').forEach(function (b) {
-        if (b.classList.contains('chip')) b.setAttribute('aria-pressed', String(b.dataset.font === state.font));
+      document.querySelectorAll('.chip[data-font]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.font === note.font));
       });
-      el.sizeDown.disabled = state.size === 0;
-      el.sizeUp.disabled = state.size === SIZES.length - 1;
+      el.sizeDown.disabled = note.size === 0;
+      el.sizeUp.disabled = note.size === SIZES.length - 1;
     }
     function renderCount() {
       var t = el.text.value.trim();
@@ -314,48 +612,19 @@
       el.count.textContent = words + ' kata · ' + el.text.value.length + ' karakter';
     }
     document.querySelectorAll('.chip[data-font]').forEach(function (b) {
-      b.addEventListener('click', function () { state.font = b.dataset.font; applyType(); schedule(); });
+      b.addEventListener('click', function () { if (!note) return; note.font = b.dataset.font; applyType(); schedule(true); });
     });
-    el.sizeUp.addEventListener('click', function () { if (state.size < SIZES.length - 1) { state.size++; applyType(); schedule(); } });
-    el.sizeDown.addEventListener('click', function () { if (state.size > 0) { state.size--; applyType(); schedule(); } });
-    el.text.addEventListener('input', function () { state.text = el.text.value; renderCount(); schedule(); });
-    el.title.addEventListener('input', function () { state.title = el.title.value; schedule(); });
+    el.sizeUp.addEventListener('click', function () { if (note && note.size < SIZES.length - 1) { note.size++; applyType(); schedule(true); } });
+    el.sizeDown.addEventListener('click', function () { if (note && note.size > 0) { note.size--; applyType(); schedule(true); } });
+    el.text.addEventListener('input', function () { if (!note) return; note.text = el.text.value; renderCount(); schedule(true); });
+    el.title.addEventListener('input', function () { if (!note) return; note.title = el.title.value; schedule(true); });
 
     /* ---------- mode pensil ---------- */
     var ctx = el.pad.getContext('2d');
     var cur = null;
-    function mid(a, b) { return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; }
-    function wf(s, p) { return s.e ? s.w * 3.2 : s.w * (0.55 + (p[2] === undefined ? 0.5 : p[2]) * 0.9); }
-    function style(s) {
-      ctx.globalCompositeOperation = s.e ? 'destination-out' : 'source-over';
-      ctx.strokeStyle = s.c; ctx.fillStyle = s.c; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    }
-    function dot(s) {
-      var p = s.p[0];
-      ctx.beginPath(); ctx.arc(p[0], p[1], wf(s, p) / 2, 0, Math.PI * 2); ctx.fill();
-    }
-    function seg(s, i) {
-      var a = s.p[i - 1], b = s.p[i];
-      var m0 = i === 1 ? a : mid(s.p[i - 2], a), m1 = mid(a, b);
-      ctx.lineWidth = wf(s, b);
-      ctx.beginPath(); ctx.moveTo(m0[0], m0[1]); ctx.quadraticCurveTo(a[0], a[1], m1[0], m1[1]); ctx.stroke();
-    }
-    function tail(s) {
-      var n = s.p.length; if (n < 2) return;
-      var m = mid(s.p[n - 2], s.p[n - 1]), b = s.p[n - 1];
-      ctx.lineWidth = wf(s, b);
-      ctx.beginPath(); ctx.moveTo(m[0], m[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    }
     function redraw() {
       ctx.clearRect(0, 0, el.pad.width, el.pad.height);
-      state.strokes.forEach(function (s) {
-        if (!s.p || !s.p.length) return;
-        style(s);
-        if (s.p.length === 1) { dot(s); return; }
-        for (var i = 1; i < s.p.length; i++) seg(s, i);
-        tail(s);
-      });
-      ctx.globalCompositeOperation = 'source-over';
+      if (note) paint(ctx, note.strokes);
     }
     function pt(e) {
       var r = el.pad.getBoundingClientRect();
@@ -365,63 +634,63 @@
       return [Math.round(x), Math.round(y), pr];
     }
     function updateBtns() {
-      el.undo.disabled = !state.strokes.length;
-      el.clear.disabled = !state.strokes.length;
+      var has = !!(note && note.strokes.length);
+      el.undo.disabled = !has; el.clear.disabled = !has;
     }
     el.pad.addEventListener('pointerdown', function (e) {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (!note || (e.pointerType === 'mouse' && e.button !== 0)) return;
       e.preventDefault();
       try { el.pad.setPointerCapture(e.pointerId); } catch (_) {}
-      cur = { c: state.color, w: state.width, e: state.tool === 'eraser', p: [pt(e)] };
-      state.strokes.push(cur);
-      style(cur); dot(cur); updateBtns();
+      cur = { c: data.ui.color, w: data.ui.width, e: data.ui.tool === 'eraser', p: [pt(e)] };
+      note.strokes.push(cur);
+      setStyle(ctx, cur); dot(ctx, cur); updateBtns();
     });
     el.pad.addEventListener('pointermove', function (e) {
       if (!cur) return;
       var list = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
       if (!list.length) list = [e];
-      style(cur);
+      setStyle(ctx, cur);
       list.forEach(function (ev) {
         var q = pt(ev), last = cur.p[cur.p.length - 1];
         if (Math.hypot(q[0] - last[0], q[1] - last[1]) < 1.5) return;
         cur.p.push(q);
-        seg(cur, cur.p.length - 1);
+        seg(ctx, cur, cur.p.length - 1);
       });
     });
     function endStroke() {
       if (!cur) return;
-      style(cur); tail(cur); ctx.globalCompositeOperation = 'source-over';
-      cur = null; updateBtns(); schedule();
+      setStyle(ctx, cur); tail(ctx, cur); ctx.globalCompositeOperation = 'source-over';
+      cur = null; updateBtns(); schedule(true);
     }
     el.pad.addEventListener('pointerup', endStroke);
     el.pad.addEventListener('pointercancel', endStroke);
     el.pad.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
-    function undo() { if (!state.strokes.length) return; state.strokes.pop(); redraw(); updateBtns(); schedule(); }
+    function undo() { if (!note || !note.strokes.length) return; note.strokes.pop(); redraw(); updateBtns(); schedule(true); }
     el.undo.addEventListener('click', undo);
     el.clear.addEventListener('click', function () {
-      if (!state.strokes.length) return;
+      if (!note || !note.strokes.length) return;
       if (!confirm('Hapus semua coretan pada kertas ini?')) return;
-      state.strokes = []; redraw(); updateBtns(); schedule();
+      note.strokes = []; redraw(); updateBtns(); schedule(true);
     });
     document.addEventListener('keydown', function (e) {
-      if (state.mode === 'draw' && (e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+      if (note && note.mode === 'draw' && (e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
     });
 
     COLORS.forEach(function (c) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'swatch'; b.style.background = c[0]; b.setAttribute('aria-label', c[1]); b.dataset.color = c[0];
-      b.addEventListener('click', function () { state.color = c[0]; state.tool = 'pen'; applyTools(); schedule(); });
+      b.addEventListener('click', function () { data.ui.color = c[0]; data.ui.tool = 'pen'; applyTools(); schedule(false); });
       el.swatches.appendChild(b);
     });
     document.querySelectorAll('.chip[data-tool]').forEach(function (b) {
-      b.addEventListener('click', function () { state.tool = b.dataset.tool; applyTools(); schedule(); });
+      b.addEventListener('click', function () { data.ui.tool = b.dataset.tool; applyTools(); schedule(false); });
     });
-    el.width.addEventListener('input', function () { state.width = +el.width.value; schedule(); });
+    el.width.addEventListener('input', function () { data.ui.width = +el.width.value; schedule(false); });
     function applyTools() {
-      document.querySelectorAll('.swatch').forEach(function (b) { b.setAttribute('aria-pressed', String(state.tool === 'pen' && b.dataset.color === state.color)); });
-      document.querySelectorAll('.chip[data-tool]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.tool === state.tool)); });
-      el.width.value = state.width;
+      document.querySelectorAll('.swatch').forEach(function (b) { b.setAttribute('aria-pressed', String(data.ui.tool === 'pen' && b.dataset.color === data.ui.color)); });
+      document.querySelectorAll('.chip[data-tool]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.tool === data.ui.tool)); });
+      el.width.value = data.ui.width;
     }
 
     el.png.addEventListener('click', function () {
@@ -432,21 +701,30 @@
 
     /* ---------- tab ---------- */
     function setMode(m, quiet) {
-      state.mode = m;
+      note.mode = m;
       var t = m === 'type';
       el.paperType.hidden = !t; el.toolsType.hidden = !t; el.count.hidden = !t;
       el.paperDraw.hidden = t; el.toolsDraw.hidden = t;
       el.tabType.setAttribute('aria-selected', String(t));
       el.tabDraw.setAttribute('aria-selected', String(!t));
       if (!t) redraw();
-      if (!quiet) schedule();
+      if (!quiet) schedule(false);
     }
-    el.tabType.addEventListener('click', function () { setMode('type'); });
-    el.tabDraw.addEventListener('click', function () { setMode('draw'); });
+    el.tabType.addEventListener('click', function () { if (note) setMode('type'); });
+    el.tabDraw.addEventListener('click', function () { if (note) setMode('draw'); });
+
+    function enterEditor(n) {
+      editingId = n.id; note = n; cur = null;
+      el.title.value = n.title; el.text.value = n.text;
+      applyType(); applyTools(); renderCount(); renderDate(); updateBtns();
+      setMode(n.mode, true);
+      setStatus(isEmpty(n) ? 'Catatan baru — mulai menulis' : 'Terakhir diubah · ' + clock(n.updated));
+      window.scrollTo(0, 0);
+    }
 
     /* ---------- ekspor / impor .txt ---------- */
     function fileBase() {
-      return (state.title || '').replace(/[\\/:*?"<>|]+/g, '').trim() || 'catatan-momona';
+      return ((note && note.title) || '').replace(/[\\/:*?"<>|]+/g, '').trim() || 'catatan-momona';
     }
     function download(blob, name) {
       var url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -454,35 +732,51 @@
       setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
     }
     $('#exportBtn').addEventListener('click', function () {
-      download(new Blob([state.text], { type: 'text/plain;charset=utf-8' }), fileBase() + '.txt');
+      if (!note) return;
+      download(new Blob([note.text], { type: 'text/plain;charset=utf-8' }), fileBase() + '.txt');
       toast('Diekspor: ' + fileBase() + '.txt');
     });
-    $('#importBtn').addEventListener('click', function () { el.file.click(); });
+    $('#importBtn').addEventListener('click', function () { importMode = 'current'; el.file.click(); });
+    el.importListBtn.addEventListener('click', function () { importMode = 'new'; el.file.click(); });
     el.file.addEventListener('change', function () {
       var f = el.file.files && el.file.files[0];
       el.file.value = '';
       if (!f) return;
       if (f.size > 1024 * 1024) { toast('File terlalu besar (maks 1 MB)'); return; }
-      if (state.text.trim() && !confirm('Tulisan ketikan saat ini akan diganti isi file. Lanjutkan?')) return;
+      var mode = importMode;
+      if (mode === 'current' && note && note.text.trim() && !confirm('Tulisan ketikan di catatan ini akan diganti isi file. Lanjutkan?')) return;
       var r = new FileReader();
       r.onload = function () {
-        state.text = String(r.result || '').replace(/^\uFEFF/, '');
-        el.text.value = state.text;
-        if (!state.title.trim()) { state.title = f.name.replace(/\.[^.]+$/, ''); el.title.value = state.title; }
-        renderCount(); setMode('type', true); save();
-        toast('Diimpor: ' + f.name);
+        var txt = String(r.result || '').replace(/^﻿/, '');
+        var base = f.name.replace(/\.[^.]+$/, '');
+        if (mode === 'new') {
+          var n = makeNote({ title: base.slice(0, 80), text: txt });
+          data.notes.push(n);
+          if (!save()) { data.notes.pop(); return; }
+          toast('Diimpor sebagai catatan baru');
+          openNote(n.id);
+        } else if (note) {
+          note.text = txt; el.text.value = txt;
+          if (!note.title.trim()) { note.title = base.slice(0, 80); el.title.value = note.title; }
+          note.updated = Date.now();
+          renderCount(); setMode('type', true); save();
+          toast('Diimpor: ' + f.name);
+        }
       };
       r.onerror = function () { toast('Gagal membaca file'); };
       r.readAsText(f, 'UTF-8');
     });
 
-    /* ---------- init ---------- */
-    el.title.value = state.title || '';
-    el.text.value = state.text || '';
-    el.width.value = state.width;
-    applyType(); applyTools(); renderCount(); renderDate(); updateBtns();
-    setMode(state.mode === 'draw' ? 'draw' : 'type', true);
-    if (state.updated) setStatus('Terakhir disimpan · ' + clock(state.updated));
+    el.del.addEventListener('click', function () {
+      if (!note) return;
+      var id = note.id;
+      if (removeNote(id)) goList();
+    });
+    el.newBtn.addEventListener('click', createNote);
+
+    /* ---------- mulai ---------- */
+    applyTools();
+    route();
   })();
   </script>
 </body>
