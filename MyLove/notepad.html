@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf2e7">
+  <title>Notepad — Momona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    :root {
+      --ink: #25352b;
+      --muted: #718174;
+      --paper: #fffefa;
+      --line: #dfe6d6;
+      --sage: #8fa58b;
+      --f-elegan: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      --f-tangan: "Caveat", "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
+      --f-klasik: Georgia, "Times New Roman", serif;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 28px 18px max(40px, env(safe-area-inset-bottom));
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 15% 15%, #f8f3d9 0, transparent 34%),
+        radial-gradient(ellipse at 85% 80%, #c7ddc3 0, transparent 38%),
+        linear-gradient(135deg, #edf3e9, #dce9df 55%, #f5f1e5);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; width: 260px; height: 260px; border-radius: 50%; background: #fff; filter: blur(80px); opacity: .38; pointer-events: none; }
+    .glow.one { top: -100px; right: -50px; }
+    .glow.two { bottom: -120px; left: -70px; }
+    .wrap { width: min(100%, 820px); margin: 0 auto; position: relative; }
+
+    /* top bar */
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      color: #455b49; font: 12px Arial, sans-serif; letter-spacing: .06em;
+      padding: 9px 16px; border: 1px solid #b9cbb8; border-radius: 999px; background: #ffffffa8; transition: .2s ease;
+    }
+    .back:hover { background: #fff; transform: translateY(-2px); }
+    .status { font: italic 12px Georgia, serif; color: #7d8d7a; }
+    .status.error { color: #b0605f; }
+
+    .eyebrow { text-align: center; text-transform: uppercase; letter-spacing: .28em; font: 10px/1.5 Arial, sans-serif; color: #758675; margin: 26px 0 8px; }
+    h1 { text-align: center; font-size: clamp(32px, 8vw, 48px); line-height: 1.05; margin: 0 0 10px; font-weight: 600; letter-spacing: -.045em; }
+    .lede { text-align: center; font: 13px/1.8 Arial, sans-serif; color: #68766a; margin: 0 auto; max-width: 440px; }
+
+    /* sheet */
+    .sheet {
+      position: relative; margin-top: 34px; padding: 28px 30px 24px;
+      background: var(--paper); border: 1px solid #fff; border-radius: 4px;
+      box-shadow: 0 24px 70px #435b4730, 0 4px 12px #435b4712;
+    }
+    .sheet::before, .sheet::after {
+      content: ""; position: absolute; top: -11px; width: 74px; height: 22px;
+      background: rgba(214,226,206,.82); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620;
+    }
+    .sheet::before { left: 8%; transform: rotate(-6deg); }
+    .sheet::after { right: 8%; transform: rotate(5deg); }
+
+    .row-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .tabs { display: inline-flex; padding: 4px; gap: 4px; background: #eff3e9; border-radius: 999px; }
+    .tab {
+      border: 0; background: transparent; color: #66796a; cursor: pointer;
+      padding: 9px 18px; border-radius: 999px; font: 13px Arial, sans-serif; letter-spacing: .04em; transition: .2s ease;
+    }
+    .tab[aria-selected="true"] { background: #fff; color: #31473a; box-shadow: 0 2px 8px #435b4718; }
+    .note-date { font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; }
+
+    .note-title {
+      display: block; width: 100%; margin: 16px 0 4px; padding: 6px 0 8px; border: 0; border-bottom: 1px dashed #cdd9c8;
+      background: none; outline: none; color: var(--ink);
+      font: italic 600 clamp(26px, 5.5vw, 36px)/1.2 var(--f-elegan); letter-spacing: -.01em;
+    }
+    .note-title::placeholder { color: #aab7a8; }
+    .note-title:focus { border-bottom-color: var(--sage); }
+
+    /* tools */
+    .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 14px 0; }
+    .tools .sep { width: 1px; height: 22px; background: #d9e2d4; margin: 0 4px; }
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px;
+      border: 1px solid #cdd9c8; background: #ffffffb0; color: #455b49; cursor: pointer;
+      padding: 6px 13px; border-radius: 999px; font: 12px Arial, sans-serif; letter-spacing: .03em; transition: .2s ease;
+    }
+    .chip:hover:not(:disabled) { background: #fff; transform: translateY(-1px); }
+    .chip[aria-pressed="true"] { background: #e4ece1; border-color: #9caf98; }
+    .chip:disabled { opacity: .45; cursor: not-allowed; }
+    .chip.f-elegan { font: italic 15px var(--f-elegan); }
+    .chip.f-tangan { font: 17px var(--f-tangan); }
+    .chip.f-klasik { font: italic 13px var(--f-klasik); }
+    .swatches { display: flex; gap: 7px; align-items: center; }
+    .swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd8c8; cursor: pointer; transition: transform .15s ease; }
+    .swatch:hover { transform: scale(1.1); }
+    .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #6d856d; }
+    .range { display: inline-flex; align-items: center; gap: 8px; font: 11px Arial, sans-serif; color: #6f806f; }
+    .range input { width: 96px; accent-color: #7f9a7c; }
+
+    /* paper */
+    .paper { position: relative; background: var(--paper); border: 1px solid #ece8da; border-radius: 6px; box-shadow: inset 0 1px 6px #58634b10; overflow: hidden; }
+    .paper::before { content: ""; position: absolute; top: 0; bottom: 0; left: 46px; width: 1px; background: #e8c7c8aa; pointer-events: none; z-index: 2; }
+    .paper textarea {
+      display: block; width: 100%; height: clamp(360px, 62vh, 640px); height: clamp(360px, 62dvh, 640px);
+      margin: 0; padding: 0 22px 0 64px; border: 0; outline: none; resize: none;
+      background-color: transparent;
+      background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh) - 1px), var(--line) calc(var(--lh) - 1px), var(--line) var(--lh));
+      background-attachment: local;
+      font-size: var(--fs); line-height: var(--lh); color: #3d4f40; caret-color: var(--sage);
+    }
+    .paper textarea::placeholder { color: #b4bfb1; }
+    .paper textarea::selection { background: #dce9d8; }
+    .paper[data-font="elegan"] textarea { font-family: var(--f-elegan); font-style: italic; font-weight: 500; }
+    .paper[data-font="tangan"] textarea { font-family: var(--f-tangan); font-weight: 500; }
+    .paper[data-font="klasik"] textarea { font-family: var(--f-klasik); font-style: italic; }
+
+    .paper.draw { aspect-ratio: 5 / 6; background-image: linear-gradient(var(--line) 1px, transparent 1px); background-size: 100% 3.6%; }
+    .paper.draw::before { left: 7%; }
+    .paper.draw canvas { position: relative; z-index: 1; display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; -webkit-user-select: none; user-select: none; }
+
+    .count { text-align: right; margin-top: 8px; font: 11px Arial, sans-serif; color: #8a9b88; letter-spacing: .04em; }
+
+    .files { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px dashed #dbe3d6; }
+    .hint { text-align: center; margin: 12px auto 0; max-width: 520px; font: italic 12px/1.7 Georgia, serif; color: #8a9b88; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 20; transform: translate(-50%, 14px);
+      max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #25352be6; color: #fffefa;
+      font: 12px Arial, sans-serif; letter-spacing: .03em; opacity: 0; pointer-events: none; transition: .3s ease; text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    footer { text-align: center; margin-top: 30px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
+
+    /* responsive */
+    @media (min-width: 1024px) {
+      body { padding-top: 44px; }
+      .wrap { width: min(100%, 900px); }
+      .sheet { padding: 34px 40px 28px; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 18px 12px 34px; }
+      .sheet { margin-top: 30px; padding: 22px 14px 18px; }
+      .sheet::before, .sheet::after { width: 56px; height: 18px; }
+      .paper::before { left: 34px; }
+      .paper textarea { padding: 0 14px 0 46px; height: clamp(340px, 58vh, 560px); height: clamp(340px, 58dvh, 560px); }
+      .tab { padding: 9px 14px; }
+      .chip { padding: 6px 11px; }
+      .range input { width: 80px; }
+      .note-date { width: 100%; }
+    }
+    @media (max-width: 360px) {
+      .tools .sep { display: none; }
+      .back { padding: 8px 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+  <main class="wrap">
+    <div class="top">
+      <a class="back" href="index.html">← Kembali</a>
+      <div class="status" id="status" role="status" aria-live="polite">Siap menulis</div>
+    </div>
+
+    <div class="eyebrow">Tempat kecil untuk menulis</div>
+    <h1>Notepad</h1>
+    <p class="lede">Ketik lewat keyboard atau goreskan dengan pensil digital. Semuanya tersimpan otomatis di perangkat ini.</p>
+
+    <section class="sheet" aria-label="Catatan">
+      <div class="row-top">
+        <div class="tabs" role="tablist" aria-label="Cara menulis">
+          <button type="button" class="tab" id="tabType" role="tab" aria-selected="true">⌨ Ketik</button>
+          <button type="button" class="tab" id="tabDraw" role="tab" aria-selected="false">✎ Pensil</button>
+        </div>
+        <div class="note-date" id="noteDate"></div>
+      </div>
+
+      <input class="note-title" id="noteTitle" type="text" maxlength="80" placeholder="Judul catatan…" aria-label="Judul catatan" autocomplete="off">
+
+      <!-- alat mode ketik -->
+      <div class="tools" id="toolsType">
+        <button type="button" class="chip f-elegan" data-font="elegan" aria-pressed="true">Elegan</button>
+        <button type="button" class="chip f-tangan" data-font="tangan" aria-pressed="false">Tulisan tangan</button>
+        <button type="button" class="chip f-klasik" data-font="klasik" aria-pressed="false">Klasik</button>
+        <span class="sep"></span>
+        <button type="button" class="chip" id="sizeDown" aria-label="Perkecil huruf">A−</button>
+        <button type="button" class="chip" id="sizeUp" aria-label="Perbesar huruf">A+</button>
+      </div>
+
+      <!-- alat mode pensil -->
+      <div class="tools" id="toolsDraw" hidden>
+        <div class="swatches" id="swatches" role="group" aria-label="Warna tinta"></div>
+        <span class="sep"></span>
+        <button type="button" class="chip" data-tool="pen" aria-pressed="true">✎ Pensil</button>
+        <button type="button" class="chip" data-tool="eraser" aria-pressed="false">⌫ Penghapus</button>
+        <label class="range">Tebal <input type="range" id="penWidth" min="2" max="24" step="1" value="6"></label>
+        <span class="sep"></span>
+        <button type="button" class="chip" id="undoBtn" disabled>↶ Urungkan</button>
+        <button type="button" class="chip" id="clearBtn" disabled>Bersihkan</button>
+        <button type="button" class="chip" id="pngBtn">⇩ Simpan PNG</button>
+      </div>
+
+      <div class="paper" id="paperType" data-font="elegan">
+        <textarea id="noteText" placeholder="Mulai menulis di sini…" spellcheck="true" aria-label="Isi catatan"></textarea>
+      </div>
+      <div class="paper draw" id="paperDraw" hidden>
+        <canvas id="pad" width="1000" height="1200" aria-label="Kertas tulis dengan pensil digital"></canvas>
+      </div>
+      <div class="count" id="count"></div>
+
+      <div class="files">
+        <button type="button" class="chip" id="importBtn">⇧ Impor .txt</button>
+        <button type="button" class="chip" id="exportBtn">⇩ Ekspor .txt</button>
+      </div>
+      <p class="hint">Ekspor .txt menyimpan tulisan ketikan, dengan judul sebagai nama file. Saat impor, nama file jadi judul catatan.</p>
+    </section>
+
+    <footer>MADE WITH CARE · 2026</footer>
+  </main>
+
+  <input type="file" id="fileInput" accept=".txt,text/plain" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+    var KEY = 'momona.notepad.v1';
+    var $ = function (s) { return document.querySelector(s); };
+    var el = {
+      status: $('#status'), title: $('#noteTitle'), date: $('#noteDate'), text: $('#noteText'), count: $('#count'),
+      paperType: $('#paperType'), paperDraw: $('#paperDraw'), toolsType: $('#toolsType'), toolsDraw: $('#toolsDraw'),
+      tabType: $('#tabType'), tabDraw: $('#tabDraw'), pad: $('#pad'), undo: $('#undoBtn'), clear: $('#clearBtn'),
+      png: $('#pngBtn'), width: $('#penWidth'), file: $('#fileInput'), toast: $('#toast'),
+      sizeUp: $('#sizeUp'), sizeDown: $('#sizeDown'), swatches: $('#swatches')
+    };
+    var COLORS = [
+      ['#25352b', 'Hijau tua'], ['#5b7a5c', 'Hijau sage'], ['#b9707a', 'Mawar'],
+      ['#c29b4d', 'Emas'], ['#4d6a8f', 'Biru'], ['#7b5c8f', 'Ungu']
+    ];
+    var FONT_SCALE = { elegan: 1.14, tangan: 1.28, klasik: 1 };
+    var SIZES = [16, 18, 20, 23];
+
+    var state = { title: '', text: '', strokes: [], mode: 'type', font: 'elegan', size: 1, color: COLORS[0][0], width: 6, tool: 'pen', updated: 0 };
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var saved = JSON.parse(raw);
+        if (saved && typeof saved === 'object') Object.keys(state).forEach(function (k) { if (saved[k] !== undefined) state[k] = saved[k]; });
+      }
+    } catch (e) {}
+    if (!Array.isArray(state.strokes)) state.strokes = [];
+    if (!(state.font in FONT_SCALE)) state.font = 'elegan';
+    if (!(state.size >= 0 && state.size < SIZES.length)) state.size = 1;
+
+    /* ---------- util ---------- */
+    function clock(ts) { return new Date(ts).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'); }
+    var toastTimer = null;
+    function toast(msg) {
+      el.toast.textContent = msg; el.toast.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 2400);
+    }
+    function setStatus(msg, err) { el.status.textContent = msg; el.status.classList.toggle('error', !!err); }
+    function renderDate() {
+      el.date.textContent = new Date(state.updated || Date.now()).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    /* ---------- autosave (localStorage) ---------- */
+    var saveTimer = null;
+    function save() {
+      clearTimeout(saveTimer); saveTimer = null;
+      state.updated = Date.now();
+      try {
+        localStorage.setItem(KEY, JSON.stringify(state));
+        setStatus('Tersimpan otomatis · ' + clock(state.updated));
+        renderDate();
+      } catch (e) {
+        setStatus('Gagal menyimpan — penyimpanan penuh atau diblokir', true);
+      }
+    }
+    function schedule() { setStatus('Menyimpan…'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 350); }
+    window.addEventListener('pagehide', function () { if (saveTimer) save(); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && saveTimer) save(); });
+
+    /* ---------- mode ketik ---------- */
+    function applyType() {
+      var fs = Math.round(SIZES[state.size] * FONT_SCALE[state.font]);
+      var lh = Math.round(fs * 1.75);
+      el.paperType.dataset.font = state.font;
+      el.paperType.style.setProperty('--fs', fs + 'px');
+      el.paperType.style.setProperty('--lh', lh + 'px');
+      document.querySelectorAll('[data-font]').forEach(function (b) {
+        if (b.classList.contains('chip')) b.setAttribute('aria-pressed', String(b.dataset.font === state.font));
+      });
+      el.sizeDown.disabled = state.size === 0;
+      el.sizeUp.disabled = state.size === SIZES.length - 1;
+    }
+    function renderCount() {
+      var t = el.text.value.trim();
+      var words = t ? t.split(/\s+/).length : 0;
+      el.count.textContent = words + ' kata · ' + el.text.value.length + ' karakter';
+    }
+    document.querySelectorAll('.chip[data-font]').forEach(function (b) {
+      b.addEventListener('click', function () { state.font = b.dataset.font; applyType(); schedule(); });
+    });
+    el.sizeUp.addEventListener('click', function () { if (state.size < SIZES.length - 1) { state.size++; applyType(); schedule(); } });
+    el.sizeDown.addEventListener('click', function () { if (state.size > 0) { state.size--; applyType(); schedule(); } });
+    el.text.addEventListener('input', function () { state.text = el.text.value; renderCount(); schedule(); });
+    el.title.addEventListener('input', function () { state.title = el.title.value; schedule(); });
+
+    /* ---------- mode pensil ---------- */
+    var ctx = el.pad.getContext('2d');
+    var cur = null;
+    function mid(a, b) { return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; }
+    function wf(s, p) { return s.e ? s.w * 3.2 : s.w * (0.55 + (p[2] === undefined ? 0.5 : p[2]) * 0.9); }
+    function style(s) {
+      ctx.globalCompositeOperation = s.e ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = s.c; ctx.fillStyle = s.c; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    }
+    function dot(s) {
+      var p = s.p[0];
+      ctx.beginPath(); ctx.arc(p[0], p[1], wf(s, p) / 2, 0, Math.PI * 2); ctx.fill();
+    }
+    function seg(s, i) {
+      var a = s.p[i - 1], b = s.p[i];
+      var m0 = i === 1 ? a : mid(s.p[i - 2], a), m1 = mid(a, b);
+      ctx.lineWidth = wf(s, b);
+      ctx.beginPath(); ctx.moveTo(m0[0], m0[1]); ctx.quadraticCurveTo(a[0], a[1], m1[0], m1[1]); ctx.stroke();
+    }
+    function tail(s) {
+      var n = s.p.length; if (n < 2) return;
+      var m = mid(s.p[n - 2], s.p[n - 1]), b = s.p[n - 1];
+      ctx.lineWidth = wf(s, b);
+      ctx.beginPath(); ctx.moveTo(m[0], m[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    }
+    function redraw() {
+      ctx.clearRect(0, 0, el.pad.width, el.pad.height);
+      state.strokes.forEach(function (s) {
+        if (!s.p || !s.p.length) return;
+        style(s);
+        if (s.p.length === 1) { dot(s); return; }
+        for (var i = 1; i < s.p.length; i++) seg(s, i);
+        tail(s);
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    function pt(e) {
+      var r = el.pad.getBoundingClientRect();
+      var x = (e.clientX - r.left) * el.pad.width / r.width;
+      var y = (e.clientY - r.top) * el.pad.height / r.height;
+      var pr = e.pointerType === 'pen' ? (Math.round((e.pressure || 0.5) * 100) / 100) : 0.5;
+      return [Math.round(x), Math.round(y), pr];
+    }
+    function updateBtns() {
+      el.undo.disabled = !state.strokes.length;
+      el.clear.disabled = !state.strokes.length;
+    }
+    el.pad.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      e.preventDefault();
+      try { el.pad.setPointerCapture(e.pointerId); } catch (_) {}
+      cur = { c: state.color, w: state.width, e: state.tool === 'eraser', p: [pt(e)] };
+      state.strokes.push(cur);
+      style(cur); dot(cur); updateBtns();
+    });
+    el.pad.addEventListener('pointermove', function (e) {
+      if (!cur) return;
+      var list = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      if (!list.length) list = [e];
+      style(cur);
+      list.forEach(function (ev) {
+        var q = pt(ev), last = cur.p[cur.p.length - 1];
+        if (Math.hypot(q[0] - last[0], q[1] - last[1]) < 1.5) return;
+        cur.p.push(q);
+        seg(cur, cur.p.length - 1);
+      });
+    });
+    function endStroke() {
+      if (!cur) return;
+      style(cur); tail(cur); ctx.globalCompositeOperation = 'source-over';
+      cur = null; updateBtns(); schedule();
+    }
+    el.pad.addEventListener('pointerup', endStroke);
+    el.pad.addEventListener('pointercancel', endStroke);
+    el.pad.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+    function undo() { if (!state.strokes.length) return; state.strokes.pop(); redraw(); updateBtns(); schedule(); }
+    el.undo.addEventListener('click', undo);
+    el.clear.addEventListener('click', function () {
+      if (!state.strokes.length) return;
+      if (!confirm('Hapus semua coretan pada kertas ini?')) return;
+      state.strokes = []; redraw(); updateBtns(); schedule();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (state.mode === 'draw' && (e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+    });
+
+    COLORS.forEach(function (c) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'swatch'; b.style.background = c[0]; b.setAttribute('aria-label', c[1]); b.dataset.color = c[0];
+      b.addEventListener('click', function () { state.color = c[0]; state.tool = 'pen'; applyTools(); schedule(); });
+      el.swatches.appendChild(b);
+    });
+    document.querySelectorAll('.chip[data-tool]').forEach(function (b) {
+      b.addEventListener('click', function () { state.tool = b.dataset.tool; applyTools(); schedule(); });
+    });
+    el.width.addEventListener('input', function () { state.width = +el.width.value; schedule(); });
+    function applyTools() {
+      document.querySelectorAll('.swatch').forEach(function (b) { b.setAttribute('aria-pressed', String(state.tool === 'pen' && b.dataset.color === state.color)); });
+      document.querySelectorAll('.chip[data-tool]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.tool === state.tool)); });
+      el.width.value = state.width;
+    }
+
+    el.png.addEventListener('click', function () {
+      var tmp = document.createElement('canvas'); tmp.width = el.pad.width; tmp.height = el.pad.height;
+      var t = tmp.getContext('2d'); t.fillStyle = '#fffefa'; t.fillRect(0, 0, tmp.width, tmp.height); t.drawImage(el.pad, 0, 0);
+      tmp.toBlob(function (blob) { if (blob) download(blob, fileBase() + '.png'); }, 'image/png');
+    });
+
+    /* ---------- tab ---------- */
+    function setMode(m, quiet) {
+      state.mode = m;
+      var t = m === 'type';
+      el.paperType.hidden = !t; el.toolsType.hidden = !t; el.count.hidden = !t;
+      el.paperDraw.hidden = t; el.toolsDraw.hidden = t;
+      el.tabType.setAttribute('aria-selected', String(t));
+      el.tabDraw.setAttribute('aria-selected', String(!t));
+      if (!t) redraw();
+      if (!quiet) schedule();
+    }
+    el.tabType.addEventListener('click', function () { setMode('type'); });
+    el.tabDraw.addEventListener('click', function () { setMode('draw'); });
+
+    /* ---------- ekspor / impor .txt ---------- */
+    function fileBase() {
+      return (state.title || '').replace(/[\\/:*?"<>|]+/g, '').trim() || 'catatan-momona';
+    }
+    function download(blob, name) {
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    }
+    $('#exportBtn').addEventListener('click', function () {
+      download(new Blob([state.text], { type: 'text/plain;charset=utf-8' }), fileBase() + '.txt');
+      toast('Diekspor: ' + fileBase() + '.txt');
+    });
+    $('#importBtn').addEventListener('click', function () { el.file.click(); });
+    el.file.addEventListener('change', function () {
+      var f = el.file.files && el.file.files[0];
+      el.file.value = '';
+      if (!f) return;
+      if (f.size > 1024 * 1024) { toast('File terlalu besar (maks 1 MB)'); return; }
+      if (state.text.trim() && !confirm('Tulisan ketikan saat ini akan diganti isi file. Lanjutkan?')) return;
+      var r = new FileReader();
+      r.onload = function () {
+        state.text = String(r.result || '').replace(/^\uFEFF/, '');
+        el.text.value = state.text;
+        if (!state.title.trim()) { state.title = f.name.replace(/\.[^.]+$/, ''); el.title.value = state.title; }
+        renderCount(); setMode('type', true); save();
+        toast('Diimpor: ' + f.name);
+      };
+      r.onerror = function () { toast('Gagal membaca file'); };
+      r.readAsText(f, 'UTF-8');
+    });
+
+    /* ---------- init ---------- */
+    el.title.value = state.title || '';
+    el.text.value = state.text || '';
+    el.width.value = state.width;
+    applyType(); applyTools(); renderCount(); renderDate(); updateBtns();
+    setMode(state.mode === 'draw' ? 'draw' : 'type', true);
+    if (state.updated) setStatus('Terakhir disimpan · ' + clock(state.updated));
+  })();
+  </script>
+</body>
+</html>
