@@ -38,7 +38,16 @@
     .intro { font: 13px/1.8 Arial, sans-serif; color: #68766a; margin: 0; }
 
     /* kumpulan polaroid */
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 16px; margin-top: 26px; padding: 0 4px; }
+    /* satu halaman = 6 foto; geser/drag ke kiri-kanan untuk halaman berikutnya */
+    .pages { position: relative; margin-top: 14px; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; transition: height .45s cubic-bezier(.22,.8,.3,1); }
+    .pages.dragging { cursor: grabbing; }
+    .track { display: flex; align-items: flex-start; transition: transform .5s cubic-bezier(.22,.8,.3,1); will-change: transform; }
+    .pages.dragging .track { transition: none; }
+    .page { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 16px; padding: 18px 16px 32px; }
+    .dots { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 0; }
+    .dot { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid #a9bba6; background: transparent; cursor: pointer; transition: width .3s ease, background .3s ease, border-color .3s ease; }
+    .dot[aria-current="true"] { width: 24px; border-radius: 6px; background: #6f8a6c; border-color: #6f8a6c; }
+    .dot:focus-visible { outline: 2px solid #8fa58b; outline-offset: 3px; }
     .shot { position: relative; margin: 0; padding: 8px 8px 28px; background: #fffefa; border: 1px solid #e7e6db; box-shadow: 0 9px 22px #35453625; cursor: zoom-in; transform: rotate(-1.6deg); transition: box-shadow .25s ease, translate .25s ease; }
     .shot:nth-child(even) { transform: rotate(1.8deg); }
     .shot:nth-child(3n) { transform: rotate(-.6deg); }
@@ -46,9 +55,9 @@
     .shot:focus-visible { outline: 2px solid #8fa58b; outline-offset: 3px; }
     .shot::before { content: ""; position: absolute; top: -10px; left: 14%; width: 42px; height: 17px; background: rgba(214,226,206,.82); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620; transform: rotate(-8deg); z-index: 2; }
     .shot:nth-child(even)::before { left: auto; right: 14%; transform: rotate(7deg); }
-    .shot img { display: block; width: 100%; aspect-ratio: 4/5; object-fit: contain; background: #f1f0e8; }
+    .shot img { display: block; width: 100%; aspect-ratio: 4/5; object-fit: contain; background: #f1f0e8; pointer-events: none; -webkit-user-drag: none; }
     .shot figcaption { position: absolute; left: 10px; right: 10px; bottom: 7px; font: italic 11px Georgia, serif; color: #788275; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .count { font: 10px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #879583; text-align: center; margin-top: 26px; }
+    .count { font: 10px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #879583; text-align: center; margin-top: 16px; }
 
     .backlink { display: block; width: fit-content; margin: 26px auto 0; font: italic 13px Georgia, serif; color: #4e624f; text-decoration: none; border-bottom: 1px solid #879985; padding-bottom: 3px; }
     footer { text-align: center; margin-top: 30px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
@@ -72,13 +81,13 @@
     @media (max-width: 420px) {
       body { padding: 24px 14px 34px; }
       .section { padding: 22px 14px 20px; }
-      .grid { gap: 22px 12px; padding: 0 2px; }
+      .page { gap: 22px 12px; padding: 16px 12px 30px; }
       .shot { padding: 6px 6px 24px; }
       .shot figcaption { font-size: 10px; left: 8px; bottom: 6px; }
     }
     @media (min-width: 700px) {
       main { width: min(100%, 680px); }
-      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 20px; }
+      .page { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 20px; padding: 20px 18px 34px; }
     }
     @media (min-width: 1024px) { main { width: min(100%, 860px); } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
@@ -98,9 +107,9 @@
     <section class="section">
       <div class="section-kicker">A small archive of beautiful moments</div>
       <h1>Archive</h1>
-      <p class="intro">Semua foto yang disimpan di halaman ini, dikumpulkan di satu tempat. Ketuk foto untuk melihatnya lebih besar.</p>
+      <p class="intro">Semua foto yang disimpan di halaman ini, dikumpulkan di satu tempat. Geser ke kiri atau kanan untuk foto berikutnya, ketuk foto untuk melihatnya lebih besar.</p>
 
-      <div class="grid" id="grid">
+      <div class="pages" id="pages"><div class="track" id="track">
         <figure class="shot"><img src="img/cover.jpg" alt="Potret Momona Matsumoto" loading="lazy"><figcaption>A favorite picture</figcaption></figure>
         <figure class="shot"><img src="img/gallery-5.png" alt="Portrait in natural light" loading="lazy"><figcaption>Soft afternoon light</figcaption></figure>
         <figure class="shot"><img src="img/gallery-4.jpg" alt="Quiet room by a window" loading="lazy"><figcaption>Quiet afternoon</figcaption></figure>
@@ -108,7 +117,8 @@
         <figure class="shot"><img src="img/gallery-1.jpg" alt="Green leaves in soft light" loading="lazy"><figcaption>Green memories</figcaption></figure>
         <figure class="shot"><img src="img/gallery-2.jpg" alt="Ocean waves" loading="lazy"><figcaption>Atlantic coast</figcaption></figure>
         <figure class="shot"><img src="img/gallery-6.jpg" alt="Momen yang akan datang" loading="lazy"><figcaption>More moments to come</figcaption></figure>
-      </div>
+      </div></div>
+      <div class="dots" id="dots" role="group" aria-label="Halaman foto"></div>
       <p class="count">7 photographs</p>
       <a class="backlink" href="index.html#gallery">Kembali ke halaman utama</a>
     </section>
@@ -127,6 +137,90 @@
     </div>
   </div>
 
+<script>
+/* Pager: 6 foto per halaman, drag / geser kiri-kanan untuk pindah halaman */
+(function(){
+  var PER=6;
+  var pagesEl=document.getElementById('pages'),track=document.getElementById('track'),dotsBox=document.getElementById('dots');
+  if(!pagesEl||!track)return;
+  var figs=[].slice.call(track.querySelectorAll('.shot')),pageEls=[];
+  for(var i=0;i<figs.length;i+=PER){
+    var pg=document.createElement('div');pg.className='page';
+    figs.slice(i,i+PER).forEach(function(f){pg.appendChild(f);});
+    track.appendChild(pg);pageEls.push(pg);
+  }
+  var total=pageEls.length,page=0,suppress=false,dots=[];
+  function w(){return track.offsetWidth;}
+  function setX(px){track.style.transform='translate3d('+px+'px,0,0)';}
+  function goPage(p){
+    page=Math.max(0,Math.min(total-1,p));
+    setX(-page*w());
+    pagesEl.style.height=pageEls[page].offsetHeight+'px';
+    pageEls.forEach(function(el,k){el.inert=(k!==page);});
+    dots.forEach(function(d,k){if(k===page)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current');});
+  }
+  if(total>1){
+    for(var k=0;k<total;k++){
+      (function(k){
+        var b=document.createElement('button');b.type='button';b.className='dot';
+        b.setAttribute('aria-label','Halaman '+(k+1)+' dari '+total);
+        b.addEventListener('click',function(){goPage(k);});
+        dotsBox.appendChild(b);dots.push(b);
+      })(k);
+    }
+  }
+  goPage(0);
+  window.addEventListener('resize',function(){
+    track.style.transition='none';pagesEl.style.transition='none';
+    goPage(page);void track.offsetWidth;
+    track.style.transition='';pagesEl.style.transition='';
+  });
+
+  var sx=0,sy=0,dx=0,t0=0,tracking=false,moved=false,pid=null;
+  pagesEl.addEventListener('pointerdown',function(e){
+    if(total<2||(e.pointerType==='mouse'&&e.button!==0))return;
+    tracking=true;moved=false;sx=e.clientX;sy=e.clientY;dx=0;t0=Date.now();pid=e.pointerId;
+  });
+  pagesEl.addEventListener('pointermove',function(e){
+    if(!tracking||e.pointerId!==pid)return;
+    var mx=e.clientX-sx,my=e.clientY-sy;
+    if(!moved){
+      if(Math.abs(mx)<7&&Math.abs(my)<7)return;
+      if(Math.abs(my)>Math.abs(mx)){tracking=false;return;}   /* gerakan vertikal = scroll biasa */
+      moved=true;pagesEl.classList.add('dragging');
+      try{pagesEl.setPointerCapture(pid);}catch(_){}
+    }
+    dx=mx;
+    var edge=(page===0&&dx>0)||(page===total-1&&dx<0);
+    setX(-page*w()+(edge?dx*.35:dx));
+  });
+  function end(e){
+    if(!tracking||e.pointerId!==pid)return;
+    tracking=false;
+    if(!moved)return;
+    pagesEl.classList.remove('dragging');
+    try{pagesEl.releasePointerCapture(pid);}catch(_){}
+    var v=dx/Math.max(1,Date.now()-t0),th=Math.min(80,w()*.18),p=page;
+    if(e.type!=='pointercancel'){
+      if(dx<-th||(v<-.45&&dx<-20))p=page+1;
+      else if(dx>th||(v>.45&&dx>20))p=page-1;
+    }
+    goPage(p);
+    suppress=true;setTimeout(function(){suppress=false;},80);
+  }
+  pagesEl.addEventListener('pointerup',end);
+  pagesEl.addEventListener('pointercancel',end);
+  pagesEl.addEventListener('click',function(e){if(suppress){e.stopPropagation();e.preventDefault();}},true);
+  pagesEl.addEventListener('scroll',function(){pagesEl.scrollLeft=0;});
+  document.addEventListener('keydown',function(e){
+    var lb=document.getElementById('lightbox');
+    if(total<2||(lb&&!lb.hidden))return;
+    if(e.key==='ArrowRight')goPage(page+1);
+    else if(e.key==='ArrowLeft')goPage(page-1);
+  });
+  window.galleryPager={per:PER,go:goPage,dragged:function(){return suppress;},box:pagesEl};
+})();
+</script>
 <script>
 (function(){
   var shots=[].slice.call(document.querySelectorAll('.shot'));
@@ -148,6 +242,8 @@
   function from(el){
     var r=el.getBoundingClientRect(),c=card.getBoundingClientRect();
     if(!c.width||r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth)return null;
+    var pr=window.galleryPager&&galleryPager.box.getBoundingClientRect();
+    if(pr&&(r.left<pr.left-2||r.right>pr.right+2))return null;   /* foto ada di halaman lain */
     return 'translate('+(r.left+r.width/2-c.left-c.width/2)+'px,'+(r.top+r.height/2-c.top-c.height/2)+'px) scale('+(r.width/c.width)+','+(r.height/c.height)+')';
   }
   function d(n){return reduce?0:n;}
@@ -166,6 +262,7 @@
     clearTimeout(tClose);clear();
     box.hidden=true;isOpen=false;closing=false;stepping=false;
     document.documentElement.style.overflow='';
+    if(window.galleryPager)galleryPager.go(Math.floor(idx/galleryPager.per));
     shots[idx].focus({preventScroll:true});
   }
   function closeLB(){
@@ -194,7 +291,7 @@
   shots.forEach(function(f,i){
     f.tabIndex=0;f.setAttribute('role','button');
     f.setAttribute('aria-label','Lihat foto: '+f.querySelector('figcaption').textContent);
-    f.addEventListener('click',function(){openLB(i);});
+    f.addEventListener('click',function(){if(window.galleryPager&&galleryPager.dragged())return;openLB(i);});
     f.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLB(i);}});
   });
   box.querySelector('.lb-close').addEventListener('click',closeLB);
