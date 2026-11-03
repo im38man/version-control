@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf2e7">
+  <title>Count — Momona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    :root {
+      --ink: #25352b;
+      --paper: #fffefa;
+      --sage: #8fa58b;
+      --f-elegan: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 28px 18px max(40px, env(safe-area-inset-bottom));
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 15% 15%, #f8f3d9 0, transparent 34%),
+        radial-gradient(ellipse at 85% 80%, #c7ddc3 0, transparent 38%),
+        linear-gradient(135deg, #edf3e9, #dce9df 55%, #f5f1e5);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; width: 260px; height: 260px; border-radius: 50%; background: #fff; filter: blur(80px); opacity: .38; pointer-events: none; }
+    .glow.one { top: -100px; right: -50px; }
+    .glow.two { bottom: -120px; left: -70px; }
+    .wrap { width: min(100%, 820px); margin: 0 auto; position: relative; }
+
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      color: #455b49; font: 12px Arial, sans-serif; letter-spacing: .06em;
+      padding: 9px 16px; border: 1px solid #b9cbb8; border-radius: 999px; background: #ffffffa8; transition: .2s ease;
+    }
+    .back:hover { background: #fff; transform: translateY(-2px); }
+    .status { font: italic 12px Georgia, serif; color: #7d8d7a; }
+    .status.error { color: #b0605f; }
+
+    .eyebrow { text-align: center; text-transform: uppercase; letter-spacing: .28em; font: 10px/1.5 Arial, sans-serif; color: #758675; margin: 26px 0 8px; }
+    h1 { text-align: center; font-size: clamp(32px, 8vw, 48px); line-height: 1.05; margin: 0 0 10px; font-weight: 600; letter-spacing: -.045em; }
+    .lede { text-align: center; font: 13px/1.8 Arial, sans-serif; color: #68766a; margin: 0 auto; max-width: 440px; }
+
+    .sheet {
+      position: relative; margin-top: 34px; padding: 28px 30px 26px;
+      background: var(--paper); border: 1px solid #fff; border-radius: 4px;
+      box-shadow: 0 24px 70px #435b4730, 0 4px 12px #435b4712;
+    }
+    .sheet::before, .sheet::after {
+      content: ""; position: absolute; top: -11px; width: 74px; height: 22px;
+      background: rgba(214,226,206,.82); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620;
+    }
+    .sheet::before { left: 8%; transform: rotate(-6deg); }
+    .sheet::after { right: 8%; transform: rotate(5deg); }
+
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px;
+      border: 1px solid #cdd9c8; background: #ffffffb0; color: #455b49; cursor: pointer;
+      padding: 6px 14px; border-radius: 999px; font: 12px Arial, sans-serif; letter-spacing: .03em; transition: .2s ease;
+    }
+    .chip:hover { background: #fff; transform: translateY(-1px); }
+    .chip.primary { background: #e4ece1; border-color: #9caf98; color: #31473a; }
+    .list-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+    .list-count { font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; }
+
+    /* ===== kartu hitung mundur ===== */
+    .counts { list-style: none; margin: 0; padding: 24px 0 2px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px 22px; }
+    .cd-card {
+      position: relative; padding: 24px 20px 18px; background: #fffefa; border: 1px solid #ece8da;
+      box-shadow: 0 10px 26px #435b4718; transition: box-shadow .25s ease, translate .25s ease;
+    }
+    .cd-card:nth-child(odd) { transform: rotate(-.6deg); }
+    .cd-card:nth-child(even) { transform: rotate(.7deg); }
+    .cd-card::before {
+      content: ""; position: absolute; top: -10px; left: 50%; width: 60px; height: 19px; margin-left: -30px; z-index: 2; pointer-events: none;
+      background: rgba(214,226,206,.85); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620; transform: rotate(-3deg);
+    }
+    .cd-card:hover, .cd-card:focus-within { translate: 0 -3px; box-shadow: 0 18px 36px #435b4728; }
+    .cd-card.past { background: #fbfaf3; }
+    .cd-badge {
+      display: inline-block; margin: 0 0 8px; padding: 3px 10px; border-radius: 999px; background: #e4ece1; color: #55705a;
+      font: 9px Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase;
+    }
+    .cd-card.past .cd-badge { background: #f0e6d6; color: #8a6f3f; }
+    .cd-name { margin: 0 56px 4px 0; font: italic 600 clamp(24px, 4.6vw, 30px)/1.15 var(--f-elegan); color: #31473a; overflow-wrap: anywhere; letter-spacing: -.01em; }
+    .cd-date { margin: 0 0 16px; font: 11px/1.6 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #8a9b88; }
+    .cd-units { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .cd-unit { padding: 12px 4px 9px; text-align: center; background: #f8f6ec; border: 1px solid #e9e5d6; border-radius: 12px; }
+    .cd-num { display: block; font: 600 clamp(26px, 6vw, 34px)/1 var(--f-elegan); color: #3d5744; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+    .cd-lbl { display: block; margin-top: 6px; font: 9px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; }
+    .cd-caption { margin: 12px 0 0; text-align: center; font: italic 12px Georgia, serif; color: #8a9b88; }
+    .cd-desc { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed #e3e6d8; font: italic 14px/1.75 Georgia, serif; color: #626b5d; white-space: pre-line; overflow-wrap: anywhere; }
+    .cd-actions { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; gap: 6px; }
+    .cd-btn {
+      display: grid; place-items: center; width: 30px; height: 30px; margin: 0; padding: 0; border: 0; border-radius: 50%;
+      background: #fffefaf0; box-shadow: 0 2px 6px #435b4722; color: #6f876d; font: 14px/1 Arial, sans-serif; cursor: pointer; opacity: 0; transition: .2s ease;
+    }
+    .cd-card:hover .cd-btn, .cd-card:focus-within .cd-btn, .cd-btn:focus-visible { opacity: 1; }
+    .cd-btn:hover { background: #fff; }
+    .cd-btn.del:hover { color: #a05b5b; }
+    @media (hover: none) { .cd-btn { opacity: .9; } }
+    .cd-add {
+      display: grid; place-items: center; align-content: center; gap: 6px; width: 100%; min-height: 250px; margin: 0; padding: 14px;
+      border: 1.5px dashed #bccab8; background: #ffffff70; color: #6f876d; cursor: pointer; text-align: center; font: italic 18px var(--f-elegan); transition: .2s ease;
+    }
+    .cd-add b { font: 300 42px/1 Arial, sans-serif; color: #9caf98; }
+    .cd-add:hover { background: #fff; border-color: #9caf98; }
+    .cd-card.add { padding: 0; background: none; border: 0; box-shadow: none; }
+    .cd-card.add::before { display: none; }
+    .empty-state { text-align: center; margin: 22px auto 2px; max-width: 380px; font: italic 14px/1.8 Georgia, serif; color: #8a9b88; }
+
+    /* ===== form (popup) ===== */
+    .modal {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 18px; overflow-y: auto;
+      background: rgba(37,53,43,.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    }
+    .modal-card {
+      position: relative; width: min(100%, 460px); max-height: calc(100vh - 36px); max-height: calc(100dvh - 36px); overflow-y: auto; margin: auto;
+      padding: 30px 26px 24px; background: #fffefa; border: 1px solid #fff; box-shadow: 0 28px 80px #25352b66;
+      transform: rotate(-.6deg); animation: pop .35s cubic-bezier(.22,.8,.3,1);
+    }
+    .modal-card::before {
+      content: ""; position: absolute; top: -11px; left: 50%; width: 70px; height: 21px; margin-left: -35px;
+      background: rgba(214,226,206,.88); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620; transform: rotate(-3deg);
+    }
+    @keyframes pop { from { opacity: 0; transform: translateY(16px) rotate(-3deg); } to { opacity: 1; transform: rotate(-.6deg); } }
+    .modal h2 { margin: 0 0 4px; font: italic 600 30px/1.15 var(--f-elegan); color: #31473a; text-align: center; }
+    .modal .sub { margin: 0 0 18px; text-align: center; font: 12px/1.6 Arial, sans-serif; color: #8a9b88; }
+    .field { display: block; margin: 0 0 16px; }
+    .field > span { display: block; margin: 0 0 4px; font: 10px Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #8a9b88; }
+    .field input, .field textarea {
+      display: block; width: 100%; margin: 0; padding: 8px 2px 9px; border: 0; border-bottom: 1px dashed #cdd9c8; border-radius: 0; background: none; outline: none;
+      color: var(--ink); font: italic 500 20px/1.3 var(--f-elegan); transition: border-color .2s ease;
+    }
+    .field textarea { min-height: 84px; resize: vertical; font-size: 17px; line-height: 1.55; border: 1px dashed #cdd9c8; border-radius: 6px; padding: 9px 11px; background: #fbfaf3; }
+    .field input[type="date"], .field input[type="time"] { font: 500 16px/1.3 Arial, sans-serif; font-style: normal; color: #3d4f40; min-height: 40px; }
+    .field input:focus, .field textarea:focus { border-color: var(--sage); }
+    .field input::placeholder, .field textarea::placeholder { color: #b4bfb1; }
+    .row2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+    .row2 .field { min-width: 0; }
+    .err { min-height: 16px; margin: -4px 0 8px; text-align: center; font: italic 12px Georgia, serif; color: #b0605f; }
+    .modal-actions { display: flex; justify-content: center; gap: 10px; margin-top: 6px; }
+    .chip.big { min-height: 40px; padding: 8px 22px; font-size: 13px; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 80; transform: translate(-50%, 14px);
+      max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #25352be6; color: #fffefa;
+      font: 12px Arial, sans-serif; letter-spacing: .03em; opacity: 0; pointer-events: none; transition: .3s ease; text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    footer { text-align: center; margin-top: 30px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
+
+    @media (min-width: 1024px) {
+      body { padding-top: 44px; }
+      .wrap { width: min(100%, 900px); }
+      .sheet { padding: 34px 40px 30px; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 18px 12px 34px; }
+      .sheet { margin-top: 30px; padding: 24px 14px 20px; }
+      .sheet::before, .sheet::after { width: 56px; height: 18px; }
+      .counts { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+      .cd-card { padding: 22px 14px 16px; }
+      .cd-units { gap: 6px; }
+      .cd-add { min-height: 150px; }
+      .modal-card { padding: 28px 18px 20px; }
+    }
+    @media (max-width: 360px) {
+      .row2 { grid-template-columns: 1fr; gap: 0; }
+      .back { padding: 8px 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+  <main class="wrap">
+    <div class="top">
+      <a class="back" href="index.html">← Kembali</a>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="eyebrow">Menghitung hari-hari berharga</div>
+    <h1>Count</h1>
+    <p class="lede">Hitung mundur menuju hari yang kamu tunggu. Beri nama, pilih tanggal dan jam, tambahkan catatan kecil. Semuanya tersimpan di perangkat ini.</p>
+
+    <section class="sheet" aria-label="Daftar hitung mundur">
+      <div class="list-bar">
+        <button type="button" class="chip primary" id="newBtn">＋ Hitung mundur baru</button>
+        <div class="list-count" id="listCount"></div>
+      </div>
+      <ul class="counts" id="counts"></ul>
+      <p class="empty-state" id="emptyState" hidden>Belum ada hitung mundur. Tekan “Hitung mundur baru” untuk menambahkan hari yang kamu tunggu.</p>
+    </section>
+
+    <footer>MADE WITH CARE · 2026</footer>
+  </main>
+
+  <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <form class="modal-card" id="form" novalidate>
+      <h2 id="mTitle">Hitung mundur baru</h2>
+      <p class="sub">Menuju hari yang ingin kamu ingat.</p>
+      <label class="field"><span>Nama</span>
+        <input id="fName" type="text" maxlength="60" placeholder="mis. Ulang tahun Momona" autocomplete="off" required>
+      </label>
+      <div class="row2">
+        <label class="field"><span>Tanggal</span><input id="fDate" type="date" required></label>
+        <label class="field"><span>Jam</span><input id="fTime" type="time" value="00:00"></label>
+      </div>
+      <label class="field"><span>Deskripsi (opsional)</span>
+        <textarea id="fDesc" maxlength="300" placeholder="Catatan kecil tentang hari ini…"></textarea>
+      </label>
+      <p class="err" id="fErr" role="alert"></p>
+      <div class="modal-actions">
+        <button type="button" class="chip big" id="cancelBtn">Batal</button>
+        <button type="submit" class="chip big primary" id="saveBtn">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+    var KEY = 'momona.count.v1';
+    var $ = function (s) { return document.querySelector(s); };
+    var el = {
+      list: $('#counts'), empty: $('#emptyState'), count: $('#listCount'), status: $('#status'), toast: $('#toast'),
+      newBtn: $('#newBtn'), modal: $('#modal'), form: $('#form'), title: $('#mTitle'),
+      name: $('#fName'), date: $('#fDate'), time: $('#fTime'), desc: $('#fDesc'), err: $('#fErr'), cancel: $('#cancelBtn')
+    };
+    var items = [];
+    var refs = [];            // referensi elemen angka tiap kartu, untuk update tiap detik
+    var editingId = null, lastFocus = null;
+
+    /* ---------- data ---------- */
+    function uid() { return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function valid(it) {
+      return it && typeof it.name === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(it.date || '') && /^\d{2}:\d{2}$/.test(it.time || '');
+    }
+    function load() {
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (!raw) return;
+        var d = JSON.parse(raw);
+        if (!d || !Array.isArray(d.items)) return;
+        items = d.items.filter(valid).map(function (it) {
+          return { id: typeof it.id === 'string' && /^[\w-]+$/.test(it.id) ? it.id : uid(), name: it.name, date: it.date, time: it.time, desc: typeof it.desc === 'string' ? it.desc : '', created: +it.created || Date.now() };
+        });
+      } catch (e) { items = []; }
+    }
+    function save() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify({ v: 1, items: items }));
+        setStatus('Tersimpan otomatis');
+        return true;
+      } catch (e) {
+        setStatus('Gagal menyimpan — penyimpanan penuh atau diblokir', true);
+        return false;
+      }
+    }
+    function targetMs(it) {
+      var d = it.date.split('-'), t = it.time.split(':');
+      return new Date(+d[0], +d[1] - 1, +d[2], +t[0], +t[1], 0, 0).getTime();
+    }
+
+    /* ---------- util ---------- */
+    var toastTimer = null;
+    function toast(msg) {
+      el.toast.textContent = msg; el.toast.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 2400);
+    }
+    function setStatus(msg, err) { el.status.textContent = msg; el.status.classList.toggle('error', !!err); }
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function longDate(it) {
+      var d = it.date.split('-');
+      var s = new Date(+d[0], +d[1] - 1, +d[2]).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      return s + ' · ' + it.time.replace(':', '.');
+    }
+    function split(ms) {
+      var s = Math.floor(ms / 1000);
+      return { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+    }
+
+    /* ---------- tampilan ---------- */
+    function make(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+
+    function render() {
+      var now = Date.now();
+      var sorted = items.map(function (it) { return { it: it, t: targetMs(it) }; });
+      sorted.sort(function (a, b) {
+        var pa = a.t <= now, pb = b.t <= now;
+        if (pa !== pb) return pa ? 1 : -1;                 // yang akan datang dulu
+        return pa ? b.t - a.t : a.t - b.t;                 // terdekat dulu / lewat terbaru dulu
+      });
+
+      el.list.textContent = ''; refs = [];
+
+      var li0 = make('li', 'cd-card add');
+      var add = make('button', 'cd-add'); add.type = 'button';
+      add.appendChild(make('b', null, '+')); add.appendChild(make('span', null, 'Hitung mundur baru'));
+      add.addEventListener('click', function () { openForm(null); });
+      li0.appendChild(add); el.list.appendChild(li0);
+
+      sorted.forEach(function (x) {
+        var it = x.it;
+        var li = make('li', 'cd-card');
+        var badge = make('span', 'cd-badge');
+        var name = make('h3', 'cd-name', it.name);
+        var date = make('p', 'cd-date', longDate(it));
+
+        var units = make('div', 'cd-units');
+        var nums = {};
+        [['d', 'hari'], ['h', 'jam'], ['m', 'menit'], ['s', 'detik']].forEach(function (u) {
+          var box = make('div', 'cd-unit'); var n = make('span', 'cd-num', '0'); n.setAttribute('aria-hidden', 'true');
+          box.appendChild(n); box.appendChild(make('span', 'cd-lbl', u[1])); units.appendChild(box); nums[u[0]] = n;
+        });
+        units.setAttribute('role', 'timer'); units.setAttribute('aria-label', 'Hitung mundur ' + it.name);
+
+        var cap = make('p', 'cd-caption');
+        li.appendChild(badge); li.appendChild(name); li.appendChild(date); li.appendChild(units); li.appendChild(cap);
+        if (it.desc.trim()) li.appendChild(make('p', 'cd-desc', it.desc));
+
+        var acts = make('div', 'cd-actions');
+        var ed = make('button', 'cd-btn edit', '✎'); ed.type = 'button'; ed.setAttribute('aria-label', 'Ubah ' + it.name);
+        ed.addEventListener('click', function () { openForm(it.id); });
+        var del = make('button', 'cd-btn del', '×'); del.type = 'button'; del.setAttribute('aria-label', 'Hapus ' + it.name);
+        del.addEventListener('click', function () { removeItem(it.id); });
+        acts.appendChild(ed); acts.appendChild(del); li.appendChild(acts);
+
+        el.list.appendChild(li);
+        refs.push({ t: x.t, li: li, badge: badge, cap: cap, nums: nums, past: null, last: {} });
+      });
+
+      el.count.textContent = items.length ? items.length + ' hitung mundur' : '';
+      el.empty.hidden = items.length > 0;
+      tick();
+    }
+
+    // update angka tiap detik tanpa membangun ulang DOM
+    function tick() {
+      var now = Date.now(), flipped = false;
+      refs.forEach(function (r) {
+        var past = r.t <= now;
+        if (r.past === null) { r.past = past; r.li.classList.toggle('past', past); r.badge.textContent = past ? 'Sudah tiba' : 'Menuju'; r.cap.textContent = past ? 'telah berlalu sejak hari itu' : 'lagi menuju hari itu'; }
+        else if (r.past !== past) { flipped = true; }
+        var p = split(Math.abs(r.t - now));
+        var vals = { d: String(p.d), h: pad(p.h), m: pad(p.m), s: pad(p.s) };
+        for (var k in vals) if (r.last[k] !== vals[k]) { r.nums[k].textContent = vals[k]; r.last[k] = vals[k]; }
+      });
+      if (flipped) { render(); toast('🎉 Ada hitung mundur yang sudah tiba!'); }
+    }
+    var loopTimer = null;
+    function loop() { tick(); loopTimer = setTimeout(loop, 1000 - (Date.now() % 1000) + 8); }
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { clearTimeout(loopTimer); loop(); } });
+
+    /* ---------- form ---------- */
+    function openForm(id) {
+      editingId = id; lastFocus = document.activeElement;
+      var it = id ? items.filter(function (x) { return x.id === id; })[0] : null;
+      el.title.textContent = it ? 'Ubah hitung mundur' : 'Hitung mundur baru';
+      el.name.value = it ? it.name : ''; el.date.value = it ? it.date : ''; el.time.value = it ? it.time : '00:00'; el.desc.value = it ? it.desc : '';
+      el.err.textContent = '';
+      el.modal.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      el.name.focus({ preventScroll: true });
+    }
+    function closeForm() {
+      el.modal.hidden = true; editingId = null;
+      document.documentElement.style.overflow = '';
+      if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+    }
+    el.newBtn.addEventListener('click', function () { openForm(null); });
+    el.cancel.addEventListener('click', closeForm);
+    el.modal.addEventListener('mousedown', function (e) { if (e.target === el.modal) closeForm(); });
+    document.addEventListener('keydown', function (e) {
+      if (el.modal.hidden) return;
+      if (e.key === 'Escape') { closeForm(); return; }
+      if (e.key === 'Tab') {                                  // jaga fokus tetap di dalam popup
+        var f = [].slice.call(el.form.querySelectorAll('input,textarea,button')).filter(function (n) { return !n.disabled; });
+        var i = f.indexOf(document.activeElement);
+        if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      }
+    });
+    el.form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = el.name.value.trim(), date = el.date.value, time = el.time.value || '00:00';
+      if (!name) { el.err.textContent = 'Nama hitung mundur belum diisi.'; el.name.focus(); return; }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(targetMs({ date: date, time: time }))) { el.err.textContent = 'Pilih tanggal yang valid.'; el.date.focus(); return; }
+      var desc = el.desc.value.trim();
+      var backup = JSON.stringify(items);
+      if (editingId) {
+        items.forEach(function (x) { if (x.id === editingId) { x.name = name; x.date = date; x.time = time; x.desc = desc; } });
+      } else {
+        items.push({ id: uid(), name: name, date: date, time: time, desc: desc, created: Date.now() });
+      }
+      if (!save()) { items = JSON.parse(backup); el.err.textContent = 'Gagal menyimpan. Penyimpanan browser penuh atau diblokir.'; return; }
+      var wasEdit = !!editingId;
+      closeForm(); render(); toast(wasEdit ? 'Perubahan disimpan' : 'Hitung mundur ditambahkan');
+    });
+
+    function removeItem(id) {
+      var it = items.filter(function (x) { return x.id === id; })[0]; if (!it) return;
+      if (!confirm('Hapus hitung mundur “' + it.name + '”? Tindakan ini tidak bisa dibatalkan.')) return;
+      items = items.filter(function (x) { return x.id !== id; });
+      save(); render(); toast('Hitung mundur dihapus');
+    }
+
+    // sinkron bila halaman dibuka di tab lain
+    window.addEventListener('storage', function (e) { if (e.key === KEY) { load(); render(); } });
+
+    load(); setStatus(items.length ? '' : 'Siap menghitung'); render(); loop();
+  })();
+  </script>
+</body>
+</html>

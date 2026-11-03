@@ -210,7 +210,7 @@ h2{font-size:29px;font-weight:500;margin:0 0 10px;letter-spacing:-.03em}
 
 /* ===== Gallery: polaroid bisa diklik + lightbox ===== */
 .gallery-photo{cursor:zoom-in;transition:box-shadow .25s ease,translate .25s ease}
-.gallery-photo:hover,.gallery-photo:focus-visible{translate:0 -5px;box-shadow:0 16px 32px #35453640;z-index:6}
+.gallery-photo:hover,.gallery-photo:focus-visible{translate:0 -5px;box-shadow:0 16px 32px #35453640}
 .gallery-photo:focus-visible{outline:2px solid #8fa58b;outline-offset:3px}
 .lightbox{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:18px;background:rgba(37,53,43,.62);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 .lightbox[hidden]{display:none}
@@ -541,6 +541,11 @@ img{max-width:100%}
           <span class="side-text"><strong>Notepad</strong><small>Ketik atau gambar catatan kecil</small></span>
           <span class="side-arrow">→</span>
         </a>
+        <a class="side-item" href="count.html">
+          <span class="side-ico">◷</span>
+          <span class="side-text"><strong>Count</strong><small>Hitung mundur hari-hari penting</small></span>
+          <span class="side-arrow">→</span>
+        </a>
       </nav>
     </div>
   </aside>
@@ -592,7 +597,14 @@ img{max-width:100%}
   var btnPrev=box.querySelector('.lb-prev');
   var btnNext=box.querySelector('.lb-next');
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var idx=0, isOpen=false, closing=false, lastFocus=null;
+  var idx=0, isOpen=false, closing=false, stepping=false, lastFocus=null, closeTimer=null;
+
+  /* Lepas semua animasi (termasuk yang fill:forwards) supaya buka berikutnya bersih */
+  function clearAnims(){
+    [box,card].forEach(function(n){
+      if(n.getAnimations) n.getAnimations().forEach(function(a){ a.cancel(); });
+    });
+  }
 
   figs.forEach(function(f,i){
     f.tabIndex=0; f.setAttribute('role','button');
@@ -617,7 +629,9 @@ img{max-width:100%}
 
   function openLB(i){
     if(isOpen) return;
-    isOpen=true; closing=false; lastFocus=document.activeElement;
+    isOpen=true; closing=false; stepping=false; lastFocus=document.activeElement;
+    clearTimeout(closeTimer);
+    clearAnims();
     fill(i); box.hidden=false;
     document.documentElement.style.overflow='hidden';
     box.animate([{opacity:0},{opacity:1}],{duration:dur(300),easing:'ease'});
@@ -629,7 +643,10 @@ img{max-width:100%}
     btnClose.focus({preventScroll:true});
   }
   function finish(){
-    box.hidden=true; isOpen=false; closing=false;
+    if(!isOpen) return;
+    clearTimeout(closeTimer);
+    clearAnims();
+    box.hidden=true; isOpen=false; closing=false; stepping=false;
     document.documentElement.style.overflow='';
     var f=figs[idx]; if(f) f.focus({preventScroll:true}); else if(lastFocus) lastFocus.focus();
   }
@@ -643,13 +660,20 @@ img{max-width:100%}
       {duration:dur(380),easing:'cubic-bezier(.5,0,.75,0)',fill:'forwards'}
     );
     a.onfinish=finish;
+    clearTimeout(closeTimer);
+    closeTimer=setTimeout(finish,dur(380)+120); /* jaring pengaman bila onfinish tidak terpanggil */
     if(reduce) finish();
   }
   function step(d){
-    if(!isOpen||closing) return;
-    card.animate([{opacity:1,translate:'0 0'},{opacity:0,translate:(-d*28)+'px 0'}],{duration:dur(140),easing:'ease-in',fill:'forwards'}).onfinish=function(){
+    if(!isOpen||closing||stepping) return;
+    stepping=true;
+    var out=card.animate([{opacity:1,translate:'0 0'},{opacity:0,translate:(-d*28)+'px 0'}],{duration:dur(140),easing:'ease-in',fill:'forwards'});
+    out.onfinish=function(){
+      out.cancel(); /* lepas fill:forwards, kalau tidak kartu tetap transparan */
+      if(!isOpen||closing){ stepping=false; return; }
       fill(idx+d);
-      card.animate([{opacity:0,translate:(d*28)+'px 0'},{opacity:1,translate:'0 0'}],{duration:dur(220),easing:'ease-out'});
+      var inn=card.animate([{opacity:0,translate:(d*28)+'px 0'},{opacity:1,translate:'0 0'}],{duration:dur(220),easing:'ease-out'});
+      inn.onfinish=function(){ stepping=false; };
     };
   }
 
