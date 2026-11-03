@@ -104,6 +104,8 @@ h2{font-size:29px;font-weight:500;margin:0 0 10px;letter-spacing:-.03em}
 .gallery-brand{font-family:cursive;font-size:clamp(23px,4vw,34px);font-style:italic;color:#536653;letter-spacing:-.04em}
 .gallery-links{display:flex;gap:18px;font:11px Georgia,serif;color:#73816f}
 .gallery-links span{border-bottom:1px solid #b8c8b4;padding-bottom:3px}
+.gallery-links a{color:inherit;text-decoration:none}
+.gallery-links a:hover span{border-bottom-color:#73816f}
 .gallery-stage{position:relative;min-height:450px;margin:4px 0 8px;background:radial-gradient(ellipse at 50% 50%,#e9ede2 0,#f5f3e9 70%,transparent 100%);border-radius:4px}
 .gallery-title{position:absolute;left:2%;top:12%;z-index:4;font:clamp(27px,4vw,43px)/1.05 Georgia,serif;color:#354437}
 .gallery-title em{display:block;padding-left:20px;font-weight:400}
@@ -206,6 +208,47 @@ h2{font-size:29px;font-weight:500;margin:0 0 10px;letter-spacing:-.03em}
  .letter-paper .salutation{font-size:18px}
  .letter-paper .letter-copy{font-size:14px;line-height:1.8}
  .letter-envelope{width:72%;height:115px;margin:-5px 1% 0 auto}
+}
+
+/* ===== Letters: animasi buka amplop (tampilan akhir = desain asli) ===== */
+.letter-scene{transition:min-height .9s ease,padding-bottom .9s ease}
+.letter-scene:not(.is-open){min-height:0;padding-bottom:44px}
+.letter-reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .8s cubic-bezier(.4,0,.2,1) 0s}
+.letter-reveal-inner{min-height:0;overflow:hidden}
+.letter-scene.is-open .letter-reveal{grid-template-rows:1fr;transition:grid-template-rows 1.1s cubic-bezier(.22,.7,.2,1) .3s}
+.letter-scene.is-settled .letter-reveal-inner{overflow:visible}
+.letter-scene .letter-paper{opacity:0;transform:translateY(40px) rotate(-1deg);transition:transform .9s cubic-bezier(.22,.7,.2,1) 0s,opacity .4s ease 0s}
+.letter-scene.is-open .letter-paper{opacity:1;transform:rotate(-1deg);transition-delay:.4s,.4s}
+.letter-paper>*{opacity:0;transform:translateY(8px);transition:opacity .5s ease 0s,transform .5s ease 0s}
+.letter-scene.is-open .letter-paper>*{opacity:1;transform:none}
+.letter-scene.is-open .letter-paper .salutation{transition:opacity .6s ease 1s,transform .6s ease 1s}
+.letter-scene.is-open .letter-paper .letter-copy{transition:opacity .6s ease 1.25s,transform .6s ease 1.25s}
+.letter-scene.is-open .letter-paper .signature{transition:opacity .6s ease 1.55s,transform .6s ease 1.55s}
+.letter-scene{--env-shift:-30%}
+.letter-envelope{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;transform:translateX(var(--env-shift)) rotate(1deg);transition:transform .9s cubic-bezier(.22,.7,.2,1) .1s}
+.letter-scene.is-open .letter-envelope{transform:rotate(1deg)}
+.letter-envelope:focus-visible{outline:2px solid #9bb09a;outline-offset:6px}
+.letter-scene:not(.is-open) .wax-seal{animation:sealPulse 2.6s ease-in-out infinite}
+@keyframes sealPulse{0%,100%{box-shadow:0 2px 5px #55442b30,0 0 0 0 #c8b18a66}50%{box-shadow:0 2px 5px #55442b30,0 0 0 9px #c8b18a00}}
+.letter-hint{position:absolute;left:0;right:0;bottom:12px;z-index:3;margin:0;text-align:center;font:italic 12px Georgia,serif;color:#82907d;pointer-events:none;transition:opacity .35s ease}
+.letter-scene:not(.is-open) .letter-hint{animation:hintBlink 2.4s ease-in-out infinite}
+.letter-scene.is-open .letter-hint{opacity:0}
+@keyframes hintBlink{0%,100%{opacity:1}50%{opacity:.45}}
+.letter-scene{--eh:145px}
+.wax-seal{transition:opacity .45s ease 1.1s,transform .45s ease 1.1s}
+.letter-scene.is-open .wax-seal{opacity:0;transform:translate(-50%,-50%) scale(.5);transition:opacity .3s ease 0s,transform .3s ease 0s}
+.env-inner,.env-flap{position:absolute;left:0;right:0;top:0;height:calc(var(--eh)*.5);pointer-events:none;clip-path:polygon(calc(50% - var(--eh)*.714) 0,calc(50% + var(--eh)*.714) 0,50% 100%)}
+.env-inner{z-index:-2;background:linear-gradient(#e4e0d0,#eeebdf)}
+.env-flap{z-index:-1;background:#fdfcf7;transform-origin:50% 0;transform:perspective(700px) rotateX(0deg);transition:transform .7s ease .6s}
+.letter-scene.is-open .env-flap{transform:perspective(700px) rotateX(180deg);transition:transform .7s ease .15s}
+@media(max-width:600px){.letter-scene{--eh:115px}}
+@media(min-width:700px){.letter-scene{--eh:165px}}
+@media(min-width:1024px){.letter-scene{--eh:185px}}
+@media(max-width:600px){.letter-scene{--env-shift:-18%}}
+@media (prefers-reduced-motion:reduce){
+ .letter-scene,.letter-reveal,.letter-paper,.letter-paper>*,.letter-envelope,.letter-hint{transition-duration:.01ms!important;transition-delay:0s!important}
+ .env-flap,.wax-seal{transition-duration:.01ms!important;transition-delay:0s!important}
+ .wax-seal,.letter-hint{animation:none!important}
 }
 
 /* ===== Gallery: polaroid bisa diklik + lightbox ===== */
@@ -350,7 +393,7 @@ img{max-width:100%}
 <section class="section" id="gallery">
   <div class="gallery-heading">
     <div class="gallery-brand">Momona Matsumoto</div>
-    <div class="gallery-links"><span>About</span><span>Archive</span></div>
+    <div class="gallery-links"><a href="about.html"><span>About</span></a><a href="gallery.html"><span>Archive</span></a></div>
   </div>
   <div class="gallery-stage">
     <div class="gallery-title">Poetry <em>in Light</em></div>
@@ -384,14 +427,17 @@ img{max-width:100%}
   <div class="section-kicker">Words from the heart</div>
   <h2>Letters</h2>
   <div class="letter-intro"><p>Some words deserve a beautiful place to stay.</p></div>
-  <div class="letter-scene">
+  <div class="letter-scene" id="letterScene">
     <img class="letter-botanical" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=max&w=700&q=85" alt="Delicate dried flowers">
+    <div class="letter-reveal"><div class="letter-reveal-inner">
     <article class="letter-paper">
       <p class="salutation">Dear Momona,</p>
       <p class="letter-copy">Ada banyak hal sederhana yang ingin kusimpan dalam sebuah surat. Bukan karena kata-kata ini sempurna, tetapi karena setiap kalimat punya arti tersendiri. Semoga halaman kecil ini selalu menjadi tempat yang hangat untuk menyimpan cerita dan rasa syukur.</p>
       <p class="signature">With affection,</p>
     </article>
-    <div class="letter-envelope"><span class="wax-seal">M</span></div>
+    </div></div>
+    <div class="letter-envelope" id="letterEnv" role="button" tabindex="0" aria-expanded="false" aria-controls="letterScene" aria-label="Buka surat"><span class="env-inner"></span><span class="env-flap"></span><span class="wax-seal">M</span></div>
+    <p class="letter-hint">Ketuk amplop untuk membuka suratnya</p>
   </div>
   <div class="letter-caption">A little letter, kept with care</div>
 </section>
@@ -808,6 +854,30 @@ if ('IntersectionObserver' in window) {
   },{rootMargin:'-25% 0px -60% 0px'});
   navSections.forEach(section=>observer.observe(section));
 }
+</script>
+<script>
+(function(){
+  var scene=document.getElementById('letterScene'),env=document.getElementById('letterEnv');
+  if(!scene||!env)return;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,tSettle,tScroll;
+  function setOpen(open){
+    clearTimeout(tSettle);clearTimeout(tScroll);
+    scene.classList.remove('is-settled');
+    scene.classList.toggle('is-open',open);
+    env.setAttribute('aria-expanded',open?'true':'false');
+    env.setAttribute('aria-label',open?'Tutup surat':'Buka surat');
+    if(open){
+      tSettle=setTimeout(function(){scene.classList.add('is-settled');},reduce?0:1500);
+      tScroll=setTimeout(function(){
+        var h=scene.getBoundingClientRect().height;
+        scene.scrollIntoView({behavior:reduce?'auto':'smooth',block:h<window.innerHeight?'center':'start'});
+      },reduce?0:1300);
+    }
+  }
+  function toggle(){setOpen(!scene.classList.contains('is-open'));}
+  env.addEventListener('click',toggle);
+  env.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+})();
 </script>
 </body>
 </html>

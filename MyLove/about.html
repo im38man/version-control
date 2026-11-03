@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eaf2e7">
+  <title>About — Momona Matsumoto</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { --ink:#25352b; --muted:#718174; --paper:#fffefa; --green:#dce9d8; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh;
+      display: grid; place-items: start center; padding: 30px 18px 40px;
+      color: var(--ink); font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 15% 15%, #f8f3d9 0, transparent 34%),
+        radial-gradient(ellipse at 85% 80%, #c7ddc3 0, transparent 38%),
+        linear-gradient(135deg, #edf3e9, #dce9df 55%, #f5f1e5);
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; width: 260px; height: 260px; border-radius: 50%; background: #fff; filter: blur(80px); opacity: .38; pointer-events: none; }
+    .glow.one { top: -100px; right: -50px; }
+    .glow.two { bottom: -120px; left: -70px; }
+    main { width: min(100%, 520px); position: relative; }
+
+    /* bar atas: kembali + About / Archive */
+    .pagebar { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin: 0 2px 22px; }
+    .brand { font-family: cursive; font-size: clamp(23px, 4vw, 34px); font-style: italic; color: #536653; letter-spacing: -.04em; text-decoration: none; }
+    .pagelinks { display: flex; gap: 18px; font: 11px Georgia, serif; color: #73816f; padding-top: 6px; }
+    .pagelinks a { color: inherit; text-decoration: none; }
+    .pagelinks span { display: inline-block; border-bottom: 1px solid #b8c8b4; padding-bottom: 3px; }
+    .pagelinks a:hover span, .pagelinks a.active span { border-bottom-color: #73816f; }
+    .pagelinks a.active { color: #455b49; }
+
+    .eyebrow { text-align: center; text-transform: uppercase; letter-spacing: .28em; font: 10px/1.5 Arial, sans-serif; color: #758675; margin-bottom: 18px; }
+    .card {
+      background: var(--paper); padding: 17px 17px 25px;
+      box-shadow: 0 24px 70px #435b4730, 0 4px 12px #435b4712;
+      transform: rotate(-1.2deg); border: 1px solid #fff;
+    }
+    .photo-wrap { background: #f3f5ee; }
+    .photo { width: 100%; height: auto; display: block; }
+    h1 { text-align: center; font-size: clamp(27px, 7vw, 42px); line-height: 1.05; margin: 23px 0 9px; font-weight: 600; letter-spacing: -.045em; }
+    .subtitle { text-align: center; font: 14px/1.7 Arial, sans-serif; color: #68766a; margin: 0 auto; max-width: 340px; }
+    .bottom { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 23px; color: #91a18f; font: 10px Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; }
+    .bottom::before, .bottom::after { content: ""; width: 34px; height: 1px; background: #cbd8c8; }
+
+    .section { margin-top: 30px; padding: 25px 22px; background: #fffefaad; border: 1px solid #ffffffb8; border-radius: 18px; box-shadow: 0 10px 28px #435b470b; }
+    .section-kicker { font: 10px Arial, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #8a9b88; margin: 0 0 8px; }
+    h2 { font-size: 29px; font-weight: 500; margin: 0 0 10px; letter-spacing: -.03em; }
+    .section p { font: 13px/1.8 Arial, sans-serif; color: #68766a; margin: 0 0 12px; }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* ikon sosial media */
+    .socials { display: flex; justify-content: center; gap: 14px; margin-top: 18px; }
+    .socials a { display: grid; place-items: center; width: 52px; height: 52px; color: #536654; background: #ffffffa8; border: 1px solid #ffffffc9; border-radius: 50%; box-shadow: 0 6px 18px #435b470b; transition: .2s; }
+    .socials a:hover { background: #fff; color: #3e5340; transform: translateY(-3px); border-color: #c5d5c2; }
+    .socials svg { width: 22px; height: 22px; }
+
+    .pullquote { text-align: center; font: italic 17px/1.7 Georgia, serif; color: #536454; margin: 0 auto; max-width: 380px; }
+
+    footer { text-align: center; margin-top: 30px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
+    a:focus-visible { outline: 2px solid #8fa58b; outline-offset: 3px; }
+
+    @media (max-width: 420px) {
+      body { padding: 24px 14px 34px; }
+      .card { padding: 11px 11px 21px; }
+      .subtitle { font-size: 12px; }
+      .section { padding: 22px 17px; }
+    }
+    @media (min-width: 700px) { main { width: min(100%, 620px); } }
+    @media (hover: none) { .socials a:hover { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+  <main>
+    <header class="pagebar">
+      <a class="brand" href="index.html">Momona Matsumoto</a>
+      <nav class="pagelinks" aria-label="Halaman">
+        <a href="about.html" class="active" aria-current="page"><span>About</span></a>
+        <a href="gallery.html"><span>Archive</span></a>
+      </nav>
+    </header>
+
+    <div class="eyebrow">A little page, made with affection</div>
+    <article class="card">
+      <div class="photo-wrap">
+        <img class="photo" src="img/cover.jpg" alt="Potret Momona Matsumoto">
+      </div>
+      <h1>About</h1>
+      <p class="subtitle">Sedikit cerita tentang Momona,<br>dan tentang halaman kecil ini.</p>
+      <div class="bottom">My favorite person</div>
+    </article>
+
+    <!-- GANTI teks di bawah ini sesuai cerita yang ingin kamu tulis -->
+    <section class="section" id="momona">
+      <div class="section-kicker">The person behind it all</div>
+      <h2>Momona</h2>
+      <p>Gadis yang paling aku cintai dan sayangi. Di antara banyak cerita, kamu punya tempat tersendiri.</p>
+      <p>Halaman ini dibuat untuk menyimpan hal-hal kecil tentang dia: foto yang disukai, kata-kata yang ingin disampaikan, dan momen yang ingin selalu diingat.</p>
+    </section>
+
+    <!-- GANTI href di bawah ini dengan link akun sosial media kamu -->
+    <section class="section" id="social">
+      <div class="section-kicker">Find us online</div>
+      <h2>Social</h2>
+      <div class="socials">
+        <a href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg></a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.2h-3.1V7.9c0-.9.3-1.5 1.6-1.5h1.7V3.5c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.2v2.2H7.5V13h2.8v8h3.2z"/></svg></a>
+        <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="pullquote">Halaman kecil ini sederhana, tapi dibuat untuk menyimpan satu rasa yang berarti.</p>
+    </section>
+
+    <footer>Made with affection</footer>
+  </main>
+</body>
+</html>
