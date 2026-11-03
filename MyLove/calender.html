@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf2e7">
+  <title>Calendar — Momona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    :root {
+      --ink: #25352b;
+      --paper: #fffefa;
+      --sage: #8fa58b;
+      --f-elegan: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 28px 18px max(40px, env(safe-area-inset-bottom));
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 15% 15%, #f8f3d9 0, transparent 34%),
+        radial-gradient(ellipse at 85% 80%, #c7ddc3 0, transparent 38%),
+        linear-gradient(135deg, #edf3e9, #dce9df 55%, #f5f1e5);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; width: 260px; height: 260px; border-radius: 50%; background: #fff; filter: blur(80px); opacity: .38; pointer-events: none; }
+    .glow.one { top: -100px; right: -50px; }
+    .glow.two { bottom: -120px; left: -70px; }
+    .wrap { width: min(100%, 900px); margin: 0 auto; position: relative; }
+
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+      color: #455b49; font: 12px Arial, sans-serif; letter-spacing: .06em;
+      padding: 9px 16px; border: 1px solid #b9cbb8; border-radius: 999px; background: #ffffffa8; transition: .2s ease;
+    }
+    .back:hover { background: #fff; transform: translateY(-2px); }
+    .status { font: italic 12px Georgia, serif; color: #7d8d7a; }
+    .status.error { color: #b0605f; }
+
+    .eyebrow { text-align: center; text-transform: uppercase; letter-spacing: .28em; font: 10px/1.5 Arial, sans-serif; color: #758675; margin: 26px 0 8px; }
+    h1 { text-align: center; font-size: clamp(32px, 8vw, 48px); line-height: 1.05; margin: 0 0 10px; font-weight: 600; letter-spacing: -.045em; }
+    .lede { text-align: center; font: 13px/1.8 Arial, sans-serif; color: #68766a; margin: 0 auto; max-width: 460px; }
+
+    .sheet {
+      position: relative; margin-top: 34px; padding: 26px 26px 22px;
+      background: var(--paper); border: 1px solid #fff; border-radius: 4px;
+      box-shadow: 0 24px 70px #435b4730, 0 4px 12px #435b4712;
+    }
+    .sheet::before, .sheet::after {
+      content: ""; position: absolute; top: -11px; width: 74px; height: 22px;
+      background: rgba(214,226,206,.82); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620;
+    }
+    .sheet::before { left: 8%; transform: rotate(-6deg); }
+    .sheet::after { right: 8%; transform: rotate(5deg); }
+
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px;
+      border: 1px solid #cdd9c8; background: #ffffffb0; color: #455b49; cursor: pointer;
+      padding: 6px 14px; border-radius: 999px; font: 12px Arial, sans-serif; letter-spacing: .03em; transition: .2s ease;
+    }
+    .chip:hover { background: #fff; transform: translateY(-1px); }
+    .chip.primary { background: #e4ece1; border-color: #9caf98; color: #31473a; }
+    .chip.danger { color: #a05b5b; border-color: #e2c9c9; }
+    .chip.big { min-height: 40px; padding: 8px 22px; font-size: 13px; }
+
+    /* bar bulan */
+    .cal-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .cal-nav { display: flex; align-items: center; gap: 8px; }
+    .nav-btn { width: 38px; padding: 0; font-size: 18px; }
+    .cal-title { margin: 0; font: italic 600 clamp(24px, 5vw, 34px)/1.1 var(--f-elegan); color: #31473a; text-transform: capitalize; }
+    .cal-meta { font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; margin: 6px 0 0; }
+
+    /* grid */
+    .dow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 20px; }
+    .dow span { text-align: center; font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; padding: 4px 0; }
+    .dow span:nth-child(7) { color: #b98a8a; }
+    .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+    .day {
+      position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 3px;
+      min-height: 98px; margin: 0; padding: 8px 7px 6px; text-align: left; cursor: pointer; font: inherit; color: inherit;
+      background: #fbfaf3; border: 1px solid #e9e5d6; border-radius: 10px; transition: .2s ease;
+    }
+    .day:hover { background: #fff; border-color: #c5d5c2; transform: translateY(-2px); box-shadow: 0 8px 18px #435b4716; }
+    .day:focus-visible { outline: 2px solid #8fa58b; outline-offset: 2px; }
+    .day.out { background: transparent; border-style: dashed; border-color: #e3e6d8; }
+    .day.out .num { color: #b4bfb1; }
+    .day .num { font: 600 17px/1 var(--f-elegan); color: #3d5744; font-variant-numeric: tabular-nums; }
+    .day.sun .num { color: #b0707a; }
+    .day.today { background: #e9f0e4; border-color: #8fa58b; box-shadow: 0 0 0 2px #8fa58b55; }
+    .day.today .num { display: inline-grid; place-items: center; width: 26px; height: 26px; margin: -4px 0 0 -4px; border-radius: 50%; background: #6f8a6c; color: #fff; font-size: 15px; }
+
+    /* hari terlewat: redup + tanda centang */
+    .day.past { background: #f3f2ea; border-color: #e6e4d7; }
+    .day.past .num { color: #a3ad9f; text-decoration: line-through; text-decoration-thickness: 1px; }
+    .day.past::after {
+      content: "✓"; position: absolute; top: 6px; right: 7px; display: grid; place-items: center;
+      width: 18px; height: 18px; border-radius: 50%; background: #e4ece1; color: #7d967a; font: 11px/1 Arial, sans-serif;
+    }
+    .day.past .ev { opacity: .6; }
+
+    .evs { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .ev {
+      display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      padding: 2px 6px; border-radius: 6px; background: #e4ece1; color: #3d5744; font: 10.5px/1.5 Arial, sans-serif;
+    }
+    .ev b { font-weight: 700; margin-right: 4px; font-variant-numeric: tabular-nums; }
+    .ev.done { text-decoration: line-through; background: #ebe9de; color: #8a9588; }
+    .more { font: 10px Arial, sans-serif; color: #8a9b88; padding-left: 4px; }
+    .dots { display: none; gap: 3px; flex-wrap: wrap; margin-top: auto; }
+    .dots i { width: 6px; height: 6px; border-radius: 50%; background: #8fa58b; }
+    .day.past .dots i { background: #bcc6b8; }
+
+    .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-top: 16px; font: 11px Arial, sans-serif; color: #7d8d7a; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid #c5d5c2; }
+    .legend .l-today { background: #6f8a6c; border-color: #6f8a6c; border-radius: 50%; }
+    .legend .l-past { background: #f3f2ea; }
+    .legend .l-ev { background: #e4ece1; }
+
+    /* upcoming */
+    .upnext { margin: 22px 0 0; padding: 16px 18px; background: #f8f6ec; border: 1px solid #e9e5d6; border-radius: 12px; }
+    .upnext h3 { margin: 0 0 8px; font: 10px Arial, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #8a9b88; }
+    .upnext ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+    .upnext li { display: flex; gap: 10px; align-items: baseline; font: italic 15px/1.5 Georgia, serif; color: #4a5d4d; }
+    .upnext li small { flex: none; font: 11px Arial, sans-serif; letter-spacing: .06em; color: #8a9b88; min-width: 110px; font-style: normal; }
+    .upnext .none { font: italic 14px Georgia, serif; color: #8a9b88; }
+
+    /* modal */
+    .modal {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 18px; overflow-y: auto;
+      background: rgba(37,53,43,.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    }
+    .modal-card {
+      position: relative; width: min(100%, 480px); max-height: calc(100vh - 36px); max-height: calc(100dvh - 36px); overflow-y: auto; margin: auto;
+      padding: 30px 24px 22px; background: #fffefa; border: 1px solid #fff; box-shadow: 0 28px 80px #25352b66;
+      transform: rotate(-.5deg); animation: pop .35s cubic-bezier(.22,.8,.3,1);
+    }
+    .modal-card::before {
+      content: ""; position: absolute; top: -11px; left: 50%; width: 70px; height: 21px; margin-left: -35px;
+      background: rgba(214,226,206,.88); border: 1px solid rgba(255,255,255,.65); box-shadow: 0 1px 3px #35453620; transform: rotate(-3deg);
+    }
+    @keyframes pop { from { opacity: 0; transform: translateY(16px) rotate(-3deg); } to { opacity: 1; transform: rotate(-.5deg); } }
+    .m-close { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 32px; height: 32px; margin: 0; padding: 0; border: 0; border-radius: 50%; background: #fffefaf0; box-shadow: 0 2px 6px #435b4722; color: #6f876d; font: 18px/1 Arial, sans-serif; cursor: pointer; }
+    .modal h2 { margin: 0 0 2px; font: italic 600 27px/1.2 var(--f-elegan); color: #31473a; text-align: center; padding: 0 20px; }
+    .modal .sub { margin: 0 0 14px; text-align: center; font: 10px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a9b88; }
+    .agenda { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+    .ag {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #f8f6ec; border: 1px solid #e9e5d6; border-radius: 12px;
+    }
+    .ag.done { opacity: .65; }
+    .ag-time { flex: none; min-width: 48px; font: 600 16px/1.3 var(--f-elegan); color: #3d5744; font-variant-numeric: tabular-nums; }
+    .ag-body { flex: 1; min-width: 0; }
+    .ag-title { margin: 0; font: italic 500 17px/1.3 var(--f-elegan); color: #31473a; overflow-wrap: anywhere; }
+    .ag.done .ag-title { text-decoration: line-through; }
+    .ag-note { margin: 2px 0 0; font: 12px/1.6 Arial, sans-serif; color: #7d8d7a; white-space: pre-line; overflow-wrap: anywhere; }
+    .ag-flag { display: inline-block; margin-top: 4px; font: 9px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #8a6f3f; background: #f0e6d6; padding: 2px 8px; border-radius: 999px; }
+    .ag-acts { flex: none; display: flex; gap: 4px; }
+    .ag-btn { display: grid; place-items: center; width: 28px; height: 28px; margin: 0; padding: 0; border: 0; border-radius: 50%; background: #fffefaf0; box-shadow: 0 1px 4px #435b4720; color: #6f876d; font: 13px/1 Arial, sans-serif; cursor: pointer; }
+    .ag-btn:hover { background: #fff; }
+    .ag-btn.del:hover { color: #a05b5b; }
+    .no-ag { text-align: center; margin: 4px 0 14px; font: italic 14px/1.7 Georgia, serif; color: #8a9b88; }
+    .form { padding-top: 14px; border-top: 1px dashed #dbe3d6; }
+    .form h4 { margin: 0 0 8px; font: 10px Arial, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #8a9b88; }
+    .field { display: block; margin: 0 0 12px; }
+    .field > span { display: block; margin: 0 0 3px; font: 10px Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #8a9b88; }
+    .field input, .field textarea {
+      display: block; width: 100%; margin: 0; padding: 7px 2px 8px; border: 0; border-bottom: 1px dashed #cdd9c8; border-radius: 0; background: none; outline: none;
+      color: var(--ink); font: italic 500 19px/1.3 var(--f-elegan); transition: border-color .2s ease;
+    }
+    .field textarea { min-height: 64px; resize: vertical; font-size: 16px; line-height: 1.5; border: 1px dashed #cdd9c8; border-radius: 6px; padding: 8px 10px; background: #fbfaf3; }
+    .field input[type="time"] { font: 500 16px/1.3 Arial, sans-serif; font-style: normal; color: #3d4f40; min-height: 38px; }
+    .field input:focus, .field textarea:focus { border-color: var(--sage); }
+    .field input::placeholder, .field textarea::placeholder { color: #b4bfb1; }
+    .row2 { display: grid; grid-template-columns: 1fr 1.6fr; gap: 14px; }
+    .row2 .field { min-width: 0; }
+    .err { min-height: 16px; margin: -4px 0 6px; text-align: center; font: italic 12px Georgia, serif; color: #b0605f; }
+    .form-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 80; transform: translate(-50%, 14px);
+      max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #25352be6; color: #fffefa;
+      font: 12px Arial, sans-serif; letter-spacing: .03em; opacity: 0; pointer-events: none; transition: .3s ease; text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    footer { text-align: center; margin-top: 30px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
+
+    @media (min-width: 1024px) { body { padding-top: 44px; } .sheet { padding: 32px 38px 26px; } .day { min-height: 108px; } }
+    @media (max-width: 700px) {
+      body { padding: 18px 10px 34px; }
+      .sheet { margin-top: 30px; padding: 22px 10px 18px; }
+      .sheet::before, .sheet::after { width: 56px; height: 18px; }
+      .dow, .grid { gap: 4px; }
+      .day { min-height: 64px; padding: 6px 4px 5px; border-radius: 8px; align-items: center; }
+      .day .num { font-size: 15px; }
+      .day.today .num { width: 24px; height: 24px; margin: -3px 0 0; font-size: 13px; }
+      .evs { display: none; }
+      .dots { display: flex; justify-content: center; }
+      .day.past::after { top: 3px; right: 3px; width: 14px; height: 14px; font-size: 9px; }
+      .upnext li { flex-direction: column; gap: 0; }
+      .row2 { grid-template-columns: 1fr; gap: 0; }
+    }
+    @media (max-width: 360px) { .back { padding: 8px 12px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+  <main class="wrap">
+    <div class="top">
+      <a class="back" href="index.html">← Kembali</a>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="eyebrow">Hari demi hari, satu per satu</div>
+    <h1>Calendar</h1>
+    <p class="lede">Ketuk tanggal untuk menambahkan agenda lengkap dengan jamnya. Hari yang sudah terlewat diberi tanda centang. Semuanya tersimpan di perangkat ini.</p>
+
+    <section class="sheet" aria-label="Kalender">
+      <div class="cal-bar">
+        <div>
+          <h2 class="cal-title" id="calTitle"></h2>
+          <p class="cal-meta" id="calMeta"></p>
+        </div>
+        <div class="cal-nav">
+          <button type="button" class="chip nav-btn" id="prevBtn" aria-label="Bulan sebelumnya">‹</button>
+          <button type="button" class="chip" id="todayBtn">Hari ini</button>
+          <button type="button" class="chip nav-btn" id="nextBtn" aria-label="Bulan berikutnya">›</button>
+        </div>
+      </div>
+
+      <div class="dow" aria-hidden="true"><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span></div>
+      <div class="grid" id="grid" role="grid" aria-label="Tanggal"></div>
+
+      <div class="legend">
+        <span><i class="l-today"></i> Hari ini</span>
+        <span><i class="l-past"></i> ✓ Sudah terlewat</span>
+        <span><i class="l-ev"></i> Ada agenda</span>
+      </div>
+
+      <div class="upnext">
+        <h3>Agenda berikutnya</h3>
+        <ul id="upList"></ul>
+      </div>
+    </section>
+
+    <footer>MADE WITH CARE · 2026</footer>
+  </main>
+
+  <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal-card">
+      <button type="button" class="m-close" id="mClose" aria-label="Tutup">×</button>
+      <h2 id="mTitle"></h2>
+      <p class="sub" id="mSub"></p>
+      <ul class="agenda" id="agenda"></ul>
+      <p class="no-ag" id="noAg" hidden>Belum ada agenda di hari ini.</p>
+      <form class="form" id="form" novalidate>
+        <h4 id="fHead">Tambah agenda</h4>
+        <div class="row2">
+          <label class="field"><span>Jam</span><input id="fTime" type="time" value="09:00"></label>
+          <label class="field"><span>Agenda</span><input id="fTitle" type="text" maxlength="80" placeholder="mis. Makan malam bersama" autocomplete="off"></label>
+        </div>
+        <label class="field"><span>Catatan (opsional)</span><textarea id="fNote" maxlength="300" placeholder="Detail kecil tentang agenda ini…"></textarea></label>
+        <p class="err" id="fErr" role="alert"></p>
+        <div class="form-actions">
+          <button type="button" class="chip big" id="fCancel" hidden>Batal ubah</button>
+          <button type="submit" class="chip big primary" id="fSave">Simpan agenda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+    var KEY = 'momona.calendar.v1';
+    var $ = function (s) { return document.querySelector(s); };
+    var el = {
+      grid: $('#grid'), title: $('#calTitle'), meta: $('#calMeta'), up: $('#upList'), status: $('#status'), toast: $('#toast'),
+      prev: $('#prevBtn'), next: $('#nextBtn'), today: $('#todayBtn'),
+      modal: $('#modal'), mTitle: $('#mTitle'), mSub: $('#mSub'), agenda: $('#agenda'), noAg: $('#noAg'), mClose: $('#mClose'),
+      form: $('#form'), fHead: $('#fHead'), fTime: $('#fTime'), fTitle: $('#fTitle'), fNote: $('#fNote'), fErr: $('#fErr'),
+      fCancel: $('#fCancel'), fSave: $('#fSave')
+    };
+    var items = [];
+    var now0 = new Date();
+    var viewY = now0.getFullYear(), viewM = now0.getMonth();
+    var selDate = null, editingId = null, lastFocus = null;
+    var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+    function uid() { return 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function key(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d); }
+    function todayKey() { var t = new Date(); return key(t.getFullYear(), t.getMonth(), t.getDate()); }
+    function nowHM() { var t = new Date(); return pad(t.getHours()) + ':' + pad(t.getMinutes()); }
+    function parseKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+    function longDate(k) { return parseKey(k).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+    function make(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+
+    /* ---------- data ---------- */
+    function valid(it) { return it && typeof it.title === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(it.date || '') && /^\d{2}:\d{2}$/.test(it.time || ''); }
+    function load() {
+      try {
+        var raw = localStorage.getItem(KEY); if (!raw) return;
+        var d = JSON.parse(raw); if (!d || !Array.isArray(d.items)) return;
+        items = d.items.filter(valid).map(function (it) {
+          return { id: typeof it.id === 'string' && /^[\w-]+$/.test(it.id) ? it.id : uid(), date: it.date, time: it.time, title: it.title, note: typeof it.note === 'string' ? it.note : '' };
+        });
+      } catch (e) { items = []; }
+    }
+    function setStatus(msg, err) { el.status.textContent = msg; el.status.classList.toggle('error', !!err); }
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify({ v: 1, items: items })); setStatus('Tersimpan otomatis'); return true; }
+      catch (e) { setStatus('Gagal menyimpan — penyimpanan penuh atau diblokir', true); return false; }
+    }
+    var toastTimer = null;
+    function toast(msg) { el.toast.textContent = msg; el.toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 2300); }
+    function byTime(a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; }
+    function forDay(k) { return items.filter(function (x) { return x.date === k; }).sort(byTime); }
+    function isDone(it) { var t = todayKey(); return it.date < t || (it.date === t && it.time <= nowHM()); }
+
+    /* ---------- render kalender ---------- */
+    function render() {
+      var tk = todayKey();
+      el.title.textContent = MONTHS[viewM] + ' ' + viewY;
+      var first = new Date(viewY, viewM, 1);
+      var lead = (first.getDay() + 6) % 7;                // Senin = 0
+      var dim = new Date(viewY, viewM + 1, 0).getDate();
+      var cells = Math.ceil((lead + dim) / 7) * 7;
+      var monthCount = 0;
+      el.grid.textContent = '';
+
+      for (var i = 0; i < cells; i++) {
+        var dt = new Date(viewY, viewM, 1 - lead + i);
+        var k = key(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        var out = dt.getMonth() !== viewM;
+        var evs = forDay(k);
+        if (!out) monthCount += evs.length;
+
+        var b = make('button', 'day'); b.type = 'button'; b.setAttribute('role', 'gridcell');
+        if (out) b.classList.add('out');
+        if (dt.getDay() === 0) b.classList.add('sun');
+        if (k === tk) b.classList.add('today');
+        if (k < tk) b.classList.add('past');
+        b.setAttribute('aria-label', longDate(k) + (k === tk ? ', hari ini' : k < tk ? ', sudah terlewat' : '') + (evs.length ? ', ' + evs.length + ' agenda' : ''));
+        b.appendChild(make('span', 'num', String(dt.getDate())));
+
+        if (evs.length) {
+          var box = make('div', 'evs');
+          evs.slice(0, 2).forEach(function (ev) {
+            var line = make('span', 'ev' + (isDone(ev) ? ' done' : ''));
+            line.appendChild(make('b', null, ev.time));
+            line.appendChild(document.createTextNode(ev.title));
+            box.appendChild(line);
+          });
+          if (evs.length > 2) box.appendChild(make('span', 'more', '+' + (evs.length - 2) + ' lagi'));
+          b.appendChild(box);
+          var dots = make('div', 'dots');
+          evs.slice(0, 4).forEach(function () { dots.appendChild(document.createElement('i')); });
+          b.appendChild(dots);
+        }
+        (function (kk) { b.addEventListener('click', function () { openDay(kk); }); })(k);
+        el.grid.appendChild(b);
+      }
+      el.meta.textContent = monthCount ? monthCount + ' agenda bulan ini' : 'Belum ada agenda bulan ini';
+      renderUpcoming();
+    }
+
+    function renderUpcoming() {
+      var t = todayKey(), hm = nowHM();
+      var list = items.filter(function (x) { return x.date > t || (x.date === t && x.time > hm); })
+        .sort(function (a, b) { return a.date === b.date ? byTime(a, b) : (a.date < b.date ? -1 : 1); }).slice(0, 5);
+      el.up.textContent = '';
+      if (!list.length) { el.up.appendChild(make('li', 'none', 'Belum ada agenda yang akan datang.')); return; }
+      list.forEach(function (x) {
+        var li = make('li');
+        var d = parseKey(x.date).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+        li.appendChild(make('small', null, d + ' · ' + x.time.replace(':', '.')));
+        li.appendChild(make('span', null, x.title));
+        el.up.appendChild(li);
+      });
+    }
+
+    /* ---------- popup hari ---------- */
+    function resetForm() {
+      editingId = null;
+      el.fHead.textContent = 'Tambah agenda'; el.fSave.textContent = 'Simpan agenda'; el.fCancel.hidden = true;
+      el.fTitle.value = ''; el.fNote.value = ''; el.fTime.value = '09:00'; el.fErr.textContent = '';
+    }
+    function renderAgenda() {
+      var tk = todayKey();
+      var evs = forDay(selDate);
+      el.agenda.textContent = '';
+      el.noAg.hidden = evs.length > 0;
+      evs.forEach(function (it) {
+        var li = make('li', 'ag' + (isDone(it) ? ' done' : ''));
+        li.appendChild(make('span', 'ag-time', it.time.replace(':', '.')));
+        var body = make('div', 'ag-body');
+        body.appendChild(make('p', 'ag-title', it.title));
+        if (it.note.trim()) body.appendChild(make('p', 'ag-note', it.note));
+        if (isDone(it)) body.appendChild(make('span', 'ag-flag', 'Sudah terlewat'));
+        li.appendChild(body);
+        var acts = make('div', 'ag-acts');
+        var ed = make('button', 'ag-btn', '✎'); ed.type = 'button'; ed.setAttribute('aria-label', 'Ubah ' + it.title);
+        ed.addEventListener('click', function () {
+          editingId = it.id; el.fHead.textContent = 'Ubah agenda'; el.fSave.textContent = 'Simpan perubahan'; el.fCancel.hidden = false;
+          el.fTime.value = it.time; el.fTitle.value = it.title; el.fNote.value = it.note; el.fErr.textContent = '';
+          el.fTitle.focus();
+        });
+        var del = make('button', 'ag-btn del', '×'); del.type = 'button'; del.setAttribute('aria-label', 'Hapus ' + it.title);
+        del.addEventListener('click', function () {
+          if (!confirm('Hapus agenda “' + it.title + '”?')) return;
+          items = items.filter(function (x) { return x.id !== it.id; });
+          if (editingId === it.id) resetForm();
+          save(); renderAgenda(); render(); toast('Agenda dihapus');
+        });
+        acts.appendChild(ed); acts.appendChild(del); li.appendChild(acts);
+        el.agenda.appendChild(li);
+      });
+      var tkNow = todayKey();
+      el.mSub.textContent = selDate === tkNow ? 'Hari ini' : selDate < tkNow ? 'Sudah terlewat' : 'Akan datang';
+    }
+    function openDay(k) {
+      selDate = k; lastFocus = document.activeElement;
+      el.mTitle.textContent = longDate(k);
+      resetForm(); renderAgenda();
+      el.modal.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      el.fTitle.focus({ preventScroll: true });
+    }
+    function closeDay() {
+      el.modal.hidden = true; selDate = null;
+      if (/^#d-/.test(location.hash) && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+      document.documentElement.style.overflow = '';
+      if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+    }
+    el.mClose.addEventListener('click', closeDay);
+    el.fCancel.addEventListener('click', resetForm);
+    el.modal.addEventListener('mousedown', function (e) { if (e.target === el.modal) closeDay(); });
+    document.addEventListener('keydown', function (e) {
+      if (el.modal.hidden) return;
+      if (e.key === 'Escape') closeDay();
+    });
+    el.form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var title = el.fTitle.value.trim(), time = el.fTime.value;
+      if (!title) { el.fErr.textContent = 'Nama agenda belum diisi.'; el.fTitle.focus(); return; }
+      if (!/^\d{2}:\d{2}$/.test(time)) { el.fErr.textContent = 'Pilih jam yang valid.'; el.fTime.focus(); return; }
+      var backup = JSON.stringify(items), note = el.fNote.value.trim();
+      var wasEdit = !!editingId;
+      if (editingId) items.forEach(function (x) { if (x.id === editingId) { x.title = title; x.time = time; x.note = note; } });
+      else items.push({ id: uid(), date: selDate, time: time, title: title, note: note });
+      if (!save()) { items = JSON.parse(backup); el.fErr.textContent = 'Gagal menyimpan. Penyimpanan browser penuh atau diblokir.'; return; }
+      resetForm(); renderAgenda(); render(); toast(wasEdit ? 'Perubahan disimpan' : 'Agenda ditambahkan');
+    });
+
+    /* ---------- navigasi bulan ---------- */
+    function shift(n) { var d = new Date(viewY, viewM + n, 1); viewY = d.getFullYear(); viewM = d.getMonth(); render(); }
+    el.prev.addEventListener('click', function () { shift(-1); });
+    el.next.addEventListener('click', function () { shift(1); });
+    el.today.addEventListener('click', function () { var t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth(); render(); });
+    document.addEventListener('keydown', function (e) {
+      if (!el.modal.hidden || /input|textarea/i.test((e.target.tagName || ''))) return;
+      if (e.key === 'ArrowLeft') shift(-1); else if (e.key === 'ArrowRight') shift(1);
+    });
+
+    // perbarui tanda "terlewat" tiap menit & saat tab aktif lagi / tab lain mengubah data
+    function refresh() { render(); if (selDate) renderAgenda(); }
+    setInterval(refresh, 60000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(); });
+    window.addEventListener('storage', function (e) { if (e.key === KEY) { load(); refresh(); } });
+
+    function fromHash() {
+      var m = /^#d-(\d{4})-(\d{2})-(\d{2})$/.exec(location.hash); if (!m) return;
+      viewY = +m[1]; viewM = +m[2] - 1; render(); openDay(m[1] + '-' + m[2] + '-' + m[3]);
+    }
+    window.addEventListener('hashchange', fromHash);
+
+    load(); setStatus(items.length ? '' : 'Siap mencatat'); render(); fromHash();
+  })();
+  </script>
+  <script src="search.js" defer></script>
+</body>
+</html>

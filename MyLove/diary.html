@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eaf2e7">
+  <title>Man's Diary — Momona</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { --ink:#25352b; --script: "Segoe Script","Bradley Hand","Snell Roundhand","Brush Script MT","Lucida Handwriting",cursive; }
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column; align-items: center; padding: 30px 18px 34px;
+      color: var(--ink); font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 15% 15%, #f8f3d9 0, transparent 34%),
+        radial-gradient(ellipse at 85% 80%, #c7ddc3 0, transparent 38%),
+        linear-gradient(135deg, #edf3e9, #dce9df 55%, #f5f1e5);
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; width: 260px; height: 260px; border-radius: 50%; background: #fff; filter: blur(80px); opacity: .38; pointer-events: none; }
+    .glow.one { top: -100px; right: -50px; }
+    .glow.two { bottom: -120px; left: -70px; }
+
+    /* bar atas */
+    .pagebar { position: relative; width: min(100%, 860px); display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin: 0 0 14px; }
+    .brand { font-family: cursive; font-size: clamp(23px, 4vw, 34px); font-style: italic; color: #536653; letter-spacing: -.04em; text-decoration: none; }
+    .pagelinks { display: flex; gap: 18px; font: 11px Georgia, serif; color: #73816f; padding-top: 6px; }
+    .pagelinks a { color: inherit; text-decoration: none; }
+    .pagelinks span { display: inline-block; border-bottom: 1px solid #b8c8b4; padding-bottom: 3px; }
+    .pagelinks a:hover span, .pagelinks a.active span { border-bottom-color: #73816f; }
+    .pagelinks a.active { color: #455b49; }
+
+    .eyebrow { text-align: center; text-transform: uppercase; letter-spacing: .28em; font: 10px/1.5 Arial, sans-serif; color: #758675; margin: 6px 0 0; }
+/* ===== judul halaman ===== */
+    .diary-heading { position: relative; width: min(100%, 860px); text-align: center; margin: 0 0 2px; }
+    .diary-mark { display: grid; place-items: center; width: 30px; height: 30px; margin: 0 auto 6px; border-radius: 50%; background: #fffefa; border: 1px solid #cfdccb; box-shadow: 0 4px 12px rgba(67,91,71,.12); color: #6f8a6c; font: italic 600 16px/1 Georgia, serif; }
+    .diary-overline { margin: 0 0 2px; font: 10px/1.5 Arial, sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #758675; }
+    .diary-heading h1 { margin: 0; font-family: var(--script); font-weight: 400; font-size: clamp(30px, 6vw, 40px); line-height: 1.1; color: #4f6d4d; text-shadow: 0 1px 0 rgba(255,255,255,.7); }
+    .diary-caption { margin: 2px 0 0; font: italic 13px/1.5 Georgia, serif; color: #7b8c78; }
+    @media (max-width: 420px) { .diary-heading h1 { font-size: 30px; } .diary-caption { font-size: 12.5px; } }
+    @media (max-width: 759px) { footer { padding-bottom: 60px; } }
+
+    /* ===== BUKU ===== */
+    .stage {
+      --pw: min(86vw, 380px, 54vh);          /* lebar satu halaman */
+      --lh: calc(var(--pw) * .0735);          /* tinggi satu baris garis */
+      --dur: .9s; --ease: cubic-bezier(.45,.05,.25,1);
+      position: relative; flex: 1; display: grid; place-items: center; width: 100%;
+      padding: 26px 0 18px; min-height: calc(var(--pw) * 1.4 + 70px);
+    }
+    .book {
+      position: relative; width: var(--pw); height: calc(var(--pw) * 1.4);
+      perspective: 1900px; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab;
+      transform: translateX(calc(var(--open, 0) * 50%));
+      transition: transform var(--dur) var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .stage.grabbing .book { cursor: grabbing; }
+
+    .leaf { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; transition: transform var(--dur) var(--ease), visibility 0s; }
+    .leaf.turned { transform: rotateY(-180deg); }
+    .face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 2px 9px 9px 2px; box-shadow: 0 1px 2px rgba(60,75,55,.18), 0 6px 16px rgba(60,75,55,.10); }
+    .back { transform: rotateY(180deg); border-radius: 9px 2px 2px 9px; }
+    /* bayangan lipatan di dekat punggung buku */
+    .face::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: calc(var(--pw) * .09); background: linear-gradient(to right, rgba(60,70,50,.16), transparent); pointer-events: none; z-index: 3; }
+    .back::before { left: auto; right: 0; background: linear-gradient(to left, rgba(60,70,50,.16), transparent); }
+    /* bayangan saat halaman sedang dibalik */
+    .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(30,42,30,0), rgba(30,42,30,.5)); opacity: var(--sh, 0); pointer-events: none; z-index: 4; }
+    .back::after { background: linear-gradient(to left, rgba(30,42,30,0), rgba(30,42,30,.5)); }
+    .leaf.moving:not(.dragging) .face::after { animation: shade var(--dur) ease; }
+    @keyframes shade { 0%, 100% { opacity: 0; } 50% { opacity: .5; } }
+
+    /* sampul */
+    .cover, .backcover {
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255,255,255,.16), transparent 46%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.035) 0 1px, transparent 1px 3px),
+        linear-gradient(145deg, #7c9b79, #53705a 68%, #46614c);
+      color: #f1e1b0; display: grid; place-items: center; text-align: center;
+    }
+    .cover { border-radius: 3px 13px 13px 3px; }
+    .backcover { position: absolute; inset: 0; z-index: 0; border-radius: 3px 13px 13px 3px; box-shadow: 0 8px 22px rgba(60,75,55,.25); }
+    .stitch { position: absolute; inset: 4.5%; border: 1.5px dashed rgba(241,225,176,.5); border-radius: 2px 9px 9px 2px; pointer-events: none; }
+    .cover-in { position: relative; padding: 0 12%; }
+    .cover .kicker { font: calc(var(--pw) * .028)/1.6 Arial, sans-serif; letter-spacing: .34em; text-transform: uppercase; color: rgba(241,225,176,.8); margin: 0 0 calc(var(--pw) * .05); }
+    .cover h2 { margin: 0; font-family: var(--script); font-weight: 400; font-size: calc(var(--pw) * .2); line-height: 1; color: #f3e4b6; text-shadow: 0 1px 0 rgba(0,0,0,.32), 0 0 18px rgba(255,235,170,.18); }
+    .cover .orn { display: block; margin: calc(var(--pw) * .05) auto; width: 38%; height: 1px; background: linear-gradient(to right, transparent, rgba(241,225,176,.7), transparent); position: relative; }
+    .cover .orn::after { content: "♥"; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: calc(var(--pw) * .04); padding: 0 .5em; background: #5f7c62; color: #f1e1b0; }
+    .cover .sub { font-style: italic; font-size: calc(var(--pw) * .042); color: rgba(241,225,176,.88); margin: 0; line-height: 1.6; }
+    .backcover .end { font-family: var(--script); font-size: calc(var(--pw) * .1); color: #f3e4b6; text-shadow: 0 1px 0 rgba(0,0,0,.3); }
+    .backcover small { display: block; margin-top: .6em; font: italic calc(var(--pw) * .036)/1.6 Georgia, serif; color: rgba(241,225,176,.8); }
+
+    /* kertas bergaris */
+    .paper {
+      --mg: calc(var(--pw) * .135);
+      background:
+        linear-gradient(to right, transparent var(--mg), rgba(214,140,140,.38) var(--mg), rgba(214,140,140,.38) calc(var(--mg) + 1px), transparent calc(var(--mg) + 1px)),
+        repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh) - 1px), rgba(120,150,175,.3) calc(var(--lh) - 1px), rgba(120,150,175,.3) var(--lh)),
+        #fffdf6;
+      padding: var(--lh) calc(var(--pw) * .08) 0 calc(var(--pw) * .18);
+      font-style: italic; font-size: calc(var(--pw) * .043); line-height: var(--lh); color: #4b5b52;
+    }
+    .paper.verso {
+      background:
+        linear-gradient(to left, transparent var(--mg), rgba(214,140,140,.38) var(--mg), rgba(214,140,140,.38) calc(var(--mg) + 1px), transparent calc(var(--mg) + 1px)),
+        repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh) - 1px), rgba(120,150,175,.3) calc(var(--lh) - 1px), rgba(120,150,175,.3) var(--lh)),
+        #fffdf6;
+      padding: var(--lh) calc(var(--pw) * .18) 0 calc(var(--pw) * .08);
+    }
+    .paper.endpaper { background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.55) 0 2px, transparent 3px) 0 0 / calc(var(--pw) * .06) calc(var(--pw) * .06), #e3ebd8; padding: var(--lh) calc(var(--pw) * .1); }
+    .paper p { margin: 0; }
+    .date { display:block; font-family: var(--script); font-style: normal; font-size: calc(var(--lh) * .6); line-height: var(--lh); margin-bottom: var(--lh); color: #8a9b88; letter-spacing: .02em; }
+    .title { font-family: var(--script); font-style: normal; font-weight: 400; font-size: calc(var(--lh) * .92); line-height: var(--lh); margin: 0; color: #4f6d4d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pn { position: absolute; left: 0; right: 0; bottom: calc(var(--lh) * .4); text-align: center; font: 10px Georgia, serif; font-style: normal; color: #9aa89a; letter-spacing: .1em; }
+    .script { font-family: var(--script); font-style: normal; color: #55745a; }
+    .center { text-align: center; }
+    .list { list-style: none; margin: 0; padding: 0; }
+    .list li { position: relative; padding-left: 1.5em; }
+    .list li::before { content: "✓"; position: absolute; left: .1em; color: #7fa07b; font-style: normal; }
+    .doodle { display: block; margin: calc(var(--lh) * .6) auto 0; width: 44%; height: auto; }
+    .tapeframe { position: relative; margin: calc(var(--lh) * .5) auto calc(var(--lh) * .5); width: 78%; aspect-ratio: 1 / 1.05; background: #fff; border: 1px solid #e7e6db; box-shadow: 0 6px 14px rgba(53,69,54,.18); padding: 5%; transform: rotate(-2deg); }
+    .tapeframe::before { content: ""; position: absolute; top: -9px; left: 50%; width: 38%; height: 18px; margin-left: -19%; background: rgba(214,226,206,.85); border: 1px solid rgba(255,255,255,.7); transform: rotate(3deg); }
+    .tapeframe div { width: 100%; height: 86%; border: 1.5px dashed #b9c9b6; display: grid; place-items: center; text-align: center; font-size: calc(var(--pw) * .034); color: #93a490; font-style: italic; background: #f6f8f1; }
+    .tapeframe span { position: absolute; left: 0; right: 0; bottom: 3%; text-align: center; font-size: calc(var(--pw) * .033); color: #788275; }
+
+    /* hanya halaman yang tersisa di sisi kiri yang disembunyikan di layar sempit (1 halaman per layar) */
+    /* Spread responsif: kedua sisi buku tetap terlihat saat terbuka, termasuk di HP. */
+    @media (max-width: 759px) {
+      .stage { --pw: min(43vw, 190px, 34vh); min-height: calc(var(--pw) * 1.4 + 70px); }
+      .book { transform: translateX(calc(var(--open, 0) * 50%)); }
+      .leaf.turned { visibility: visible; }
+    }
+    @media (min-width: 760px) { .stage { --pw: min(38vw, 400px, 54vh); } }
+
+
+    /* halaman penutup: kolase foto ala Gallery MyLove */
+    .paper.end-gallery { padding: calc(var(--pw) * .07); background: #f7f7ef; }
+    .end-gallery .gallery-title { text-align:center; color:#536b54; font: italic calc(var(--pw) * .075)/1.2 Georgia,serif; margin: 0 0 calc(var(--pw) * .025); }
+    .end-gallery .gallery-sub { text-align:center; color:#8a9987; font: calc(var(--pw) * .025)/1.4 Arial,sans-serif; letter-spacing:.12em; text-transform:uppercase; margin:0 0 calc(var(--pw) * .045); }
+    .end-gallery-grid { height:78%; display:grid; grid-template-columns: .78fr 1.2fr .78fr; grid-template-rows:1fr 1fr; gap:calc(var(--pw) * .025); align-items:center; }
+    .end-gallery-grid figure { margin:0; padding:calc(var(--pw) * .018); background:#fffefa; border:1px solid #e9e8dc; box-shadow:0 3px 8px rgba(55,70,55,.14); min-width:0; }
+    .end-gallery-grid figure:nth-child(1){transform:rotate(-4deg)}
+    .end-gallery-grid figure:nth-child(2){transform:rotate(2deg);grid-column:2;grid-row:1 / span 2;z-index:2}
+    .end-gallery-grid figure:nth-child(3){transform:rotate(4deg)}
+    .end-gallery-grid figure:nth-child(4){transform:rotate(3deg)}
+    .end-gallery-grid figure:nth-child(5){transform:rotate(-3deg)}
+    .end-gallery-grid img { display:block; width:100%; height:calc(var(--pw) * .43); object-fit:contain; background:#f0f1e9; }
+    .end-gallery-grid figure:nth-child(2) img { height:calc(var(--pw) * .9); }
+    .end-gallery-grid figcaption { text-align:center; color:#778574; font:italic calc(var(--pw) * .025)/1.3 Georgia,serif; padding-top:calc(var(--pw) * .018); }
+    .end-gallery .end-note { text-align:center; color:#82917f; font:italic calc(var(--pw) * .032)/1.3 Georgia,serif; margin:calc(var(--pw) * .04) 0 0; }
+
+    /* kontrol */
+    .controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
+    .nav { width: 42px; height: 42px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid #b9cbb8; background: #ffffffb0; color: #455b49; font: 20px/1 Arial, sans-serif; cursor: pointer; box-shadow: 0 6px 16px rgba(67,91,71,.10); transition: .2s; }
+    .nav:hover:not(:disabled) { background: #fff; transform: translateY(-2px); }
+    .nav:disabled { opacity: .35; cursor: default; }
+    .nav:focus-visible { outline: 2px solid #8fa58b; outline-offset: 3px; }
+    .status { min-width: 220px; text-align: center; font: italic 13px Georgia, serif; color: #6f806d; }
+    .status.hint { animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    footer { text-align: center; margin-top: 22px; color: #8b9a89; font: 10px Arial, sans-serif; letter-spacing: .12em; }
+
+    @media (max-width: 420px) { body { padding: 24px 12px 30px; } .status { min-width: 0; flex: 1; font-size: 12px; } }
+    @media (prefers-reduced-motion: reduce) { .stage { --dur: .01s; } .status.hint, .leaf.moving .face::after { animation: none !important; } }
+
+    .magnifier-tool{position:fixed;right:max(22px,calc((100vw - 860px)/2));top:112px;width:48px;height:48px;border:1px solid #9caf98;border-radius:50%;background:linear-gradient(145deg,#fffef9,#e6eddf);box-shadow:0 4px 12px rgba(55,75,55,.18);display:grid;place-items:center;z-index:30;cursor:grab;touch-action:none;color:#60785f}
+    .magnifier-tool:active,.magnifier-tool.dragging{cursor:grabbing;box-shadow:0 7px 18px rgba(55,75,55,.28)}
+    .magnifier-tool svg{width:25px;height:25px;pointer-events:none}
+    .magnifier-lens{position:fixed;width:160px;height:160px;border:5px solid rgba(255,255,248,.96);border-radius:50%;box-shadow:0 5px 20px rgba(38,52,39,.28),inset 0 0 0 1px #9bad94;overflow:hidden;z-index:29;pointer-events:none;display:none;background:#fffdf6}
+    .magnifier-lens.active{display:block}
+    .magnifier-lens .magnifier-zoom{position:absolute;transform-origin:top left;pointer-events:none}
+    @media(max-width:600px){.magnifier-tool{top:96px;right:15px;width:43px;height:43px}.magnifier-lens{width:148px;height:148px}}
+
+  </style>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+
+  <header class="diary-heading">
+    <div class="diary-mark">M</div>
+    <p class="diary-overline">A PRIVATE LITTLE JOURNAL</p>
+    <h1>Man's Diary</h1>
+    <p class="diary-caption">A quiet place for thoughts and memories</p>
+  </header>
+  <button class="magnifier-tool" id="magnifierTool" type="button" aria-label="Seret kaca pembesar ke buku" title="Drag kaca pembesar ke buku">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+  </button>
+  <div class="magnifier-lens" id="magnifierLens" aria-hidden="true"><div class="magnifier-zoom" id="magnifierZoom"></div></div>
+
+  <div class="stage" id="stage">
+    <div class="book" id="book" aria-label="Buku diary">
+      <div class="backcover"><div class="stitch"></div><div class="cover-in"><div class="end">Tamat</div><small>sampai jumpa di buku berikutnya</small></div></div>
+
+      <!-- ===== Lembar 0: sampul + bagian dalam sampul ===== -->
+      <div class="leaf">
+        <div class="face cover">
+          <div class="stitch"></div>
+          <div class="cover-in">
+            <p class="kicker">Catatan harian</p>
+            <h2>Diary</h2>
+            <span class="orn"></span>
+            <p class="sub">Hari demi hari,<br>satu halaman kecil</p>
+          </div>
+        </div>
+        <div class="face back paper endpaper verso">
+          <div class="center" style="padding-top:calc(var(--lh)*2)">
+            <p class="script" style="font-size:calc(var(--pw)*.07);line-height:1.2">Milik</p>
+            <p style="border-bottom:1.5px solid #9db39a;width:70%;margin:calc(var(--lh)*.4) auto 0;height:calc(var(--lh)*.9);display:flex;align-items:flex-end;justify-content:center;color:#5b725c;font:italic calc(var(--pw)*.055) Georgia,serif;">Man</p>
+            <p style="margin-top:calc(var(--lh)*1.2);font-size:calc(var(--pw)*.036);color:#6f836d">Dimulai pada November 2026</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Lembar 1 ===== -->
+      <div class="leaf">
+        <div class="face paper">
+          <div class="date">Senin, 2 November 2026</div>
+          <h2 class="title">Hujan Sore</h2>
+          <p>Hari ini hujan turun tepat saat aku pulang. Aku sempat berteduh di depan toko kecil yang sudah tutup, mendengarkan bunyi air yang jatuh di atap seng. Anehnya, aku tidak buru-buru. Ada rasa tenang yang jarang datang, seperti dunia sengaja berjalan pelan supaya aku sempat bernapas. Sampai rumah, teh hangat sudah menunggu. Hal sederhana, tapi cukup.</p>
+          <div class="pn">— 1 —</div>
+        </div>
+        <div class="face back paper verso">
+          <p class="script center" style="margin-top:calc(var(--lh)*2);font-size:calc(var(--pw)*.062);line-height:calc(var(--lh)*1.4)">“Tidak semua hari harus luar biasa.<br>Beberapa cukup menjadi hari yang tenang.”</p>
+          <svg class="doodle" viewBox="0 0 100 120" fill="none" stroke="#7d9a79" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M50 118 C50 92 48 72 50 52"/>
+            <path d="M50 94 C34 90 27 80 29 69 C42 71 50 81 50 94Z" fill="#cfe0c8"/>
+            <path d="M50 82 C66 78 73 68 71 57 C58 59 50 70 50 82Z" fill="#cfe0c8"/>
+            <g fill="#f8dede" stroke="#c98f8f"><circle cx="50" cy="19" r="10"/><circle cx="64" cy="29" r="10"/><circle cx="58.6" cy="45" r="10"/><circle cx="41.4" cy="45" r="10"/><circle cx="36" cy="29" r="10"/></g>
+            <circle cx="50" cy="34" r="7" fill="#f3d27a" stroke="#d3ad4e"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ===== Lembar 2 ===== -->
+      <div class="leaf">
+        <div class="face paper">
+          <div class="date">Rabu, 4 November 2026</div>
+          <h2 class="title">Catatan Kecil</h2>
+          <p>Kadang aku lupa kalau hal-hal baik sering datang diam-diam. Pagi ini seseorang menahan pintu lift untukku dan tersenyum tanpa alasan. Itu saja, tapi senyumnya menempel sampai siang. Aku jadi ingin lebih sering melakukan hal sekecil itu untuk orang lain. Mungkin begitu caranya kebaikan berjalan: dari satu orang ke orang berikutnya, tanpa suara.</p>
+          <div class="pn">— 2 —</div>
+        </div>
+        <div class="face back paper verso">
+          <p class="script" style="margin-top:var(--lh);font-size:calc(var(--pw)*.06);line-height:calc(var(--lh)*1.4)">Hal kecil yang bikin senang</p>
+          <ul class="list">
+            <li>Teh hangat saat hujan</li>
+            <li>Lagu lama yang tiba-tiba terputar</li>
+            <li>Pesan singkat dari orang tersayang</li>
+            <li>Bau tanah setelah hujan</li>
+            <li>Selimut yang baru dijemur</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ===== Lembar 3 ===== -->
+      <div class="leaf">
+        <div class="face paper">
+          <div class="date">Jumat, 6 November 2026</div>
+          <h2 class="title">Langit Sore</h2>
+          <p>Sore ini langitnya berwarna jingga pucat dengan garis ungu di ujungnya. Aku duduk di tangga depan rumah cukup lama hanya untuk memandanginya. Tidak ada yang kupikirkan, dan itu menyenangkan. Aku ingin mengingat warna ini. Kalau nanti hari terasa berat, semoga aku ingat bahwa langit seindah ini pernah ada, dan akan ada lagi.</p>
+          <div class="pn">— 3 —</div>
+        </div>
+        <div class="face back paper verso">
+          <div class="tapeframe" style="margin-top:calc(var(--lh)*1.2)"><div>tempel foto<br>di sini</div><span class="script">langit sore, 6 Nov</span></div>
+        </div>
+      </div>
+
+      <!-- ===== Lembar 4 ===== -->
+      <div class="leaf">
+        <div class="face paper">
+          <div class="date">Minggu, 8 November 2026</div>
+          <h2 class="title">Untuk Diriku</h2>
+          <p>Terima kasih sudah bertahan minggu ini. Ada hari yang melelahkan, ada rencana yang tidak berjalan, tapi kamu tetap melangkah, pelan pun tidak apa-apa. Kamu tidak harus selalu kuat. Kamu boleh istirahat, boleh menangis sebentar, lalu melanjutkan lagi saat siap. Aku bangga padamu, dan aku akan terus ada di sisimu.</p>
+          <div class="pn">— 4 —</div>
+        </div>
+        <div class="face back paper verso">
+          <p class="script" style="margin-top:var(--lh);font-size:calc(var(--pw)*.06);line-height:calc(var(--lh)*1.4)">Catatan kaki</p>
+          <p>Besok: minum lebih banyak air, telepon ibu, beli buku baru, dan jalan sore sebentar kalau cuaca bagus.</p>
+          <p class="script" style="margin-top:var(--lh);color:#c98f8f">jangan lupa tersenyum ♥</p>
+        </div>
+      </div>
+
+      <!-- ===== Lembar 5 ===== -->
+      <div class="leaf">
+        <div class="face paper">
+          <div class="date">Senin, 9 November 2026</div>
+          <h2 class="title">Halaman Berikutnya</h2>
+          <p>Buku ini belum penuh. Masih banyak halaman kosong yang menunggu cerita baru: hari yang biasa, hari yang istimewa, dan hari yang belum bisa kubayangkan. Aku tidak tahu apa isinya, tapi aku ingin menuliskannya satu per satu. Sampai jumpa di halaman berikutnya.</p>
+          <div class="pn">— 5 —</div>
+        </div>
+        <div class="face back paper end-gallery">
+          <p class="gallery-title">Little Moments</p>
+          <p class="gallery-sub">A small archive of beautiful memories</p>
+          <div class="end-gallery-grid">
+            <figure><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=max&w=500&q=85" alt="Bunga lembut"><figcaption>soft days</figcaption></figure>
+            <figure><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=max&w=700&q=85" alt="Cahaya pagi"><figcaption>golden moments</figcaption></figure>
+            <figure><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=max&w=500&q=85" alt="Pemandangan alam"><figcaption>somewhere</figcaption></figure>
+            <figure><img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=max&w=500&q=85" alt="Momen bersama"><figcaption>little joys</figcaption></figure>
+            <figure><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=max&w=500&q=85" alt="Danau dan pegunungan"><figcaption>quiet memories</figcaption></figure>
+          </div>
+          <p class="end-note">Every little moment deserves a place ♥</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button type="button" class="nav" id="prev" aria-label="Halaman sebelumnya">‹</button>
+    <div class="status hint" id="status" role="status" aria-live="polite">Membuka buku…</div>
+    <button type="button" class="nav" id="next" aria-label="Halaman berikutnya">›</button>
+  </div>
+  <footer>Made with affection</footer>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage'),book=document.getElementById('book');
+  var leaves=[].slice.call(book.querySelectorAll('.leaf')),N=leaves.length;
+  var prevBtn=document.getElementById('prev'),nextBtn=document.getElementById('next'),statusEl=document.getElementById('status');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var wide=window.matchMedia('(min-width: 760px)');
+  var DUR=reduce?20:900,cur=0,busy=false,touched=false,drag=null;
+
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function pageW(){return leaves[0].offsetWidth;}
+  function setZ(){
+    leaves.forEach(function(l,i){
+      l.style.zIndex=l.classList.contains('moving')?N+5:(i<cur?i+1:N-i);
+    });
+  }
+  function updateUI(){
+    prevBtn.disabled=(cur===0);nextBtn.disabled=(cur===N);
+    statusEl.classList.toggle('hint',cur===0||cur===1);
+    if(cur===0)statusEl.textContent='Ketuk atau geser untuk membuka buku';
+    else if(cur===N)statusEl.textContent='Akhir cerita — kenangan tersimpan di sini';
+    else if(cur===1)statusEl.textContent='Geser atau drag untuk membalik halaman';
+    else statusEl.textContent='Halaman '+cur+' dari '+(N-1);
+  }
+  /* set keadaan diam: halaman < cur sudah dibalik */
+  function rest(){
+    leaves.forEach(function(l,i){l.classList.toggle('turned',i<cur);});
+    setZ();
+    book.style.setProperty('--open',cur>0?1:0);stage.classList.toggle('is-open',cur>0);
+    updateUI();
+  }
+  function settle(leaf){
+    busy=true;
+    setTimeout(function(){leaf.classList.remove('moving');setZ();busy=false;},DUR+60);
+  }
+  function turn(dir){
+    var idx=dir>0?cur:cur-1;
+    if(busy||idx<0||idx>=N)return;
+    var leaf=leaves[idx];
+    leaf.classList.add('moving');
+    cur+=dir;rest();settle(leaf);
+  }
+
+  /* ---------- drag / geser ---------- */
+  book.addEventListener('pointerdown',function(e){
+    touched=true;
+    if(busy||(e.pointerType==='mouse'&&e.button!==0))return;
+    drag={x:e.clientX,y:e.clientY,t:Date.now(),id:e.pointerId,active:false,dir:0,idx:-1,p:0,dx:0,target:e.target};
+  });
+  book.addEventListener('pointermove',function(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    var dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.active){
+      if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+      if(Math.abs(dy)>Math.abs(dx)){drag=null;return;}          /* gerak vertikal = scroll biasa */
+      var dir=dx<0?1:-1,idx=dir>0?cur:cur-1;
+      if(idx<0||idx>=N){drag=null;return;}                       /* sudah di ujung buku */
+      drag.active=true;drag.dir=dir;drag.idx=idx;
+      var l=leaves[idx];
+      l.classList.add('dragging','moving');l.style.transition='none';
+      book.style.transition='none';stage.classList.add('grabbing');setZ();
+      try{book.setPointerCapture(e.pointerId);}catch(_){}
+    }
+    drag.dx=dx;
+    var P=pageW()*.9,p=drag.dir>0?clamp(-dx/P,0,1):clamp(dx/P,0,1);
+    var a=drag.dir>0?-180*p:-180*(1-p);
+    drag.p=p;
+    var leaf=leaves[drag.idx];
+    leaf.style.transform='rotateY('+a+'deg)';
+    leaf.style.setProperty('--sh',Math.sin(Math.abs(a)*Math.PI/180).toFixed(3));
+    if(drag.idx===0)book.style.setProperty('--open',(Math.abs(a)/180).toFixed(3));
+  });
+  function endDrag(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    var d=drag;drag=null;
+    stage.classList.remove('grabbing');
+    if(!d.active){
+      /* ketukan biasa */
+      if(e.type==='pointerup'&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<8&&Date.now()-d.t<600)tap(e,d.target);
+      return;
+    }
+    var leaf=leaves[d.idx];
+    leaf.classList.remove('dragging');leaf.style.transition='';leaf.style.transform='';leaf.style.removeProperty('--sh');
+    book.style.transition='';
+    var v=Math.abs(d.dx)/Math.max(1,Date.now()-d.t);
+    var commit=e.type!=='pointercancel'&&(d.p>.28||(v>.5&&d.p>.06));
+    if(commit)cur+=d.dir;
+    rest();settle(leaf);
+  }
+  book.addEventListener('pointerup',endDrag);
+  book.addEventListener('pointercancel',endDrag);
+
+  function tap(e,target){
+    if(busy)return;
+    var el=target&&target.closest?target.closest('.leaf'):null;
+    if(!el)return;
+    var idx=leaves.indexOf(el);
+    if(cur===0){turn(1);return;}
+    if(idx<cur){turn(-1);return;}                      /* mengetuk halaman kiri (layar lebar) */
+    var r=el.getBoundingClientRect(),fx=(e.clientX-r.left)/r.width;
+    if(fx>.6)turn(1);else if(fx<.25&&!wide.matches)turn(-1);
+  }
+
+  prevBtn.addEventListener('click',function(){touched=true;turn(-1);});
+  nextBtn.addEventListener('click',function(){touched=true;turn(1);});
+  document.addEventListener('keydown',function(e){
+    if(document.body.classList.contains('search-open')||/^(input|textarea|select)$/i.test((e.target&&e.target.tagName)||''))return;
+    if(e.key==='ArrowRight'){touched=true;turn(1);}
+    else if(e.key==='ArrowLeft'){touched=true;turn(-1);}
+  });
+
+  rest();
+  /* animasi pembuka: sampul terbuka sendiri di awal */
+  setTimeout(function(){if(!touched&&cur===0)turn(1);},reduce?0:1300);
+})();
+</script>
+
+<script>
+(() => {
+  const tool = document.getElementById('magnifierTool');
+  const lens = document.getElementById('magnifierLens');
+  const zoom = document.getElementById('magnifierZoom');
+  const book = document.getElementById('book');
+  const stage = document.getElementById('stage');
+  if (!tool || !lens || !zoom || !book || !stage) return;
+
+  const factor = 1.65;
+  const gapAbovePointer = 18;
+  let dragging = false;
+  let activePointer = null;
+  let origin = null;
+  let currentFace = null;
+  let faceClone = null;
+
+  function faceUnderPointer(x, y) {
+    for (const el of document.elementsFromPoint(x, y)) {
+      if (lens.contains(el) || tool.contains(el)) continue;
+      const face = el.closest && el.closest('.face');
+      if (face && book.contains(face)) return face;
+    }
+    return null;
+  }
+
+  function prepareFaceClone(face) {
+    zoom.replaceChildren();
+    faceClone = face.cloneNode(true);
+    faceClone.removeAttribute('id');
+    faceClone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+
+    // The page uses sizing variables inherited from .stage. Copy those values
+    // onto the magnified page so typography and spacing match the real page.
+    const stageStyle = getComputedStyle(stage);
+    faceClone.style.setProperty('--pw', stageStyle.getPropertyValue('--pw'));
+    faceClone.style.setProperty('--lh', stageStyle.getPropertyValue('--lh'));
+    faceClone.style.position = 'absolute';
+    faceClone.style.left = '0';
+    faceClone.style.top = '0';
+    faceClone.style.margin = '0';
+    faceClone.style.width = face.getBoundingClientRect().width + 'px';
+    faceClone.style.height = face.getBoundingClientRect().height + 'px';
+    faceClone.style.transformOrigin = 'top left';
+    faceClone.style.transform = 'scale(' + factor + ')';
+    faceClone.style.transition = 'none';
+    faceClone.style.pointerEvents = 'none';
+    faceClone.style.animation = 'none';
+
+    // Preserve the page's original classes and descendants so its exact
+    // paper, typography, ornaments and layout rules continue to apply.
+    faceClone.querySelectorAll('*').forEach(node => {
+      node.style.pointerEvents = 'none';
+      node.style.animation = 'none';
+      node.style.transition = 'none';
+    });
+
+    zoom.appendChild(faceClone);
+    currentFace = face;
+  }
+
+  function move(x, y) {
+    const size = lens.offsetWidth || 160;
+    tool.style.left = (x - tool.offsetWidth / 2) + 'px';
+    tool.style.top = (y - tool.offsetHeight / 2) + 'px';
+    tool.style.right = 'auto';
+
+    const face = faceUnderPointer(x, y);
+    if (!face) {
+      lens.classList.remove('active');
+      return;
+    }
+
+    if (face !== currentFace || !faceClone) prepareFaceClone(face);
+
+    const rect = face.getBoundingClientRect();
+    lens.style.left = (x - size / 2) + 'px';
+    lens.style.top = (y - size - gapAbovePointer) + 'px';
+
+    // Align the precise point beneath the cursor/finger with the lens center.
+    zoom.style.width = rect.width + 'px';
+    zoom.style.height = rect.height + 'px';
+    zoom.style.left = (size / 2 - (x - rect.left) * factor) + 'px';
+    zoom.style.top = (size / 2 - (y - rect.top) * factor) + 'px';
+    lens.classList.add('active');
+  }
+
+  function pointerDown(e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    dragging = true;
+    activePointer = e.pointerId;
+    origin = { left: tool.style.left, top: tool.style.top, right: tool.style.right };
+    tool.classList.add('dragging');
+    e.preventDefault();
+    move(e.clientX, e.clientY);
+  }
+
+  function pointerMove(e) {
+    if (!dragging || (activePointer !== null && e.pointerId !== activePointer)) return;
+    e.preventDefault();
+    move(e.clientX, e.clientY);
+  }
+
+  function stop(e) {
+    if (!dragging) return;
+    if (e && activePointer !== null && e.pointerId !== activePointer) return;
+    dragging = false;
+    activePointer = null;
+    lens.classList.remove('active');
+    zoom.replaceChildren();
+    currentFace = faceClone = null;
+    tool.classList.remove('dragging');
+    tool.style.left = origin ? origin.left : '';
+    tool.style.top = origin ? origin.top : '';
+    tool.style.right = origin ? origin.right : '';
+    origin = null;
+  }
+
+  tool.addEventListener('pointerdown', pointerDown);
+  document.addEventListener('pointermove', pointerMove, { passive: false });
+  document.addEventListener('pointerup', stop);
+  document.addEventListener('pointercancel', stop);
+  tool.addEventListener('dragstart', e => e.preventDefault());
+})();
+</script>
+
+<script src="search.js" defer></script>
+</body>
+</html>
