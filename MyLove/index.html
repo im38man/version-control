@@ -406,6 +406,46 @@ img{max-width:100%}
 .diary-link.is-open{--c:1;--o:1}
 .diary-link.is-open .d-hint{opacity:0;animation:none}
 @media(prefers-reduced-motion:reduce){.d-scene,.d-ribbon,.d-heart,.d-shadow,.d-hint{animation:none!important}.d-heart{display:none}}
+
+/* ===== To-do harian (di bawah Diary) ===== */
+#todo{overflow:hidden}
+.td-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.td-date{font:italic 13px Georgia,serif;color:#788275}
+.td-summary{margin-top:14px;font:11px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8a9b88}
+.td-bar{height:6px;margin-top:8px;background:#e4ece1;border-radius:999px;overflow:hidden}
+.td-bar span{display:block;height:100%;width:0;background:#8fa58b;border-radius:999px;transition:width .4s ease}
+.td-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.td-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8f6ec;border:1px solid #e9e5d6;border-radius:12px;transition:.25s ease}
+.td-item.done{background:#edf3e9;border-color:#d3e0cf}
+.td-item.done .td-name{text-decoration:line-through;color:#8a9b88}
+.td-check{flex:none;display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;border:1.5px solid #b9cbb8;border-radius:50%;background:#fffefa;color:transparent;font:15px/1 Arial,sans-serif;letter-spacing:0;transition:.2s ease}
+.td-check:hover{background:#fff;transform:none;border-color:#8fa58b}
+.td-item.done .td-check{background:#8fa58b;border-color:#8fa58b;color:#fff}
+.td-main{flex:1;min-width:0}
+.td-name{display:block;font:italic 500 17px/1.35 Georgia,serif;color:#31473a;overflow-wrap:anywhere}
+.td-meta{display:block;margin-top:2px;font:10px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a9b88}
+.td-count{display:flex;align-items:center;gap:6px;flex:none}
+.td-count button{display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;border-radius:50%;font:16px/1 Arial,sans-serif;letter-spacing:0}
+.td-count button:hover{transform:none}
+.td-num{min-width:44px;text-align:center;font:13px Arial,sans-serif;color:#455b49}
+.td-del{flex:none;display:grid;place-items:center;width:26px;height:26px;margin:0;padding:0;border:0;background:none;color:#a9b6a7;font:17px/1 Arial,sans-serif}
+.td-del:hover{background:none;color:#b98a8a;transform:none}
+.td-empty{margin:16px 0 0;text-align:center;font:italic 14px/1.8 Georgia,serif;color:#8a9b88}
+.td-add{margin-top:18px;padding:16px;background:#f8f6ec;border:1px solid #e9e5d6;border-radius:12px;display:grid;gap:12px}
+.td-add label.td-lbl{display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88}
+.td-add input[type=text],.td-add input[type=number]{width:100%;padding:10px 12px;border:1px solid #cdd9c8;border-radius:10px;background:#fffefa;color:#25352b;font:italic 15px Georgia,serif;outline:none}
+.td-add input:focus{border-color:#9caf98;background:#fff}
+.td-row{display:flex;gap:8px;flex-wrap:wrap}
+.td-chip{margin:0;padding:8px 14px;border:1px solid #cdd9c8;border-radius:999px;background:#fffefa;color:#536654;font:12px Arial,sans-serif;letter-spacing:.04em;cursor:pointer}
+.td-chip:hover{background:#fff;transform:none}
+.td-chip.on{background:#8fa58b;border-color:#8fa58b;color:#fff}
+.td-days{display:flex;gap:6px;flex-wrap:wrap}
+.td-days .td-chip{padding:8px 0;width:40px;text-align:center}
+.td-days[hidden],.td-target[hidden]{display:none}
+.td-submit{margin:0;justify-self:start;background:#455b49;border-color:#455b49;color:#fff}
+.td-submit:hover{background:#364a3a;transform:none}
+.td-err{margin:0;font:italic 12px Georgia,serif;color:#b98a8a}
+@media(max-width:420px){.td-item{padding:11px 11px;gap:9px}.td-num{min-width:38px}}
 </style>
 </head>
 <body>
@@ -621,6 +661,176 @@ img{max-width:100%}
     setTimeout(function(){location.href=a.href;},800);
   });
   window.addEventListener('pageshow',function(ev){ if(ev.persisted){going=false;a.classList.remove('is-open');} });
+})();
+</script>
+
+<section class="section" id="todo">
+  <div class="section-kicker">One small step at a time</div>
+  <h2>To-do harian</h2>
+  <div class="td-head"><p>Daftar kecil untuk hari ini.</p><span class="td-date" id="tdDate"></span></div>
+  <div class="td-summary" id="tdSummary"></div>
+  <div class="td-bar" aria-hidden="true"><span id="tdBar"></span></div>
+  <ul class="td-list" id="tdList"></ul>
+  <p class="td-empty" id="tdEmpty" hidden>Belum ada tugas untuk hari ini. Tambahkan di bawah ya.</p>
+
+  <form class="td-add" id="tdForm" autocomplete="off">
+    <div>
+      <label class="td-lbl" for="tdName">Nama tugas</label>
+      <input type="text" id="tdName" maxlength="80" placeholder="mis. Minum air putih">
+    </div>
+    <div>
+      <span class="td-lbl" style="display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88">Jenis</span>
+      <div class="td-row" id="tdType">
+        <button type="button" class="td-chip on" data-type="check">Sekali centang</button>
+        <button type="button" class="td-chip" data-type="count">Hitung sampai selesai</button>
+      </div>
+    </div>
+    <div class="td-target" id="tdTargetWrap" hidden>
+      <label class="td-lbl" for="tdTarget">Target hitungan</label>
+      <input type="number" id="tdTarget" min="2" max="999" value="8" inputmode="numeric">
+    </div>
+    <div>
+      <span class="td-lbl" style="display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88">Pengulangan</span>
+      <div class="td-row" id="tdRepeat">
+        <button type="button" class="td-chip on" data-rep="daily">Setiap hari</button>
+        <button type="button" class="td-chip" data-rep="custom">Pilih hari</button>
+      </div>
+    </div>
+    <div class="td-days" id="tdDays" hidden>
+      <button type="button" class="td-chip" data-d="1">Sen</button>
+      <button type="button" class="td-chip" data-d="2">Sel</button>
+      <button type="button" class="td-chip" data-d="3">Rab</button>
+      <button type="button" class="td-chip" data-d="4">Kam</button>
+      <button type="button" class="td-chip" data-d="5">Jum</button>
+      <button type="button" class="td-chip" data-d="6">Sab</button>
+      <button type="button" class="td-chip" data-d="0">Min</button>
+    </div>
+    <p class="td-err" id="tdErr" hidden></p>
+    <button type="submit" class="td-submit">Tambah tugas</button>
+  </form>
+</section>
+<script>
+(function(){
+  var KEY='momona.todo.v1', DN=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  var $=function(id){return document.getElementById(id);};
+  var listEl=$('tdList'); if(!listEl) return;
+  var data={items:[],progress:{}};
+  try{var s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&Array.isArray(s.items)) data={items:s.items,progress:s.progress||{}};}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+  function pad(n){return n<10?'0'+n:''+n;}
+  function todayKey(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  var curKey=todayKey();
+  function dayLabel(){
+    return new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
+  }
+  function appliesToday(it){
+    if(it.days==='daily') return true;
+    return Array.isArray(it.days)&&it.days.indexOf(new Date().getDay())!==-1;
+  }
+  function prog(id){var p=data.progress[curKey]; return (p&&p[id])||0;}
+  function setProg(id,v){
+    if(!data.progress[curKey]) data.progress[curKey]={};
+    data.progress[curKey][id]=v;
+    /* simpan hanya 60 hari terakhir */
+    var keys=Object.keys(data.progress).sort();
+    while(keys.length>60){delete data.progress[keys.shift()];}
+    save(); render();
+  }
+  function repText(it){
+    if(it.days==='daily') return 'Setiap hari';
+    var d=it.days.slice().sort(function(a,b){return ((a+6)%7)-((b+6)%7);});
+    return d.map(function(x){return DN[x];}).join(' · ');
+  }
+  function mk(tag,cls,txt){var e=document.createElement(tag); if(cls) e.className=cls; if(txt!==undefined) e.textContent=txt; return e;}
+
+  function render(){
+    if(todayKey()!==curKey) curKey=todayKey();   /* ganti hari -> otomatis reset */
+    $('tdDate').textContent=dayLabel();
+    listEl.textContent='';
+    var items=data.items.filter(appliesToday), done=0;
+    items.forEach(function(it){
+      var isCount=it.type==='count', p=prog(it.id), target=isCount?it.target:1;
+      var fin=p>=target; if(fin) done++;
+      var li=mk('li','td-item'+(fin?' done':''));
+      var chk=mk('button','td-check','✓'); chk.type='button';
+      chk.setAttribute('aria-label',(fin?'Batalkan: ':'Selesaikan: ')+it.name);
+      chk.addEventListener('click',function(){ setProg(it.id,fin?0:target); });
+      li.appendChild(chk);
+      var main=mk('span','td-main');
+      main.appendChild(mk('span','td-name',it.name));
+      main.appendChild(mk('span','td-meta',(isCount?'Target '+target+' · ':'')+repText(it)));
+      li.appendChild(main);
+      if(isCount){
+        var c=mk('span','td-count');
+        var m=mk('button','',''); m.type='button'; m.textContent='−'; m.setAttribute('aria-label','Kurangi');
+        m.addEventListener('click',function(){ if(p>0) setProg(it.id,p-1); });
+        var num=mk('span','td-num',p+' / '+target);
+        var pl=mk('button','',''); pl.type='button'; pl.textContent='+'; pl.setAttribute('aria-label','Tambah');
+        pl.addEventListener('click',function(){ if(p<target) setProg(it.id,p+1); });
+        c.appendChild(m); c.appendChild(num); c.appendChild(pl); li.appendChild(c);
+      }
+      var del=mk('button','td-del','×'); del.type='button'; del.setAttribute('aria-label','Hapus tugas: '+it.name);
+      del.addEventListener('click',function(){
+        if(!confirm('Hapus "'+it.name+'" dari daftar?')) return;
+        data.items=data.items.filter(function(x){return x.id!==it.id;});
+        Object.keys(data.progress).forEach(function(k){delete data.progress[k][it.id];});
+        save(); render();
+      });
+      li.appendChild(del);
+      listEl.appendChild(li);
+    });
+    $('tdEmpty').hidden=items.length>0;
+    $('tdSummary').textContent=items.length?(done+' dari '+items.length+' selesai'+(done===items.length?' ♥':'')):'';
+    $('tdBar').style.width=items.length?Math.round(done/items.length*100)+'%':'0';
+  }
+
+  /* form */
+  var type='check', rep='daily', picked=[];
+  function group(box,attr,fn){
+    box.addEventListener('click',function(e){
+      var b=e.target.closest('.td-chip'); if(!b||!box.contains(b)) return; fn(b);
+    });
+  }
+  group($('tdType'),'type',function(b){
+    type=b.dataset.type;
+    [].forEach.call($('tdType').children,function(x){x.classList.toggle('on',x===b);});
+    $('tdTargetWrap').hidden=type!=='count';
+  });
+  group($('tdRepeat'),'rep',function(b){
+    rep=b.dataset.rep;
+    [].forEach.call($('tdRepeat').children,function(x){x.classList.toggle('on',x===b);});
+    $('tdDays').hidden=rep!=='custom';
+  });
+  group($('tdDays'),'d',function(b){
+    var d=+b.dataset.d, i=picked.indexOf(d);
+    if(i===-1) picked.push(d); else picked.splice(i,1);
+    b.classList.toggle('on',i===-1);
+  });
+  function err(t){var e=$('tdErr'); e.textContent=t; e.hidden=!t;}
+  $('tdForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=$('tdName').value.trim();
+    if(!name){err('Isi nama tugasnya dulu ya.'); return;}
+    var target=1;
+    if(type==='count'){
+      target=parseInt($('tdTarget').value,10);
+      if(!(target>=2&&target<=999)){err('Target hitungan 2 sampai 999.'); return;}
+    }
+    if(rep==='custom'&&!picked.length){err('Pilih minimal satu hari.'); return;}
+    data.items.push({
+      id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+      name:name, type:type, target:target,
+      days:rep==='daily'?'daily':picked.slice()
+    });
+    save(); err('');
+    $('tdName').value='';
+    render();
+  });
+
+  /* refresh saat ganti hari / kembali ke tab */
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) render(); });
+  setInterval(function(){ if(todayKey()!==curKey) render(); },60000);
+  render();
 })();
 </script>
 
