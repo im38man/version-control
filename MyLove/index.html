@@ -407,45 +407,111 @@ img{max-width:100%}
 .diary-link.is-open .d-hint{opacity:0;animation:none}
 @media(prefers-reduced-motion:reduce){.d-scene,.d-ribbon,.d-heart,.d-shadow,.d-hint{animation:none!important}.d-heart{display:none}}
 
-/* ===== To-do harian (di bawah Diary) ===== */
-#todo{overflow:hidden}
-.td-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
-.td-date{font:italic 13px Georgia,serif;color:#788275}
-.td-summary{margin-top:14px;font:11px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8a9b88}
-.td-bar{height:6px;margin-top:8px;background:#e4ece1;border-radius:999px;overflow:hidden}
-.td-bar span{display:block;height:100%;width:0;background:#8fa58b;border-radius:999px;transition:width .4s ease}
-.td-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
-.td-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8f6ec;border:1px solid #e9e5d6;border-radius:12px;transition:.25s ease}
-.td-item.done{background:#edf3e9;border-color:#d3e0cf}
-.td-item.done .td-name{text-decoration:line-through;color:#8a9b88}
-.td-check{flex:none;display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;border:1.5px solid #b9cbb8;border-radius:50%;background:#fffefa;color:transparent;font:15px/1 Arial,sans-serif;letter-spacing:0;transition:.2s ease}
-.td-check:hover{background:#fff;transform:none;border-color:#8fa58b}
-.td-item.done .td-check{background:#8fa58b;border-color:#8fa58b;color:#fff}
-.td-main{flex:1;min-width:0}
-.td-name{display:block;font:italic 500 17px/1.35 Georgia,serif;color:#31473a;overflow-wrap:anywhere}
-.td-meta{display:block;margin-top:2px;font:10px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a9b88}
-.td-count{display:flex;align-items:center;gap:6px;flex:none}
-.td-count button{display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;border-radius:50%;font:16px/1 Arial,sans-serif;letter-spacing:0}
-.td-count button:hover{transform:none}
-.td-num{min-width:44px;text-align:center;font:13px Arial,sans-serif;color:#455b49}
-.td-del{flex:none;display:grid;place-items:center;width:26px;height:26px;margin:0;padding:0;border:0;background:none;color:#a9b6a7;font:17px/1 Arial,sans-serif}
-.td-del:hover{background:none;color:#b98a8a;transform:none}
-.td-empty{margin:16px 0 0;text-align:center;font:italic 14px/1.8 Georgia,serif;color:#8a9b88}
-.td-add{margin-top:18px;padding:16px;background:#f8f6ec;border:1px solid #e9e5d6;border-radius:12px;display:grid;gap:12px}
-.td-add label.td-lbl{display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88}
+/* ===== To do list (gaya halaman diary) ===== */
+#todo{overflow:hidden;--script:"Segoe Script","Bradley Hand","Snell Roundhand","Brush Script MT","Lucida Handwriting",cursive;--lh:34px}
+#todo [hidden]{display:none!important}
+#todo button:disabled{opacity:.4;cursor:default}
+#todo button:disabled:hover{background:#ffffffa8}
+#todo .td-intro{margin:0 0 16px}
+
+/* pilih hari */
+.td-weekbar{display:flex;align-items:center;gap:6px}
+#todo .td-arrow{flex:none;display:grid;place-items:center;width:34px;height:34px;margin:0;padding:0;border-radius:50%;font:18px/1 Arial,sans-serif;letter-spacing:0;color:#455b49}
+#todo .td-arrow:hover{transform:none;background:#fff}
+.td-week{flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+#todo .td-day{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;margin:0;padding:7px 0 12px;border-radius:12px;background:#fffefa;border:1px solid #e2e6d8;color:#536654;font:10px Arial,sans-serif;letter-spacing:0}
+#todo .td-day b{font:italic 600 15px/1.2 Georgia,serif}
+#todo .td-day:hover{transform:none;background:#fff;border-color:#c5d5c2}
+#todo .td-day.today{border-color:#8fa58b;box-shadow:inset 0 0 0 1px #8fa58b}
+#todo .td-day.sel{background:#8fa58b;border-color:#8fa58b;color:#fff}
+#todo .td-day.has::after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#c98f8f}
+#todo .td-day.sel.has::after{background:#fff}
+.td-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0 18px}
+#todo .td-today{margin:0;padding:7px 14px;font:11px Arial,sans-serif;letter-spacing:.06em}
+#todo .td-today:hover{transform:none}
+.td-jump{display:flex;align-items:center;gap:8px;margin-left:auto;font:10px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8a9b88}
+.td-jump input{padding:6px 10px;border:1px solid #cdd9c8;border-radius:10px;background:#fffefa;color:#25352b;font:italic 13px Georgia,serif;outline:none}
+.td-jump input:focus{border-color:#9caf98}
+#todo .td-legend{margin:0 0 14px;font:italic 11px/1.6 Georgia,serif;color:#9aa89a;display:flex;align-items:flex-start;gap:7px}
+.td-legend i{flex:none;display:block;width:5px;height:5px;margin-top:.62em;border-radius:50%;background:#c98f8f}
+
+/* kertas bergaris ala diary */
+.td-paper{position:relative;--mg:46px;min-height:calc(var(--lh)*9);padding:var(--lh) 20px var(--lh) calc(var(--mg) + 18px);border-radius:2px 9px 9px 2px;box-shadow:0 1px 2px rgba(60,75,55,.18),0 6px 16px rgba(60,75,55,.10);color:#4b5b52;font-style:italic;
+  background:
+    linear-gradient(to right,transparent var(--mg),rgba(214,140,140,.38) var(--mg),rgba(214,140,140,.38) calc(var(--mg) + 1px),transparent calc(var(--mg) + 1px)),
+    repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--lh) - 1px),rgba(120,150,175,.3) calc(var(--lh) - 1px),rgba(120,150,175,.3) var(--lh)),
+    #fffdf6}
+.td-paper::before{content:"";position:absolute;top:0;bottom:0;left:0;width:26px;background:linear-gradient(to right,rgba(60,70,50,.14),transparent);pointer-events:none;border-radius:2px 0 0 2px}
+#todo .td-date{display:block;height:var(--lh);margin:0 0 var(--lh);font:normal calc(var(--lh)*.6)/var(--lh) var(--script);color:#8a9b88;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#todo .td-title{height:var(--lh);margin:0;font:normal 400 calc(var(--lh)*.92)/var(--lh) var(--script);letter-spacing:0;color:#4f6d4d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-list{list-style:none;margin:0;padding:0}
+.td-item{display:flex;align-items:flex-start;gap:10px;min-height:var(--lh)}
+#todo .td-check{flex:none;display:grid;place-items:center;width:calc(var(--lh)*.62);height:calc(var(--lh)*.62);margin:calc(var(--lh)*.19) 0 0;padding:0;border:1.5px solid #9db39a;border-radius:4px;background:#fffefa;color:transparent;font:normal 15px/1 var(--script);letter-spacing:0}
+#todo .td-check:hover{transform:none;background:#fff}
+#todo .td-item.done .td-check{color:#7fa07b;border-color:#7fa07b;background:#f4f8ef}
+#todo .td-name{flex:1;min-width:0;font:italic 16px/var(--lh) Georgia,serif;color:#4b5b52;overflow-wrap:anywhere}
+#todo .td-name small{margin-left:6px;font:normal 11px/var(--lh) var(--script);color:#9aa89a;letter-spacing:.02em}
+#todo .td-item.done .td-name{color:#9aa89a}
+/* efek coret: garis digambar dari kiri ke kanan (mengikuti teks yang turun baris) */
+#todo .td-txt{background:linear-gradient(#92a98f,#92a98f) no-repeat 0 60%/0% 1.5px}
+#todo .td-item.done .td-txt{background-size:100% 1.5px}
+#todo .td-tick{display:block;line-height:1}
+#todo .td-check{position:relative;overflow:visible}
+/* animasi saat tugas selesai */
+#todo .td-item.just-done{border-radius:6px;animation:tdRow 1s ease-out}
+#todo .td-item.just-done .td-check{animation:tdPop .5s cubic-bezier(.3,1.6,.5,1)}
+#todo .td-item.just-done .td-check::after{content:"";position:absolute;inset:-2px;border-radius:6px;border:2px solid #8fb58a;opacity:0;animation:tdRing .6s ease-out}
+#todo .td-item.just-done .td-tick{animation:tdTick .32s ease-out .08s backwards}
+#todo .td-item.just-done .td-txt{animation:tdStrike .5s cubic-bezier(.4,0,.2,1) .15s backwards,tdFade .5s ease .15s backwards}
+#todo .td-item.just-undone .td-txt{animation:tdUnstrike .3s ease-in,tdUnfade .3s ease}
+#todo .td-spark{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#9cc496;opacity:0;pointer-events:none;animation:tdSpark .7s ease-out forwards}
+#todo .td-spark:nth-of-type(3n){background:#e7b3b3}
+#todo .td-spark:nth-of-type(3n+1){background:#f0d58a}
+#todo .td-foot.pop{animation:tdFoot .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tdRow{0%{background:rgba(160,200,152,.34)}100%{background:rgba(160,200,152,0)}}
+@keyframes tdPop{0%{transform:scale(1)}35%{transform:scale(1.4) rotate(-8deg)}70%{transform:scale(.92) rotate(3deg)}100%{transform:scale(1)}}
+@keyframes tdRing{0%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes tdTick{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes tdStrike{from{background-size:0% 1.5px}to{background-size:100% 1.5px}}
+@keyframes tdFade{from{color:#4b5b52}to{color:#9aa89a}}
+@keyframes tdUnstrike{from{background-size:100% 1.5px}to{background-size:0% 1.5px}}
+@keyframes tdUnfade{from{color:#9aa89a}to{color:#4b5b52}}
+@keyframes tdSpark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
+@keyframes tdFoot{0%{transform:scale(.9);opacity:.4}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){#todo .td-item.just-done,#todo .td-item.just-done *,#todo .td-item.just-undone *,#todo .td-foot.pop{animation:none!important}#todo .td-spark{display:none}}
+.td-count{flex:none;display:flex;align-items:center;gap:4px;height:var(--lh)}
+#todo .td-count button{display:grid;place-items:center;width:24px;height:24px;margin:0;padding:0;border-radius:50%;font:15px/1 Arial,sans-serif;letter-spacing:0}
+#todo .td-count button:hover{transform:none}
+#todo .td-num{min-width:46px;text-align:center;font:normal 13px/1 var(--script);color:#55745a}
+#todo .td-del{flex:none;display:grid;place-items:center;width:22px;height:var(--lh);margin:0;padding:0;border:0;border-radius:0;background:none;color:#b3bfb1;font:17px/1 Arial,sans-serif;letter-spacing:0}
+#todo .td-del:hover{background:none;color:#b98a8a;transform:none}
+#todo .td-empty{margin:0;font:italic 15px/var(--lh) Georgia,serif;color:#8a9b88}
+.td-foot{height:var(--lh);margin-top:var(--lh);text-align:center;font:normal 11px/var(--lh) Georgia,serif;letter-spacing:.1em;color:#9aa89a}
+
+/* form tambah */
+.td-add{margin-top:20px;padding:16px;background:#f8f6ec;border:1px solid #e9e5d6;border-radius:12px;display:grid;gap:12px}
+#todo .td-add-title{margin:0;font:normal 400 20px/1.3 var(--script);letter-spacing:0;color:#4f6d4d}
+.td-add .td-lbl{display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88}
 .td-add input[type=text],.td-add input[type=number]{width:100%;padding:10px 12px;border:1px solid #cdd9c8;border-radius:10px;background:#fffefa;color:#25352b;font:italic 15px Georgia,serif;outline:none}
 .td-add input:focus{border-color:#9caf98;background:#fff}
 .td-row{display:flex;gap:8px;flex-wrap:wrap}
-.td-chip{margin:0;padding:8px 14px;border:1px solid #cdd9c8;border-radius:999px;background:#fffefa;color:#536654;font:12px Arial,sans-serif;letter-spacing:.04em;cursor:pointer}
-.td-chip:hover{background:#fff;transform:none}
-.td-chip.on{background:#8fa58b;border-color:#8fa58b;color:#fff}
-.td-days{display:flex;gap:6px;flex-wrap:wrap}
-.td-days .td-chip{padding:8px 0;width:40px;text-align:center}
-.td-days[hidden],.td-target[hidden]{display:none}
-.td-submit{margin:0;justify-self:start;background:#455b49;border-color:#455b49;color:#fff}
-.td-submit:hover{background:#364a3a;transform:none}
-.td-err{margin:0;font:italic 12px Georgia,serif;color:#b98a8a}
-@media(max-width:420px){.td-item{padding:11px 11px;gap:9px}.td-num{min-width:38px}}
+#todo .td-chip{margin:0;padding:8px 14px;border:1px solid #cdd9c8;border-radius:999px;background:#fffefa;color:#536654;font:12px Arial,sans-serif;letter-spacing:.04em;cursor:pointer}
+#todo .td-chip:hover{background:#fff;transform:none}
+#todo .td-chip.on{background:#8fa58b;border-color:#8fa58b;color:#fff}
+.td-pickdays{display:flex;gap:6px;flex-wrap:wrap}
+#todo .td-pickdays .td-chip{padding:8px 0;width:40px;text-align:center}
+#todo .td-submit{margin:0;justify-self:start;background:#455b49;border-color:#455b49;color:#fff}
+#todo .td-submit:hover{background:#364a3a;transform:none}
+#todo .td-note{margin:0;font:italic 12px/1.6 Georgia,serif;color:#8a9b88}
+#todo .td-err{margin:0;font:italic 12px Georgia,serif;color:#b98a8a}
+#todo .td-ok{margin:0;font:italic 12px Georgia,serif;color:#6f876d}
+@media(max-width:600px){
+  #todo{--lh:30px}
+  .td-paper{--mg:34px;padding-right:12px;padding-left:calc(var(--mg) + 12px)}
+  #todo .td-name{font-size:15px}
+  #todo .td-num{min-width:40px}
+}
+@media(max-width:360px){#todo .td-arrow{width:28px;height:28px}#todo .td-day b{font-size:13px}}
 </style>
 </head>
 <body>
@@ -666,37 +732,53 @@ img{max-width:100%}
 
 <section class="section" id="todo">
   <div class="section-kicker">One small step at a time</div>
-  <h2>To-do harian</h2>
-  <div class="td-head"><p>Daftar kecil untuk hari ini.</p><span class="td-date" id="tdDate"></span></div>
-  <div class="td-summary" id="tdSummary"></div>
-  <div class="td-bar" aria-hidden="true"><span id="tdBar"></span></div>
-  <ul class="td-list" id="tdList"></ul>
-  <p class="td-empty" id="tdEmpty" hidden>Belum ada tugas untuk hari ini. Tambahkan di bawah ya.</p>
+  <h2>To do list</h2>
+  <p class="td-intro">Pilih hari untuk melihat tugasnya dan apa saja yang sudah dicentang.</p>
+
+  <div class="td-weekbar">
+    <button type="button" class="td-arrow" id="tdPrev" aria-label="Minggu sebelumnya">‹</button>
+    <div class="td-week" id="tdWeek" role="group" aria-label="Pilih hari"></div>
+    <button type="button" class="td-arrow" id="tdNext" aria-label="Minggu berikutnya">›</button>
+  </div>
+  <div class="td-tools">
+    <button type="button" class="td-today" id="tdToday">Hari ini</button>
+    <label class="td-jump">Lompat ke <input type="date" id="tdJump"></label>
+  </div>
+  <p class="td-legend"><i aria-hidden="true"></i> titik merah = ada tugas yang sudah dicentang di hari itu</p>
+
+  <div class="td-paper">
+    <div class="td-date" id="tdDate"></div>
+    <h3 class="td-title">To do list</h3>
+    <ul class="td-list" id="tdList"></ul>
+    <p class="td-empty" id="tdEmpty" hidden></p>
+    <div class="td-foot" id="tdFoot"></div>
+  </div>
 
   <form class="td-add" id="tdForm" autocomplete="off">
+    <h3 class="td-add-title">Tambah tugas</h3>
     <div>
       <label class="td-lbl" for="tdName">Nama tugas</label>
       <input type="text" id="tdName" maxlength="80" placeholder="mis. Minum air putih">
     </div>
     <div>
-      <span class="td-lbl" style="display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88">Jenis</span>
+      <span class="td-lbl">Jenis</span>
       <div class="td-row" id="tdType">
         <button type="button" class="td-chip on" data-type="check">Sekali centang</button>
         <button type="button" class="td-chip" data-type="count">Hitung sampai selesai</button>
       </div>
     </div>
-    <div class="td-target" id="tdTargetWrap" hidden>
+    <div id="tdTargetWrap" hidden>
       <label class="td-lbl" for="tdTarget">Target hitungan</label>
       <input type="number" id="tdTarget" min="2" max="999" value="8" inputmode="numeric">
     </div>
     <div>
-      <span class="td-lbl" style="display:block;margin-bottom:6px;font:10px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8a9b88">Pengulangan</span>
+      <span class="td-lbl">Pengulangan</span>
       <div class="td-row" id="tdRepeat">
         <button type="button" class="td-chip on" data-rep="daily">Setiap hari</button>
         <button type="button" class="td-chip" data-rep="custom">Pilih hari</button>
       </div>
     </div>
-    <div class="td-days" id="tdDays" hidden>
+    <div class="td-pickdays" id="tdPickDays" hidden>
       <button type="button" class="td-chip" data-d="1">Sen</button>
       <button type="button" class="td-chip" data-d="2">Sel</button>
       <button type="button" class="td-chip" data-d="3">Rab</button>
@@ -705,131 +787,248 @@ img{max-width:100%}
       <button type="button" class="td-chip" data-d="6">Sab</button>
       <button type="button" class="td-chip" data-d="0">Min</button>
     </div>
-    <p class="td-err" id="tdErr" hidden></p>
+    <p class="td-note" id="tdStart"></p>
+    <p id="tdMsg" class="td-err" role="status" hidden></p>
     <button type="submit" class="td-submit">Tambah tugas</button>
   </form>
 </section>
 <script>
 (function(){
-  var KEY='momona.todo.v1', DN=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  var KEY='momona.todo.v1';
+  var DN=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  var DAYS=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var MON=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   var $=function(id){return document.getElementById(id);};
   var listEl=$('tdList'); if(!listEl) return;
+
+  /* ---------- data ---------- */
   var data={items:[],progress:{}};
-  try{var s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&Array.isArray(s.items)) data={items:s.items,progress:s.progress||{}};}catch(e){}
+  try{
+    var s=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(s&&Array.isArray(s.items)){
+      data.items=s.items.filter(function(x){return x&&typeof x.id==='string'&&typeof x.name==='string';});
+      data.progress=(s.progress&&typeof s.progress==='object')?s.progress:{};
+    }
+  }catch(e){}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+
+  /* ---------- tanggal ---------- */
   function pad(n){return n<10?'0'+n:''+n;}
-  function todayKey(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-  var curKey=todayKey();
-  function dayLabel(){
-    return new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
-  }
-  function appliesToday(it){
+  function keyOf(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function parseKey(k){var p=k.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+  function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);}
+  function todayKey(){return keyOf(new Date());}
+  function longDate(k){var d=parseKey(k);return DAYS[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear();}
+  function shortDate(k){var d=parseKey(k);return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear();}
+  var lastToday=todayKey(), sel=lastToday;
+
+  /* item lama (versi pertama) belum punya tanggal mulai */
+  var keys=Object.keys(data.progress).sort();
+  data.items.forEach(function(it){
+    if(it.type!=='count') it.type='check';
+    it.target=it.type==='count'?(+it.target>=2?+it.target:2):1;
+    if(it.days!=='daily'&&!Array.isArray(it.days)) it.days='daily';
+    if(!it.created){
+      var m=null;
+      keys.some(function(k){var p=data.progress[k];if(p&&p[it.id]!==undefined){m=k;return true;}return false;});
+      it.created=m||lastToday;
+    }
+  });
+  save();
+
+  function appliesOn(it,k){
+    if(it.created&&k<it.created) return false;
+    if(it.end&&k>=it.end) return false;
     if(it.days==='daily') return true;
-    return Array.isArray(it.days)&&it.days.indexOf(new Date().getDay())!==-1;
+    return it.days.indexOf(parseKey(k).getDay())!==-1;
   }
-  function prog(id){var p=data.progress[curKey]; return (p&&p[id])||0;}
+  function prog(id,k){var p=data.progress[k];return (p&&p[id])||0;}
+  var anim=null;   /* tugas yang baru saja dicentang / dibatalkan, untuk animasi */
   function setProg(id,v){
-    if(!data.progress[curKey]) data.progress[curKey]={};
-    data.progress[curKey][id]=v;
-    /* simpan hanya 60 hari terakhir */
-    var keys=Object.keys(data.progress).sort();
-    while(keys.length>60){delete data.progress[keys.shift()];}
+    if(!data.progress[sel]) data.progress[sel]={};
+    var old=prog(id,sel), item=null;
+    data.items.forEach(function(x){ if(x.id===id) item=x; });
+    anim=null;
+    if(item){
+      var was=old>=item.target, now=v>=item.target;
+      if(!was&&now) anim={id:id,type:'done'};
+      else if(was&&!now) anim={id:id,type:'undone'};
+    }
+    data.progress[sel][id]=v;
+    var ks=Object.keys(data.progress).sort();
+    while(ks.length>730){delete data.progress[ks.shift()];}
     save(); render();
   }
+  function stats(k){
+    var items=data.items.filter(function(it){return appliesOn(it,k);}), done=0;
+    items.forEach(function(it){ if(prog(it.id,k)>=it.target) done++; });
+    return {items:items,total:items.length,done:done};
+  }
   function repText(it){
-    if(it.days==='daily') return 'Setiap hari';
+    if(it.days==='daily') return 'setiap hari';
     var d=it.days.slice().sort(function(a,b){return ((a+6)%7)-((b+6)%7);});
     return d.map(function(x){return DN[x];}).join(' · ');
   }
-  function mk(tag,cls,txt){var e=document.createElement(tag); if(cls) e.className=cls; if(txt!==undefined) e.textContent=txt; return e;}
+  function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+
+  /* ---------- tampilan ---------- */
+  function renderWeek(){
+    var box=$('tdWeek'); box.textContent='';
+    var d=parseKey(sel), mon=addDays(d,-((d.getDay()+6)%7)), tk=todayKey();
+    for(var i=0;i<7;i++){
+      (function(day){
+        var k=keyOf(day), st=stats(k), anyChecked=false;
+        st.items.forEach(function(it){ if(prog(it.id,k)>0) anyChecked=true; });
+        var b=mk('button','td-day'+(k===sel?' sel':'')+(k===tk?' today':'')+(anyChecked?' has':'')); b.type='button';
+        b.appendChild(mk('span','',DN[day.getDay()]));
+        b.appendChild(mk('b','',String(day.getDate())));
+        b.setAttribute('aria-pressed',k===sel?'true':'false');
+        b.setAttribute('aria-label',longDate(k)+(k===tk?' (hari ini)':'')+(st.total?', '+st.done+' dari '+st.total+' selesai':''));
+        b.addEventListener('click',function(){ sel=k; render(); });
+        box.appendChild(b);
+      })(addDays(mon,i));
+    }
+  }
 
   function render(){
-    if(todayKey()!==curKey) curKey=todayKey();   /* ganti hari -> otomatis reset */
-    $('tdDate').textContent=dayLabel();
+    var tk=todayKey(), st=stats(sel), canDelete=sel>=tk;
+    renderWeek();
+    $('tdToday').disabled=(sel===tk);
+    $('tdJump').value=sel;
+    $('tdDate').textContent=longDate(sel)+(sel===tk?' · hari ini':'');
     listEl.textContent='';
-    var items=data.items.filter(appliesToday), done=0;
-    items.forEach(function(it){
-      var isCount=it.type==='count', p=prog(it.id), target=isCount?it.target:1;
-      var fin=p>=target; if(fin) done++;
-      var li=mk('li','td-item'+(fin?' done':''));
-      var chk=mk('button','td-check','✓'); chk.type='button';
-      chk.setAttribute('aria-label',(fin?'Batalkan: ':'Selesaikan: ')+it.name);
+
+    st.items.forEach(function(it){
+      var isCount=it.type==='count', p=prog(it.id,sel), target=it.target, fin=p>=target;
+      var li=mk('li','td-item'+(fin?' done':'')+(anim&&anim.id===it.id?(anim.type==='done'?' just-done':' just-undone'):''));
+
+      var chk=mk('button','td-check'); chk.type='button';
+      chk.appendChild(mk('span','td-tick','✓'));
+      if(anim&&anim.id===it.id&&anim.type==='done'){
+        for(var sp=0;sp<8;sp++){
+          var dot=mk('i','td-spark'), ang=(sp/8)*Math.PI*2+Math.random()*.4, rad=20+Math.random()*10;
+          dot.style.setProperty('--dx',Math.round(Math.cos(ang)*rad)+'px');
+          dot.style.setProperty('--dy',Math.round(Math.sin(ang)*rad)+'px');
+          chk.appendChild(dot);
+        }
+      }
+      chk.setAttribute('aria-label',(fin?'Batalkan centang: ':'Centang: ')+it.name);
       chk.addEventListener('click',function(){ setProg(it.id,fin?0:target); });
       li.appendChild(chk);
-      var main=mk('span','td-main');
-      main.appendChild(mk('span','td-name',it.name));
-      main.appendChild(mk('span','td-meta',(isCount?'Target '+target+' · ':'')+repText(it)));
-      li.appendChild(main);
+
+      var nm=mk('span','td-name');
+      nm.appendChild(mk('span','td-txt',it.name));
+      nm.appendChild(mk('small','',it.days==='daily'?'':'('+repText(it)+')'));
+      li.appendChild(nm);
+
       if(isCount){
         var c=mk('span','td-count');
-        var m=mk('button','',''); m.type='button'; m.textContent='−'; m.setAttribute('aria-label','Kurangi');
+        var m=mk('button','','−'); m.type='button'; m.setAttribute('aria-label','Kurangi: '+it.name);
         m.addEventListener('click',function(){ if(p>0) setProg(it.id,p-1); });
         var num=mk('span','td-num',p+' / '+target);
-        var pl=mk('button','',''); pl.type='button'; pl.textContent='+'; pl.setAttribute('aria-label','Tambah');
+        var pl=mk('button','','+'); pl.type='button'; pl.setAttribute('aria-label','Tambah: '+it.name);
         pl.addEventListener('click',function(){ if(p<target) setProg(it.id,p+1); });
         c.appendChild(m); c.appendChild(num); c.appendChild(pl); li.appendChild(c);
       }
-      var del=mk('button','td-del','×'); del.type='button'; del.setAttribute('aria-label','Hapus tugas: '+it.name);
-      del.addEventListener('click',function(){
-        if(!confirm('Hapus "'+it.name+'" dari daftar?')) return;
-        data.items=data.items.filter(function(x){return x.id!==it.id;});
-        Object.keys(data.progress).forEach(function(k){delete data.progress[k][it.id];});
-        save(); render();
-      });
-      li.appendChild(del);
+      if(canDelete){
+        var del=mk('button','td-del','×'); del.type='button'; del.setAttribute('aria-label','Hapus tugas: '+it.name);
+        del.addEventListener('click',function(){ removeItem(it); });
+        li.appendChild(del);
+      }
       listEl.appendChild(li);
     });
-    $('tdEmpty').hidden=items.length>0;
-    $('tdSummary').textContent=items.length?(done+' dari '+items.length+' selesai'+(done===items.length?' ♥':'')):'';
-    $('tdBar').style.width=items.length?Math.round(done/items.length*100)+'%':'0';
+
+    var em=$('tdEmpty');
+    em.hidden=st.total>0;
+    em.textContent=sel<tk?'Tidak ada tugas di hari ini.':'Belum ada tugas di hari ini. Tambahkan di bawah ya.';
+    $('tdFoot').textContent=st.total?('— '+st.done+' dari '+st.total+' selesai'+(st.done===st.total?' ♥':'')+' —'):'';
+    $('tdStart').textContent='Tugas baru mulai berlaku dari '+shortDate(startKey())+'.';
+    var foot=$('tdFoot'); foot.classList.remove('pop');
+    if(anim&&anim.type==='done'&&st.total&&st.done===st.total){ void foot.offsetWidth; foot.classList.add('pop'); }
+    anim=null;
   }
 
-  /* form */
+  function startKey(){var t=todayKey();return sel>=t?sel:t;}
+
+  function removeItem(it){
+    var t=todayKey(), fresh=it.created>=t;
+    var q=fresh?'Hapus "'+it.name+'"?':'Hapus "'+it.name+'" mulai hari ini? Riwayat centang sebelumnya tetap tersimpan.';
+    if(!confirm(q)) return;
+    if(fresh){
+      data.items=data.items.filter(function(x){return x.id!==it.id;});
+      Object.keys(data.progress).forEach(function(k){ if(data.progress[k]) delete data.progress[k][it.id]; });
+    } else it.end=t;
+    save(); render();
+  }
+
+  /* ---------- navigasi hari ---------- */
+  $('tdPrev').addEventListener('click',function(){ sel=keyOf(addDays(parseKey(sel),-7)); render(); });
+  $('tdNext').addEventListener('click',function(){ sel=keyOf(addDays(parseKey(sel),7)); render(); });
+  $('tdToday').addEventListener('click',function(){ sel=todayKey(); render(); });
+  $('tdJump').addEventListener('change',function(){ var v=this.value; if(/^\d{4}-\d{2}-\d{2}$/.test(v)){ sel=v; render(); } });
+
+  /* ---------- form ---------- */
   var type='check', rep='daily', picked=[];
-  function group(box,attr,fn){
+  function chips(box,fn){
     box.addEventListener('click',function(e){
-      var b=e.target.closest('.td-chip'); if(!b||!box.contains(b)) return; fn(b);
+      var b=e.target.closest('.td-chip'); if(b&&box.contains(b)) fn(b);
     });
   }
-  group($('tdType'),'type',function(b){
+  chips($('tdType'),function(b){
     type=b.dataset.type;
     [].forEach.call($('tdType').children,function(x){x.classList.toggle('on',x===b);});
     $('tdTargetWrap').hidden=type!=='count';
   });
-  group($('tdRepeat'),'rep',function(b){
+  function syncDays(){
+    [].forEach.call($('tdPickDays').children,function(x){x.classList.toggle('on',picked.indexOf(+x.dataset.d)!==-1);});
+  }
+  chips($('tdRepeat'),function(b){
     rep=b.dataset.rep;
     [].forEach.call($('tdRepeat').children,function(x){x.classList.toggle('on',x===b);});
-    $('tdDays').hidden=rep!=='custom';
+    $('tdPickDays').hidden=rep!=='custom';
+    if(rep==='custom'&&!picked.length){ picked=[parseKey(sel).getDay()]; syncDays(); }   /* langsung pilih hari yang sedang dibuka */
   });
-  group($('tdDays'),'d',function(b){
+  chips($('tdPickDays'),function(b){
     var d=+b.dataset.d, i=picked.indexOf(d);
     if(i===-1) picked.push(d); else picked.splice(i,1);
-    b.classList.toggle('on',i===-1);
+    syncDays();
   });
-  function err(t){var e=$('tdErr'); e.textContent=t; e.hidden=!t;}
+
+  var msgT=null;
+  function msg(t,ok){
+    var e=$('tdMsg'); clearTimeout(msgT);
+    e.textContent=t; e.hidden=!t; e.className=ok?'td-ok':'td-err';
+    if(t&&ok) msgT=setTimeout(function(){e.hidden=true;},4000);
+  }
   $('tdForm').addEventListener('submit',function(e){
     e.preventDefault();
     var name=$('tdName').value.trim();
-    if(!name){err('Isi nama tugasnya dulu ya.'); return;}
+    if(!name){msg('Isi nama tugasnya dulu ya.'); return;}
     var target=1;
     if(type==='count'){
       target=parseInt($('tdTarget').value,10);
-      if(!(target>=2&&target<=999)){err('Target hitungan 2 sampai 999.'); return;}
+      if(!(target>=2&&target<=999)){msg('Target hitungan 2 sampai 999.'); return;}
     }
-    if(rep==='custom'&&!picked.length){err('Pilih minimal satu hari.'); return;}
-    data.items.push({
+    if(rep==='custom'&&!picked.length){msg('Pilih minimal satu hari.'); return;}
+    var it={
       id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
       name:name, type:type, target:target,
-      days:rep==='daily'?'daily':picked.slice()
-    });
-    save(); err('');
+      days:rep==='daily'?'daily':picked.slice(),
+      created:startKey()
+    };
+    data.items.push(it); save();
     $('tdName').value='';
+    msg(appliesOn(it,sel)?'Tugas ditambahkan.':'Ditambahkan — muncul pada '+repText(it)+'.',true);
     render();
   });
 
-  /* refresh saat ganti hari / kembali ke tab */
-  document.addEventListener('visibilitychange',function(){ if(!document.hidden) render(); });
-  setInterval(function(){ if(todayKey()!==curKey) render(); },60000);
+  /* ganti hari / kembali ke tab */
+  function tick(){
+    var t=todayKey();
+    if(t!==lastToday){ if(sel===lastToday) sel=t; lastToday=t; render(); }
+  }
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) tick(); });
+  setInterval(tick,60000);
   render();
 })();
 </script>
